@@ -50,6 +50,22 @@
   --text-label: 0.75rem;
   --text-label--line-height: 1.4;
   --text-label--letter-spacing: 0.12em;
+
+  --animate-rise: rise 0.9s var(--ease-out-expo) both;
+  --animate-marquee: marquee 45s linear infinite;
+
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(1.5rem);
+    }
+  }
+
+  @keyframes marquee {
+    to {
+      transform: translateX(-50%);
+    }
+  }
 }
 
 /* Font families come from next/font CSS variables set on <html>, so they are inlined. */
@@ -144,6 +160,12 @@
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
+}
+
+/* Film grain (brief §6.4): static SVG noise, rasterised once. */
+@utility grain {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 160px 160px;
 }
 
 @utility text-grad-brand {

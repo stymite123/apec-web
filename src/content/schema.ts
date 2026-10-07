@@ -42,16 +42,13 @@ export const socialPlatformSchema = z.enum([
   "email",
 ]);
 
-const skillSchema = z
-  .object({
-    name: nonEmpty,
-    level: orTodo(skillLevelSchema),
-    group: orTodo(nonEmpty),
-    confirmed: z.boolean(),
-  })
-  .refine((skill) => !skill.confirmed || !skill.level.startsWith(TODO_PREFIX), {
-    message: "a confirmed skill needs a real level",
-  });
+/** `confirmed` = the member stated it. The level may still be a TODO (shown without a level). */
+const skillSchema = z.object({
+  name: nonEmpty,
+  level: orTodo(skillLevelSchema),
+  group: orTodo(nonEmpty),
+  confirmed: z.boolean(),
+});
 
 const experienceSchema = z.object({
   title: nonEmpty,
@@ -78,6 +75,8 @@ export const teamMemberSchema = z.object({
   slug: z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
   order: z.literal([1, 2, 3, 4, 5]),
   name: nonEmpty,
+  /** Name used in "Work with {name}"; defaults to the first word of `name`. */
+  callName: nonEmpty.optional(),
   role: nonEmpty,
   headline: orTodo(nonEmpty.max(90)),
   bio: orTodo(wordCount(60, 120)),
@@ -134,6 +133,36 @@ export const teamSchema = z
 
 const linkSchema = z.object({ label: nonEmpty, href: nonEmpty });
 
+const sectionSchema = z.object({
+  id: z.string().regex(/^[a-z-]+$/),
+  eyebrow: nonEmpty,
+  title: nonEmpty,
+  intro: orTodo(nonEmpty).optional(),
+});
+
+const slug = z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/);
+
+export const serviceSchema = z.object({
+  slug,
+  title: nonEmpty,
+  summary: orTodo(nonEmpty),
+  /** Team member slug who leads this discipline. */
+  lead: slug,
+});
+
+export const packageSchema = z.object({
+  slug,
+  title: nonEmpty,
+  summary: orTodo(nonEmpty),
+  /** Service slugs combined in this package. */
+  includes: z.array(slug).min(2),
+});
+
+export const processStepSchema = z.object({
+  title: nonEmpty,
+  summary: orTodo(nonEmpty),
+});
+
 export const siteSchema = z.object({
   name: nonEmpty,
   shortName: nonEmpty,
@@ -149,8 +178,42 @@ export const siteSchema = z.object({
   nav: z.array(linkSchema).min(1),
   cta: linkSchema,
   heroCtas: z.array(linkSchema),
-  /** Home page sections, in order; `id` is the anchor used by the nav. */
-  homeSections: z.array(z.object({ id: z.string().regex(/^[a-z-]+$/), title: nonEmpty })),
+  /** Home page section copy; `id` is the anchor used by the nav. */
+  sections: z.object({
+    manifesto: z.object({ lines: z.array(nonEmpty).min(1).max(3) }),
+    team: sectionSchema,
+    services: sectionSchema.extend({ packagesTitle: nonEmpty, ledBy: nonEmpty }),
+    process: sectionSchema,
+    contact: sectionSchema.extend({
+      emailLabel: nonEmpty,
+      whatsappLabel: nonEmpty,
+      emailTerm: nonEmpty,
+      phoneTerm: nonEmpty,
+      /** Pre-filled WhatsApp message. */
+      whatsappMessage: nonEmpty,
+    }),
+  }),
+  /** Member page (/team/[slug]) labels; `{name}` is replaced with the first name. */
+  member: z.object({
+    workWith: nonEmpty,
+    emailLabel: nonEmpty,
+    /** Pre-filled WhatsApp message / email subject; `{name}` = member's call name. */
+    whatsappMessage: nonEmpty,
+    emailSubject: nonEmpty,
+    breadcrumbTeam: nonEmpty,
+    currently: nonEmpty,
+    about: nonEmpty,
+    skills: nonEmpty,
+    tools: nonEmpty,
+    experience: nonEmpty,
+    projects: nonEmpty,
+    projectsComing: nonEmpty,
+    ctaTitle: nonEmpty,
+    previous: nonEmpty,
+    next: nonEmpty,
+    allMembers: nonEmpty,
+    present: nonEmpty,
+  }),
   notFound: z.object({
     pageTitle: nonEmpty,
     eyebrow: nonEmpty,
@@ -179,3 +242,6 @@ export type SkillLevel = z.infer<typeof skillLevelSchema>;
 export type Accent = z.infer<typeof accentSchema>;
 export type TeamMember = z.infer<typeof teamMemberSchema>;
 export type Site = z.infer<typeof siteSchema>;
+export type Service = z.infer<typeof serviceSchema>;
+export type ServicePackage = z.infer<typeof packageSchema>;
+export type ProcessStep = z.infer<typeof processStepSchema>;
