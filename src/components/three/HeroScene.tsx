@@ -6,6 +6,8 @@ import { Bloom, EffectComposer } from "@react-three/postprocessing";
 import { useRef, useState, type RefObject } from "react";
 import { MathUtils, type Group } from "three";
 
+import { perfOff } from "@/lib/perf-switches";
+
 import { ApexMark3D } from "./ApexMark3D";
 import { LiquidBlob } from "./LiquidBlob";
 
@@ -86,6 +88,7 @@ export default function HeroScene({ input, active, animate, mobile, onReady }: H
         gl.compileAsync(scene, camera)
           .catch(() => undefined)
           .finally(() => {
+            performance.mark("hero3d:compiled");
             setCompiled(true);
             onReady?.();
           });
@@ -95,34 +98,45 @@ export default function HeroScene({ input, active, animate, mobile, onReady }: H
       <ambientLight intensity={0.4} />
       <directionalLight position={[3, 4, 5]} intensity={1.4} />
 
-      <Environment resolution={128}>
-        {/* Front key light so the metal stroke reads silver, not grey. */}
-        <Lightformer intensity={3} position={[1, 2, 6]} target={[0, 0, 0]} scale={[8, 5, 1]} />
-        <Lightformer intensity={2} position={[0, 5, -2]} target={[0, 0, 0]} scale={[10, 2, 1]} />
-        <Lightformer
-          intensity={1.6}
-          color="#5CC2FF"
-          position={[-5, 0, 1]}
-          target={[0, 0, 0]}
-          scale={[3, 8, 1]}
-        />
-        <Lightformer
-          intensity={1.2}
-          color="#1F7BFF"
-          position={[5, -1, 1]}
-          target={[0, 0, 0]}
-          scale={[3, 8, 1]}
-        />
-      </Environment>
+      {!perfOff("env") && (
+        <Environment resolution={128}>
+          {/* Front key light so the metal stroke reads silver, not grey. */}
+          <Lightformer intensity={3} position={[1, 2, 6]} target={[0, 0, 0]} scale={[8, 5, 1]} />
+          <Lightformer intensity={2} position={[0, 5, -2]} target={[0, 0, 0]} scale={[10, 2, 1]} />
+          <Lightformer
+            intensity={1.6}
+            color="#5CC2FF"
+            position={[-5, 0, 1]}
+            target={[0, 0, 0]}
+            scale={[3, 8, 1]}
+          />
+          <Lightformer
+            intensity={1.2}
+            color="#1F7BFF"
+            position={[5, -1, 1]}
+            target={[0, 0, 0]}
+            scale={[3, 8, 1]}
+          />
+        </Environment>
+      )}
 
-      <group position={[layout.x, layout.y, 0]}>
-        <LiquidBlob animate={animate} scale={layout.blobScale} />
-      </group>
-      <Rig input={input} animate={animate} layout={layout} />
+      {!perfOff("blob") && (
+        <group position={[layout.x, layout.y, 0]}>
+          <LiquidBlob animate={animate} scale={layout.blobScale} />
+        </group>
+      )}
+      {!perfOff("mark") && <Rig input={input} animate={animate} layout={layout} />}
 
-      <EffectComposer multisampling={0}>
-        <Bloom mipmapBlur intensity={mobile ? 0.45 : 0.6} luminanceThreshold={0.72} radius={0.6} />
-      </EffectComposer>
+      {!perfOff("bloom") && (
+        <EffectComposer multisampling={0}>
+          <Bloom
+            mipmapBlur
+            intensity={mobile ? 0.45 : 0.6}
+            luminanceThreshold={0.72}
+            radius={0.6}
+          />
+        </EffectComposer>
+      )}
     </Canvas>
   );
 }

@@ -9,6 +9,7 @@ import { usePrefersReducedMotion } from "@/hooks/use-prefers-reduced-motion";
 import { ENABLE_3D } from "@/lib/flags";
 import { gsap, MOTION_OK, ScrollTrigger, useGSAP } from "@/lib/gsap";
 import { scrub } from "@/lib/motion";
+import { perfOff } from "@/lib/perf-switches";
 import { cn } from "@/lib/utils";
 
 const HeroScene = dynamic(() => import("@/components/three/HeroScene"), { ssr: false });
@@ -51,7 +52,8 @@ export function HeroStage() {
     // Decided after first paint so the hero text (LCP) never waits on WebGL.
     const load = () => {
       setMobile(window.matchMedia("(max-width: 767px)").matches);
-      setMode(ENABLE_3D && hasFastWebGL() ? "3d" : "poster");
+      performance.mark("hero3d:start");
+      setMode(ENABLE_3D && !perfOff("3d") && hasFastWebGL() ? "3d" : "poster");
     };
     if ("requestIdleCallback" in window) {
       const id = window.requestIdleCallback(load, { timeout: 1200 });
