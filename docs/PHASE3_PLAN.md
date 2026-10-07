@@ -59,7 +59,7 @@ Source of truth: `docs/APEC_BUILD_BRIEF.md`. API reference: `node_modules/next/d
 
 **9. Routes**
 - `layout.tsx`: fonts, `class="dark"`, `metadataBase` from `NEXT_PUBLIC_SITE_URL`, title template `%s | APEC`, description = §1 sub-headline draft, `themeColor #05060A`; providers → SkipLink, Nav, `<main id="content">`, Footer.
-- `page.tsx`: **placeholder only** — h1 headline as `TODO:` (chosen in Phase 2), sub-headline draft, empty anchored sections `#team #services #process #contact`.
+- `page.tsx`: **placeholder only** — h1 "Five specialists. *One* apex." (chosen 2026-10-07; styling is the design side's), sub-headline draft, location line, empty anchored sections `#team #services #process #contact`.
 - `not-found.tsx`: static, "This peak doesn't exist.", link home. (Falling-bars animation deferred.)
 - `next.config.ts`: `images.formats: ['image/avif','image/webp']`.
 - Remove create-next-app demo SVGs from `public/`.

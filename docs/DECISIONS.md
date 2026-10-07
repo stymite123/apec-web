@@ -45,5 +45,10 @@ Format: date · decision · why · alternatives rejected
 - **English only for v1:** no `/[locale]` routing; `lang="en"`. Urdu would need a route migration later.
 - **Logo:** no designer SVG yet → temporary trace (see next entry).
 
+## 2026-10-07 · Headline, sound, domain (Mustafa)
+- **Hero headline:** "Five specialists. *One* apex." ("One" in Instrument Serif italic). Chosen ahead of Phase 2; the design side still owns how it's set.
+- **Sound:** none in v1; `ENABLE_SOUND` stays `false` and no toggle is built.
+- **Domain:** undecided; `metadataBase` reads `NEXT_PUBLIC_SITE_URL` with a localhost fallback.
+
 ## 2026-10-07 · Temporary logo is labelled as temporary everywhere
 - **Why:** only a raster logo exists (`references/brand/apec-logo-source.jpeg`). A rough SVG trace is needed for development, but it must not become the brand asset by accident. It lives in `TemporaryApexMark.tsx`, carries `data-temporary-logo`, is listed by the build's TODO report, and is not used for the favicon, OG image or any exported asset.
