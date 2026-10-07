@@ -2,15 +2,16 @@
 
 **Date:** 2026-10-07 · **Machine:** Windows 10 Pro 10.0.19045 (non-admin user) · **Run by:** Claude Code (VS Code extension 2.1.292)
 
-## Gate status: ❌ NOT PASSED
+## Gate status: ✅ PASSED (2026-10-08)
 
-Everything Claude Code can install or check is done. The gate stays open until the MCP approval and smoke tests below are done — do not mark it passed before then. Once they pass, Phase 3 foundations start (`docs/PHASE3_PLAN.md`).
+All §2.7 checks pass. Phase 3 foundations start (`docs/PHASE3_PLAN.md`).
 
-**Waiting on a human**
-- [ ] **Approve the 4 project MCP servers.** Open `apec-web/` itself as the Claude Code workspace (VS Code: *File → Open Folder → apec-web*, or run `claude` inside `apec-web/`) and approve `playwright`, `next-devtools`, `shadcn`, `context7`. Today `claude mcp list` shows them as *Pending approval*.
-- [ ] Smoke test: "Use playwright mcp to open https://stymite.me and take a screenshot." (needs the approval above)
-- [ ] Smoke test: "Use context7 to fetch the current GSAP ScrollTrigger docs." (needs the approval above)
-- [ ] Smoke test: `/codex:review` on a trivial change
+**MCP approval** — Mustafa approved the 4 project servers on 2026-10-08; Claude Code recorded it in `.claude/settings.local.json` (`enabledMcpjsonServers`, gitignored). `claude mcp list` keeps showing *Pending approval* until a Claude Code session is opened in `apec-web/` and the folder is trusted; `apec-web` was opened in VS Code for that.
+
+**Smoke tests (2026-10-08)** — Claude Code runs used the headless CLI in `apec-web/` with `--mcp-config .mcp.json --strict-mcp-config` and only that server's tools allowed:
+- [x] Playwright MCP opened https://stymite.me → title "Adil Ahmad (Stymite) · Portfolio", final URL `https://www.stymite.me/`, screenshot `references/stymite/phase0-smoke.png` (preloader at 85 %).
+- [x] Context7 MCP fetched GSAP ScrollTrigger docs → library `/websites/gsap_v3`, excerpt from https://gsap.com/docs/v3/Plugins/ScrollTrigger.
+- [x] Codex review (plugin script `codex-companion.mjs review --wait --scope working-tree`, same as `/codex:review`) on a trivial change → "No application code changes or actionable defects were found."
 
 **Deferred — not passed** (agreed 2026-10-07: not needed until remote repo work / deployment; not part of the §2.7 gate)
 - [ ] `gh auth login` — before creating/pushing the GitHub repo
@@ -24,6 +25,7 @@ Everything Claude Code can install or check is done. The gate stays open until t
 - [x] Shared skills for Claude Code and Codex (§2.5)
 - [x] MCP servers configured for Claude Code (project) and Codex (global) (§2.6)
 - [x] Smoke test: Codex lists the GSAP + Vercel skills
+- [x] Smoke tests: Playwright MCP, Context7 MCP, Codex review (above)
 
 ## 2.1 Machine prerequisites
 

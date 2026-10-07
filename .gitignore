@@ -41,6 +41,9 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# claude code personal settings
+.claude/settings.local.json
+
 # apec references & private intake
 /references/reels/*.mp4
 /content-intake/

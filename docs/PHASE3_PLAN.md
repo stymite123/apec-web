@@ -1,6 +1,6 @@
 # Phase 3 — Technical foundations (plan)
 
-**Status:** revised 2026-10-07 after design feedback · approved · **starts once the Phase 0 gate passes** (`docs/SETUP_LOG.md`) · owner of app code: Claude Code · owner of design + visual review: Codex (design side)
+**Status:** revised 2026-10-07 after design feedback · approved · **in progress** (Phase 0 gate passed 2026-10-08) · owner of app code: Claude Code · owner of design + visual review: Codex (design side)
 
 ## Context
 
