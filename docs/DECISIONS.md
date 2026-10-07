@@ -50,5 +50,13 @@ Format: date · decision · why · alternatives rejected
 - **Sound:** none in v1; `ENABLE_SOUND` stays `false` and no toggle is built.
 - **Domain:** undecided; `metadataBase` reads `NEXT_PUBLIC_SITE_URL` with a localhost fallback.
 
+## 2026-10-08 · Team, brand name and titles (Mustafa)
+- **The website shows five people**, the ones with photos, in brief role order: 01 `muhammad-huzaifa` Muhammad Huzaifa · 02 `mustafa-ishaq` Mustafa Ishaq · 03 `hamad-alam` Hamad Alam · 04 `mian-faizyab` Mian Faizyab · 05 `abdur-rahman` Abdur Rahman. Accents follow brief §6.2 by position (silver, brand, ice, cobalt, wine). Headline and 01/05 numbering unchanged.
+- **Not on the website:** Kiran Ijaz (Digital Marketer) and Zohra Parwez (Content Writer), who appear on the agency flyer.
+- **Brand name: "APEC Digital"** (matches the flyer and email) in titles, metadata and footer. Page title pattern becomes `{Name} — {Role} | APEC Digital`. Logo mark unchanged.
+- **Job titles from the flyer:** SEO & ML Engineer · AI Agent Engineer · Web Developer · App Developer · Graphic Designer. These replace the brief §9.2 role names; member 01 is no longer "Content Writer".
+- **Spelling:** "Abdur Rahman".
+- **Concept:** The Ascent, provisional (design side; final after the reels).
+
 ## 2026-10-07 · Temporary logo is labelled as temporary everywhere
 - **Why:** only a raster logo exists (`references/brand/apec-logo-source.jpeg`). A rough SVG trace is needed for development, but it must not become the brand asset by accident. It lives in `TemporaryApexMark.tsx`, carries `data-temporary-logo`, is listed by the build's TODO report, and is not used for the favicon, OG image or any exported asset.
