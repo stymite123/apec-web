@@ -7,7 +7,7 @@
 ## Summary
 
 1. **The first-load freeze comes from the 3D hero, and mostly from one part of it: the metallic, environment-lit APEC mark.** On desktop, turning the 3D off cuts main-thread blocking from **1,237 ms to 59 ms**. Turning off only the mark, or only its reflection lighting, cuts it to about **320–370 ms**.
-2. **The 3D code adds 287 KB gzipped (1,063 KB raw) of JavaScript.** That alone exceeds the brief's 250 KB budget for initial JS.
+2. **The 3D code adds 287 KB gzipped (1,063 KB raw) of JavaScript.** That's within the brief's separate **400 KB budget for the lazy-loaded 3D chunk**; the 250 KB initial-JS limit excludes it (brief §11). The size isn't the problem. The measured freeze is why this implementation is rejected.
 3. **Generating the photo dither in the browser costs 0.15–0.2 s on desktop and about 0.6 s on a throttled phone CPU.** It's the largest cost left once the 3D is gone.
 4. **Bloom costs about 0.3 s and the liquid gradient about 0.2 s** of desktop blocking.
 5. **The pinned horizontal team scroll had no measurable cost**, either at load or while scrolling.
@@ -76,7 +76,7 @@ Once loaded, scrolling (including the pinned horizontal track and the dither res
 
 - **The mark's metal materials with environment reflections** are the main cost. Removing either the mark or the reflection lighting removes about 0.9 s on desktop (0.6–0.7 s on mobile).
 - **Likely mechanism, not proven:** `compileAsync` compiles the materials before the reflection map exists. When the map arrives, the materials recompile synchronously on the first frame. That fits two observations: blocking stays high even with async compilation, and the 3D only becomes ready about 1.4 s after it starts loading.
-- **The 287 KB gzipped 3D bundle** is parse and execute work on every first visit. It explains part of the remaining 3D cost (≈ 260–320 ms desktop with the mark or reflections off), together with the bloom and blob passes.
+- **The 287 KB gzipped 3D bundle** is within its 400 KB budget, but it's still parse and execute work on every first visit. It explains part of the remaining 3D cost (≈ 260–320 ms desktop with the mark or reflections off), together with the bloom and blob passes.
 - **Runtime dither:** 15 canvases (3 detail levels × 5 photos) generated with `getImageData` on the main thread while images load.
 - **Baseline without 3D:** 59 ms desktop (fine). On mobile it's 776 ms: hydration, GSAP + Lenis setup, and about 0.57 s of dither.
 
@@ -95,7 +95,7 @@ These are rules for whatever design is approved next; nothing has been changed i
 7. **Budgets the next build has to meet**, measured with this script (first visit, headed Chrome):
    - **Desktop:** under 200 ms blocking, no task over 150 ms.
    - **Mobile approximation:** under 400 ms blocking, no task over 250 ms.
-   - **Initial JS:** under 250 KB gzipped, as the brief requires.
+   - **Initial JS:** under 250 KB gzipped, excluding any lazy-loaded 3D chunk, which has its own 400 KB limit (brief §11).
 
 ## Not covered
 

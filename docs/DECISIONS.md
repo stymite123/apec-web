@@ -2,6 +2,17 @@
 
 Format: date · decision · why · alternatives rejected
 
+## 2026-10-08 · Redesign constraints after the rejected reel-01 attempt (Mustafa / Codex)
+- **Design ownership:** Codex delivers a **static desktop + mobile design**; Mustafa approves it **before** Claude Code implements any visuals. No more coded experiments before the direction is approved.
+- **Identity comes from typography, portrait composition and layout**, not glows, giant background words or expensive effects.
+- **Native scrolling**, no smooth-scroll easing (Lenis to be removed or disabled in the next build).
+- **No live 3D on initial load.** Any metallic artwork is rendered in advance (image or video).
+- **Photos prepared beforehand** (build time or by the designer). No image processing in the browser.
+- **Motion limited to purposeful transitions**, using transform and opacity only.
+- **Performance checked on first visits** with `scripts/profile/profile-home.mjs` budgets (`docs/PERFORMANCE_REVIEW.md`), plus **real phones before launch**.
+- **Budget clarification:** initial JS < 250 KB gzipped *excludes* a lazy-loaded 3D chunk, which has its own 400 KB limit (brief §11). The rejected attempt's 287 KB 3D chunk met that limit; the measured first-load freeze is why it was rejected.
+- Rejected attempt preserved as tag `design-attempt-reel01`.
+
 ## 2026-10-07 · Repo lives in `apec-web/` inside the "website for apec" folder
 - **Why:** the brief names the repo `apec-web`; the parent folder name has spaces, which is not a valid npm package name.
 - **Rejected:** using the parent folder as the repo root.
