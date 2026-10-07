@@ -8,7 +8,6 @@ import { DitherPortrait } from "@/components/team/DitherPortrait";
 import type { Accent } from "@/content/schema";
 import { accentStyles, pad } from "@/lib/accent";
 import { gsap, MOTION_OK, ScrollTrigger, useGSAP } from "@/lib/gsap";
-import { perfOff } from "@/lib/perf-switches";
 import { cn } from "@/lib/utils";
 
 export type ShowcaseMember = {
@@ -50,8 +49,6 @@ export function TeamShowcase({ members, eyebrow, title, intro, viewProfile }: Te
       const section = root.current;
       const list = track.current;
       if (!section || !list) return;
-      // Profiling switch: no pin / no scroll-linked team motion at all.
-      if (perfOff("pin")) return;
       const slides = gsap.utils.toArray<HTMLElement>("[data-slide]", list);
       const portraits = slides.map((slide) => slide.querySelector(".dither-portrait"));
       const mm = gsap.matchMedia();

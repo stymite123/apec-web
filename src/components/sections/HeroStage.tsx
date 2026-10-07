@@ -1,137 +1,110 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 
-import { TemporaryApexMark } from "@/components/brand/TemporaryApexMark";
-import type { HeroInput } from "@/components/three/HeroScene";
-import { usePrefersReducedMotion } from "@/hooks/use-prefers-reduced-motion";
-import { ENABLE_3D } from "@/lib/flags";
-import { gsap, MOTION_OK, ScrollTrigger, useGSAP } from "@/lib/gsap";
+import { gsap, MOTION_OK, useGSAP } from "@/lib/gsap";
 import { scrub } from "@/lib/motion";
-import { perfOff } from "@/lib/perf-switches";
-import { cn } from "@/lib/utils";
 
+/** Offline 3D renderer â€” only loaded with `?render-mark` (pnpm render:mark). */
 const HeroScene = dynamic(() => import("@/components/three/HeroScene"), { ssr: false });
 
-/**
- * True only for hardware-accelerated WebGL. Software renderers (no GPU, blocklisted
- * drivers, headless browsers) report a "major performance caveat" and get the
- * static poster instead — the 3D scene would starve the main thread there.
- * `?force-3d` overrides this for screenshot checks.
- */
-function hasFastWebGL() {
-  if (new URLSearchParams(window.location.search).has("force-3d")) return true;
-  // Automated browsers (Playwright) read every frame back from the GPU, which makes a
-  // continuously animating scene stall them; they get the poster.
-  if (navigator.webdriver) return false;
-  try {
-    const canvas = document.createElement("canvas");
-    const options = { failIfMajorPerformanceCaveat: true };
-    return Boolean(canvas.getContext("webgl2", options) ?? canvas.getContext("webgl", options));
-  } catch {
-    return false;
-  }
-}
+/** Pre-rendered from the 3D scene by `pnpm render:mark`. TEMPORARY: based on the logo trace. */
+const ARTWORK = "/brand/apex-mark-render.png";
 
 /**
- * Client half of the hero: loads the 3D scene once the page is idle, feeds it
- * pointer + scroll input, and drives the wordmark/copy scroll motion.
- * Without WebGL (or with ENABLE_3D off) a static glowing SVG mark is shown.
+ * Client half of the hero. Visitors get pre-rendered artwork (no WebGL on load,
+ * DECISIONS 2026-10-08); motion is transform/opacity only: entrance + float (CSS),
+ * pointer tilt (desktop) and scroll drift (GSAP, native scrolling).
  */
 export function HeroStage() {
   const root = useRef<HTMLDivElement>(null);
-  const input = useRef<HeroInput>({ pointerX: 0, pointerY: 0, scroll: 0 });
-  const reduceMotion = usePrefersReducedMotion();
-  const [mode, setMode] = useState<"pending" | "3d" | "poster">("pending");
-  const [visible, setVisible] = useState(true);
-  const [ready, setReady] = useState(false);
-  const [mobile, setMobile] = useState(false);
+  const art = useRef<HTMLDivElement>(null);
+  const [renderMode, setRenderMode] = useState(false);
 
   useEffect(() => {
-    // Decided after first paint so the hero text (LCP) never waits on WebGL.
-    const load = () => {
-      setMobile(window.matchMedia("(max-width: 767px)").matches);
-      performance.mark("hero3d:start");
-      setMode(ENABLE_3D && !perfOff("3d") && hasFastWebGL() ? "3d" : "poster");
-    };
-    if ("requestIdleCallback" in window) {
-      const id = window.requestIdleCallback(load, { timeout: 1200 });
-      return () => window.cancelIdleCallback(id);
+    if (new URLSearchParams(window.location.search).has("render-mark")) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- one-off tooling switch
+      setRenderMode(true);
     }
-    const id = setTimeout(load, 300);
-    return () => clearTimeout(id);
-  }, []);
-
-  useEffect(() => {
-    const hero = root.current?.closest("[data-hero]");
-    if (!hero) return;
-    const observer = new IntersectionObserver(([entry]) =>
-      setVisible(entry?.isIntersecting ?? true),
-    );
-    observer.observe(hero);
-    const onPointer = (event: PointerEvent) => {
-      input.current.pointerX = (event.clientX / window.innerWidth) * 2 - 1;
-      input.current.pointerY = (event.clientY / window.innerHeight) * 2 - 1;
-    };
-    window.addEventListener("pointermove", onPointer, { passive: true });
-    return () => {
-      observer.disconnect();
-      window.removeEventListener("pointermove", onPointer);
-    };
   }, []);
 
   useGSAP(
     () => {
       const hero = root.current?.closest<HTMLElement>("[data-hero]");
-      if (!hero) return;
+      const target = art.current;
+      if (!hero || !target) return;
       const mm = gsap.matchMedia();
+
       mm.add(MOTION_OK, () => {
-        ScrollTrigger.create({
-          trigger: hero,
-          start: "top top",
-          end: "bottom top",
-          onUpdate: (self) => {
-            input.current.scroll = self.progress;
-          },
-        });
-        const tl = gsap.timeline({
-          scrollTrigger: { trigger: hero, start: "top top", end: "bottom top", scrub },
-        });
-        tl.to(
-          hero.querySelector("[data-hero-wordmark]"),
-          { yPercent: -18, scale: 1.12, opacity: 0.15, ease: "none" },
-          0,
-        ).to(hero.querySelectorAll("[data-hero-fade]"), { y: -60, opacity: 0, ease: "none" }, 0);
+        gsap
+          .timeline({
+            scrollTrigger: { trigger: hero, start: "top top", end: "bottom top", scrub },
+          })
+          .to(target, { yPercent: -16, scale: 0.9, opacity: 0.25, ease: "none" }, 0)
+          .to(
+            hero.querySelector("[data-hero-wordmark]"),
+            { yPercent: -18, opacity: 0.15, ease: "none" },
+            0,
+          )
+          .to(hero.querySelectorAll("[data-hero-fade]"), { y: -60, opacity: 0, ease: "none" }, 0);
       });
+
+      // Pointer tilt: desktop with a fine pointer only.
+      mm.add(`${MOTION_OK} and (hover: hover) and (pointer: fine)`, () => {
+        const tilt = target.querySelector<HTMLElement>("[data-art-tilt]");
+        if (!tilt) return;
+        const toX = gsap.quickTo(tilt, "x", { duration: 0.9, ease: "power3.out" });
+        const toY = gsap.quickTo(tilt, "y", { duration: 0.9, ease: "power3.out" });
+        const toR = gsap.quickTo(tilt, "rotation", { duration: 0.9, ease: "power3.out" });
+        const onMove = (event: PointerEvent) => {
+          const nx = (event.clientX / window.innerWidth) * 2 - 1;
+          const ny = (event.clientY / window.innerHeight) * 2 - 1;
+          toX(nx * 14);
+          toY(ny * 10);
+          toR(nx * 1.5);
+        };
+        window.addEventListener("pointermove", onMove, { passive: true });
+        return () => window.removeEventListener("pointermove", onMove);
+      });
+
       return () => mm.revert();
     },
     { scope: root },
   );
 
+  if (renderMode) {
+    return (
+      <div aria-hidden className="absolute inset-0" data-render-mark>
+        <HeroScene onReady={() => performance.mark("render-mark:ready")} />
+      </div>
+    );
+  }
+
   return (
     <div ref={root} aria-hidden className="pointer-events-none absolute inset-0">
-      {mode === "3d" && (
-        <div
-          className={cn(
-            "absolute inset-0 transition-opacity duration-[1600ms] ease-out-expo",
-            ready ? "opacity-100" : "opacity-0",
-          )}
-        >
-          <HeroScene
-            input={input}
-            active={visible}
-            animate={!reduceMotion}
-            mobile={mobile}
-            onReady={() => setReady(true)}
-          />
+      {/* Blend on the outermost wrapper: inner transform layers are isolated, so a blend
+          set there couldn't reach the wordmark behind. `lighten` lets the artwork's dark
+          backdrop disappear over the page. */}
+      <div className="absolute top-[calc(var(--nav-height)+0.5rem)] left-1/2 w-[min(108vw,520px)] -translate-x-1/2 mix-blend-lighten md:top-1/2 md:right-[-3%] md:left-auto md:w-[min(56vw,860px)] md:translate-x-0 md:-translate-y-1/2">
+        <div ref={art} className="will-change-transform">
+          <div data-art-tilt>
+            <div className="animate-mark-in">
+              <div className="animate-float">
+                <Image
+                  src={ARTWORK}
+                  alt=""
+                  width={1600}
+                  height={1600}
+                  sizes="(min-width: 768px) 56vw, 108vw"
+                  className="h-auto w-full [mask-image:radial-gradient(closest-side,black_64%,transparent)]"
+                />
+              </div>
+            </div>
+          </div>
         </div>
-      )}
-      {mode === "poster" && (
-        <div className="absolute inset-0 grid place-items-center">
-          <TemporaryApexMark className="w-[min(46vw,520px)] drop-shadow-[0_0_80px_rgb(31_123_255/0.45)]" />
-        </div>
-      )}
+      </div>
     </div>
   );
 }
