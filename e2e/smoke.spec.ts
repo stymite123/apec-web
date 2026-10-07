@@ -80,8 +80,11 @@ test("team cards open member pages with prev/next navigation", async ({ page }) 
   const errors = collectErrors(page);
   await page.goto("/");
 
-  await page.locator("#team ol > li").nth(1).getByRole("link").click();
-  await expect(page).toHaveURL(/\/team\/mustafa-ishaq$/);
+  // Slides 2–5 sit off-screen inside the pinned horizontal track, so check links, then visit.
+  const slideLinks = page.locator("#team ol > li a");
+  await expect(slideLinks).toHaveCount(5);
+  await expect(slideLinks.nth(1)).toHaveAttribute("href", "/team/mustafa-ishaq");
+  await page.goto("/team/mustafa-ishaq");
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Mustafa Ishaq");
   await expect(page).toHaveTitle("Mustafa Ishaq — AI Agent Engineer | APEC Digital");
   await expect(page.getByText("Atlus Bank (USA)").first()).toBeVisible();

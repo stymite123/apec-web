@@ -42,6 +42,7 @@ export const site = siteSchema.parse({
       title: "The Five",
       // DRAFT
       intro: "One specialist per discipline, working as one team on your project.",
+      viewProfile: "Meet {name}",
     },
     services: {
       id: "services",
@@ -103,6 +104,7 @@ export const site = siteSchema.parse({
     footerExplore: "Explore",
     footerContact: "Contact",
     whatsapp: "WhatsApp",
+    scrollCue: "Scroll",
   },
   contact: {
     email: "contact.apecdigital@gmail.com",

@@ -16,6 +16,8 @@ export default defineConfig({
   use: {
     baseURL,
     trace: "retain-on-failure",
+    // Automated browsers get the hero's static poster (see HeroStage); the 3D scene is
+    // checked with screenshots via `?force-3d`.
   },
   webServer: {
     command: `pnpm build && pnpm exec next start -p ${PORT}`,
