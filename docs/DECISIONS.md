@@ -39,5 +39,11 @@ Format: date · decision · why · alternatives rejected
 - **Why:** brief §14 orders design approval (Phase 2) before Phase 3; design work hasn't finished. Design side's recommendation: Claude Code owns app code, the design side owns design and visual review. Phase 3 is limited to tokens, fonts, content schemas, providers, accessibility and a placeholder home page. Preloader, custom cursor, animated footer wordmark, final nav styling, grain/backdrop and the 404 animation wait for the approved design. Details: `docs/PHASE3_PLAN.md`.
 - **Rejected:** building all foundations from the brief alone (risk of rework and of design decisions being made in code).
 
+## 2026-10-07 · Answers to open questions 4, 7, 9, 10 (Mustafa)
+- **Atlus Bank is named publicly** on Mustafa's page (`currently.public: true`), so no "US bank" fallback field is added to the data model.
+- **Location line:** "Pakistan · Remote · Worldwide".
+- **English only for v1:** no `/[locale]` routing; `lang="en"`. Urdu would need a route migration later.
+- **Logo:** no designer SVG yet → temporary trace (see next entry).
+
 ## 2026-10-07 · Temporary logo is labelled as temporary everywhere
 - **Why:** only a raster logo exists (`references/brand/apec-logo-source.jpeg`). A rough SVG trace is needed for development, but it must not become the brand asset by accident. It lives in `TemporaryApexMark.tsx`, carries `data-temporary-logo`, is listed by the build's TODO report, and is not used for the favicon, OG image or any exported asset.

@@ -32,9 +32,9 @@ Source of truth: `docs/APEC_BUILD_BRIEF.md`. API reference: `node_modules/next/d
 - Geist, Geist Mono, Instrument Serif (italic) via `next/font/google`.
 
 **4. Content model** (`src/content/`)
-- `schema.ts`: zod schemas for `TeamMember` (brief §9.1) and `Site`. `TODO:` strings bypass length/word-count rules. One addition: `currently.privateLabel` for `public: false` (e.g. "AI Engineer for a US bank").
-- `team.ts`: the five from §9.2; only Mustafa named; unknowns are `TODO:`; all skills `confirmed: false` until members confirm levels; Atlus Bank `public: false`. Parsed at load → **invalid data fails the build**.
-- `site.ts`: name, nav links, CTA label, §1 sub-headline draft, location/email/WhatsApp/socials as `TODO:`.
+- `schema.ts`: zod schemas for `TeamMember` (exactly brief §9.1) and `Site`. `TODO:` strings bypass length/word-count rules.
+- `team.ts`: the five from §9.2; only Mustafa named; unknowns are `TODO:`; all skills `confirmed: false` until members confirm levels; Mustafa's `currently` = AI Engineer at Atlus Bank (USA), `public: true` (Q4). Parsed at load → **invalid data fails the build**.
+- `site.ts`: name, nav links, CTA label, §1 sub-headline draft, location line "Pakistan · Remote · Worldwide" (Q7); email/WhatsApp/socials as `TODO:`. English only, `lang="en"`, no locale routing (Q9).
 
 **5. Lib** (`src/lib/`)
 - `flags.ts`: `SHOW_WORK`, `SHOW_TESTIMONIALS`, `ENABLE_SOUND`, `ENABLE_3D` — all `false`.
@@ -64,7 +64,7 @@ Source of truth: `docs/APEC_BUILD_BRIEF.md`. API reference: `node_modules/next/d
 - `next.config.ts`: `images.formats: ['image/avif','image/webp']`.
 - Remove create-next-app demo SVGs from `public/`.
 
-**10. Docs** — `DECISIONS.md` (fonts + licence, `privateLabel`, TODO mechanism, temporary logo, Phase 3/design split); `PERFORMANCE.md` (Lighthouse baseline).
+**10. Docs** — `DECISIONS.md` (fonts + licence, TODO mechanism, temporary logo, Phase 3/design split); `PERFORMANCE.md` (Lighthouse baseline).
 
 ### Deferred until the approved design (Phase 2 → design side signs off)
 - Preloader (logo assembly, counter, curtain) and the session-skip logic.
