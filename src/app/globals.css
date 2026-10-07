@@ -176,6 +176,36 @@
 }
 
 /* ---------------------------------------------------------------------------
+   Dither portrait (components/team/DitherPortrait.tsx)
+   One variable, --resolve 0 → 1, steps through: dither L0 → L1 → L2 → photo.
+   --------------------------------------------------------------------------- */
+.dither-portrait {
+  --resolve: 1;
+}
+.dither-layer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top;
+  image-rendering: pixelated;
+  pointer-events: none;
+}
+.dither-layer[data-level="0"] {
+  opacity: clamp(0, (0.3 - var(--resolve)) * 1000, 1);
+}
+.dither-layer[data-level="1"] {
+  opacity: clamp(0, min((var(--resolve) - 0.3) * 1000, (0.55 - var(--resolve)) * 1000), 1);
+}
+.dither-layer[data-level="2"] {
+  opacity: clamp(0, min((var(--resolve) - 0.55) * 1000, (0.96 - var(--resolve)) * 1000), 1);
+}
+.dither-photo {
+  opacity: clamp(0, (var(--resolve) - 0.78) * 6, 1);
+}
+
+/* ---------------------------------------------------------------------------
    Base
    --------------------------------------------------------------------------- */
 @layer base {

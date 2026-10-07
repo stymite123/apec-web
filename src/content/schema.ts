@@ -181,7 +181,7 @@ export const siteSchema = z.object({
   /** Home page section copy; `id` is the anchor used by the nav. */
   sections: z.object({
     manifesto: z.object({ lines: z.array(nonEmpty).min(1).max(3) }),
-    team: sectionSchema,
+    team: sectionSchema.extend({ viewProfile: nonEmpty }),
     services: sectionSchema.extend({ packagesTitle: nonEmpty, ledBy: nonEmpty }),
     process: sectionSchema,
     contact: sectionSchema.extend({
@@ -228,6 +228,7 @@ export const siteSchema = z.object({
     footerExplore: nonEmpty,
     footerContact: nonEmpty,
     whatsapp: nonEmpty,
+    scrollCue: nonEmpty,
   }),
   contact: z.object({
     email: z.email(),
