@@ -12,7 +12,7 @@ import { cn } from "@/lib/utils";
  */
 export function Nav() {
   return (
-    <header className="fixed inset-x-0 top-0 z-40 h-(--nav-height) border-b border-steel-800 bg-void">
+    <header className="fixed inset-x-0 top-0 z-40 h-(--nav-height) border-b border-steel-800/70 bg-ink/80 backdrop-blur-md">
       <div className="container-site flex h-full items-center justify-between gap-6">
         <Link
           href="/"

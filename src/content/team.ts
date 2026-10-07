@@ -1,37 +1,47 @@
 import { teamSchema } from "./schema";
 
 /**
- * The five (brief §9.2, names/titles from the agency flyer — DECISIONS 2026-10-08).
- * Only facts we were given are filled in; everything else is a TODO.
- * Skills stay `confirmed: false` until each member confirms them and their level;
- * unconfirmed skills never render in production.
+ * The five (brief §9.2; names/titles from the agency flyer — DECISIONS 2026-10-08).
+ * Facts only. `confirmed: true` = a skill we were told about (brief "known skills" /
+ * flyer title); its level stays TODO until the member confirms it. Candidate skills
+ * (`confirmed: false`) never render in production.
+ * Headlines are DRAFTS for approval (docs/COPY_REVIEW.md).
  */
+const skill = (name: string, confirmed: boolean) => ({
+  name,
+  level: "TODO: level",
+  group: "TODO: group",
+  confirmed,
+});
+
+const portrait = (slug: string, name: string) => ({
+  src: `/team/${slug}.jpg`,
+  alt: `Portrait of ${name}`,
+});
+
 export const team = teamSchema
   .parse([
     {
       slug: "muhammad-huzaifa",
       order: 1,
       name: "Muhammad Huzaifa",
+      callName: "Huzaifa",
       role: "SEO & ML Engineer",
-      headline: "TODO: one-line headline (≤ 90 chars)",
+      headline: "SEO and machine learning, focused on search visibility you can measure.",
       bio: "TODO: bio (60–120 words)",
       accent: "silver",
+      portrait: portrait("muhammad-huzaifa", "Muhammad Huzaifa"),
       availability: "TODO: availability (ok to show?)",
       skills: [
-        { name: "SEO", level: "TODO: level", group: "TODO: group", confirmed: false },
-        { name: "Machine learning", level: "TODO: level", group: "TODO: group", confirmed: false },
-        { name: "Technical SEO", level: "TODO: level", group: "TODO: group", confirmed: false },
-        { name: "Keyword research", level: "TODO: level", group: "TODO: group", confirmed: false },
-        {
-          name: "Google Search Console",
-          level: "TODO: level",
-          group: "TODO: group",
-          confirmed: false,
-        },
-        { name: "GA4", level: "TODO: level", group: "TODO: group", confirmed: false },
+        skill("SEO", true),
+        skill("Machine learning", true),
+        skill("Technical SEO", false),
+        skill("Keyword research", false),
+        skill("Google Search Console", false),
+        skill("GA4", false),
       ],
       tools: [],
-      services: [],
+      services: ["seo"],
       experience: [],
       projects: [],
       socials: [],
@@ -41,32 +51,23 @@ export const team = teamSchema
       order: 2,
       name: "Mustafa Ishaq",
       role: "AI Agent Engineer",
-      headline: "TODO: one-line headline (≤ 90 chars)",
+      headline: "AI agents and automation that take repetitive work off your team.",
       bio: "TODO: bio (60–120 words)",
       accent: "brand",
+      portrait: portrait("mustafa-ishaq", "Mustafa Ishaq"),
       availability: "TODO: availability (ok to show?)",
       currently: { title: "AI Engineer", org: "Atlus Bank (USA)", public: true },
       skills: [
-        { name: "Python 3", level: "TODO: level", group: "TODO: group", confirmed: false },
-        { name: "Claude Code", level: "TODO: level", group: "TODO: group", confirmed: false },
-        { name: "OpenClaw", level: "TODO: level", group: "TODO: group", confirmed: false },
-        { name: "LLM agents", level: "TODO: level", group: "TODO: group", confirmed: false },
-        {
-          name: "Workflow automation",
-          level: "TODO: level",
-          group: "TODO: group",
-          confirmed: false,
-        },
-        {
-          name: "CRM & email automation",
-          level: "TODO: level",
-          group: "TODO: group",
-          confirmed: false,
-        },
-        { name: "API integrations", level: "TODO: level", group: "TODO: group", confirmed: false },
+        skill("Python 3", true),
+        skill("Claude Code", true),
+        skill("OpenClaw", true),
+        skill("LLM agents", false),
+        skill("Workflow automation", false),
+        skill("CRM & email automation", false),
+        skill("API integrations", false),
       ],
       tools: [],
-      services: [],
+      services: ["ai-agents"],
       experience: [
         {
           title: "AI Engineer",
@@ -83,29 +84,20 @@ export const team = teamSchema
       order: 3,
       name: "Hamad Alam",
       role: "Web Developer",
-      headline: "TODO: one-line headline (≤ 90 chars)",
+      headline: "Websites that load fast, read clearly and are easy to keep up to date.",
       bio: "TODO: bio (60–120 words)",
       accent: "ice",
+      portrait: portrait("hamad-alam", "Hamad Alam"),
       availability: "TODO: availability (ok to show?)",
       skills: [
-        { name: "Web development", level: "TODO: level", group: "TODO: group", confirmed: false },
-        {
-          name: "HTML/CSS/JavaScript",
-          level: "TODO: level",
-          group: "TODO: group",
-          confirmed: false,
-        },
-        { name: "React", level: "TODO: level", group: "TODO: group", confirmed: false },
-        { name: "Next.js", level: "TODO: level", group: "TODO: group", confirmed: false },
-        {
-          name: "WordPress / Shopify",
-          level: "TODO: level",
-          group: "TODO: group",
-          confirmed: false,
-        },
+        skill("Web development", true),
+        skill("HTML/CSS/JavaScript", false),
+        skill("React", false),
+        skill("Next.js", false),
+        skill("WordPress / Shopify", false),
       ],
       tools: [],
-      services: [],
+      services: ["web"],
       experience: [],
       projects: [],
       socials: [],
@@ -114,21 +106,16 @@ export const team = teamSchema
       slug: "mian-faizyab",
       order: 4,
       name: "Mian Faizyab",
+      callName: "Faizyab",
       role: "App Developer",
-      headline: "TODO: one-line headline (≤ 90 chars)",
+      headline: "Mobile apps, from first prototype to release.",
       bio: "TODO: bio (60–120 words)",
       accent: "cobalt",
+      portrait: portrait("mian-faizyab", "Mian Faizyab"),
       availability: "TODO: availability (ok to show?)",
-      skills: [
-        {
-          name: "Mobile app development",
-          level: "TODO: level",
-          group: "TODO: group",
-          confirmed: false,
-        },
-      ],
+      skills: [skill("Mobile app development", true)],
       tools: [],
-      services: [],
+      services: ["mobile-apps"],
       experience: [],
       projects: [],
       socials: [],
@@ -138,27 +125,33 @@ export const team = teamSchema
       order: 5,
       name: "Abdur Rahman",
       role: "Graphic Designer",
-      headline: "TODO: one-line headline (≤ 90 chars)",
+      headline: "Brand and graphic design that keep every touchpoint consistent.",
       bio: "TODO: bio (60–120 words)",
       accent: "wine",
+      portrait: portrait("abdur-rahman", "Abdur Rahman"),
       availability: "TODO: availability (ok to show?)",
       skills: [
-        { name: "Graphic design", level: "TODO: level", group: "TODO: group", confirmed: false },
-        { name: "Brand identity", level: "TODO: level", group: "TODO: group", confirmed: false },
-        { name: "Figma", level: "TODO: level", group: "TODO: group", confirmed: false },
-        {
-          name: "Adobe Creative Cloud",
-          level: "TODO: level",
-          group: "TODO: group",
-          confirmed: false,
-        },
-        { name: "Social creatives", level: "TODO: level", group: "TODO: group", confirmed: false },
+        skill("Graphic design", true),
+        skill("Brand identity", false),
+        skill("Figma", false),
+        skill("Adobe Creative Cloud", false),
+        skill("Social creatives", false),
       ],
       tools: [],
-      services: [],
+      services: ["brand-design"],
       experience: [],
       projects: [],
       socials: [],
     },
   ])
   .sort((a, b) => a.order - b.order);
+
+type Member = (typeof team)[number];
+
+export const callName = (member: Member) => member.callName ?? member.name.split(" ")[0];
+
+export const getMember = (slug: string) => team.find((member) => member.slug === slug);
+
+/** Shown skills: confirmed only in production; everything in dev. */
+export const visibleSkills = (member: Member) =>
+  process.env.NODE_ENV === "production" ? member.skills.filter((s) => s.confirmed) : member.skills;

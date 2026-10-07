@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { TemporaryApexMark } from "@/components/brand/TemporaryApexMark";
 import { Copy, Todo } from "@/components/dev/Todo";
+import { FooterWordmark } from "@/components/layout/FooterWordmark";
 import { site } from "@/content/site";
 import { shouldRender } from "@/lib/todo";
 
@@ -88,6 +89,8 @@ export function Footer() {
           </ul>
         </div>
       </div>
+
+      <FooterWordmark text={site.shortName} />
 
       <div className="border-t border-steel-800">
         <div className="container-site flex flex-col gap-2 py-6 text-sm text-steel-400 md:flex-row md:items-center md:justify-between">

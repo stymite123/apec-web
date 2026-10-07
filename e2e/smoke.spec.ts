@@ -16,7 +16,10 @@ test("home renders the headline and the five, with no TODO text", async ({ page 
   const h1 = page.getByRole("heading", { level: 1 });
   await expect(h1).toHaveCount(1);
   await expect(h1).toHaveText(/Five specialists\.\s+One\s+apex\./);
-  await expect(page.locator("#team li")).toHaveCount(5);
+  await expect(page.locator("#team ol > li")).toHaveCount(5);
+  for (const id of ["services", "process", "contact"]) {
+    await expect(page.locator(`#${id}-title`)).toBeAttached();
+  }
 
   await expect(page.locator("body")).not.toContainText("TODO:");
   await expect(page.locator("[data-todo]")).toHaveCount(0);
@@ -71,6 +74,31 @@ test("mobile menu links navigate and close the menu", async ({ page }, testInfo)
   await expect(page.getByRole("dialog", { name: "Menu" })).toBeHidden();
   await expect(page).toHaveURL(/#process$/);
   await expect(page.locator("#process-title")).toBeInViewport();
+});
+
+test("team cards open member pages with prev/next navigation", async ({ page }) => {
+  const errors = collectErrors(page);
+  await page.goto("/");
+
+  await page.locator("#team ol > li").nth(1).getByRole("link").click();
+  await expect(page).toHaveURL(/\/team\/mustafa-ishaq$/);
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Mustafa Ishaq");
+  await expect(page).toHaveTitle("Mustafa Ishaq — AI Agent Engineer | APEC Digital");
+  await expect(page.getByText("Atlus Bank (USA)").first()).toBeVisible();
+  await expect(page.getByRole("link", { name: "Work with Mustafa" }).first()).toHaveAttribute(
+    "href",
+    /^https:\/\/wa\.me\/923265698123\?text=/,
+  );
+  await expect(page.locator("body")).not.toContainText("TODO:");
+
+  await page.getByRole("navigation", { name: "All five" }).getByRole("link").last().click();
+  await expect(page).toHaveURL(/\/team\/hamad-alam$/);
+  expect(errors).toEqual([]);
+});
+
+test("member pages for unknown slugs are 404", async ({ page }) => {
+  const response = await page.goto("/team/not-a-member");
+  expect(response?.status()).toBe(404);
 });
 
 test("unknown URLs show the 404 page", async ({ page }) => {
