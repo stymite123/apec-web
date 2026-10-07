@@ -1,0 +1,12 @@
+﻿node : desktop current {"runs":5,"scriptKB":231,"hero3dReadyMs":null,"ditherMs":0,"loadLongTasks":2,"loadLongTotalMs":1
+33,"loadMaxTaskMs":80,"loadBlockingMs":33,"scrollLongTotalMs":0,"scrollMaxTaskMs":0,"scrollP95FrameMs":7,"scrollMaxFram
+eMs":43,"scrollJankPct":0}
+At line:1 char:644
++ ... leep 1 } }; node scripts/profile/profile-home.mjs 5 2> docs\perf\prof ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (desktop current...rollJankPct":0}:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+mobile current {"runs":5,"scriptKB":231,"hero3dReadyMs":null,"ditherMs":0,"loadLongTasks":5,"loadLongTotalMs":646,"load
+MaxTaskMs":202,"loadBlockingMs":423,"scrollLongTotalMs":0,"scrollMaxTaskMs":0,"scrollP95FrameMs":11,"scrollMaxFrameMs":
+43,"scrollJankPct":0}

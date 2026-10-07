@@ -97,6 +97,26 @@ These are rules for whatever design is approved next; nothing has been changed i
    - **Mobile approximation:** under 400 ms blocking, no task over 250 ms.
    - **Initial JS:** under 250 KB gzipped, excluding any lazy-loaded 3D chunk, which has its own 400 KB limit (brief §11).
 
+## Lag fix applied (2026-10-08, branch `fix/lag`)
+
+Performance-only changes to the same design. No new effects.
+
+- **Live 3D removed from page load.** The hero shows artwork pre-rendered from the same 3D scene (`pnpm render:mark` → `public/brand/apex-mark-render.png`). Its motion is transform/opacity only: CSS entrance and float, pointer tilt on desktop, and scroll drift. The WebGL code now loads only in the offline render mode (`?render-mark`).
+- **Native scrolling.** Lenis removed; GSAP ScrollTrigger runs on native scroll.
+- **Dither generated at build time.** `pnpm dither` writes 15 tiny two-colour PNGs (about 37 KB in total) and CSS scales them up crisply. The browser no longer processes images. The dither itself is improved: an 8×8 pattern, auto-levelled contrast, and a vignette on the face.
+- The pinned team scroll is unchanged (it was measured as not causing the lag).
+
+### Before vs after (same method, first visits, headed Chrome)
+
+| | Before: blocking | After: blocking | Before: longest task | After: longest task |
+|---|---|---|---|---|
+| Desktop | 1,237 ms | **33 ms** | 935 ms | **80 ms** |
+| Mobile approx. (4× CPU) | 2,618 ms | **423 ms** | 1,382 ms | **202 ms** |
+
+After: medians of 5 runs. Desktop runs 19–49 ms; mobile runs 285–895 ms (one outlier). JS transferred: 231 KB (was 525 KB). Scrolling: no long tasks, 0 % frames over 34 ms, on both profiles. Raw data: `docs/perf/profile-2026-10-08-lagfix.json`.
+
+**Against the budgets above:** desktop passes both limits (< 200 ms blocking, no task over 150 ms). On the mobile approximation the longest task passes (< 250 ms), but blocking is **423 ms, just over the 400 ms target**. What remains is React hydration plus GSAP/ScrollTrigger setup for the hero and team sections. The next build should set up below-the-fold animation lazily, when each section approaches the viewport. Check on real phones before launch.
+
 ## Not covered
 
 - **Real phones** (GPU, thermals and touch scrolling) and Safari/Firefox. Test on at least one mid-range Android and one iPhone before launch.

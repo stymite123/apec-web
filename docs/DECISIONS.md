@@ -2,6 +2,13 @@
 
 Format: date · decision · why · alternatives rejected
 
+## 2026-10-08 · Lag fix on the current version (Mustafa)
+- **Kept by request:** the APEC mark look (now as pre-rendered artwork) and the dither-to-photo portraits (now pre-generated, improved). Pinned team scroll and editorial layout left as-is until Codex's design replaces them.
+- **Live 3D → pre-rendered artwork** (`pnpm render:mark`; WebGL only in the offline `?render-mark` mode). `ENABLE_3D = false`. The artwork is TEMPORARY: rendered from the logo trace.
+- **Lenis removed** → native scrolling.
+- **`sharp` added as a dev dependency** for build-time dithering (`pnpm dither`); the browser does no image processing.
+- Result: desktop first-load blocking 1,237 → 33 ms; mobile approximation 2,618 → 423 ms (target 400 ms). See `docs/PERFORMANCE_REVIEW.md`.
+
 ## 2026-10-08 · Redesign constraints after the rejected reel-01 attempt (Mustafa / Codex)
 - **Design ownership:** Codex delivers a **static desktop + mobile design**; Mustafa approves it **before** Claude Code implements any visuals. No more coded experiments before the direction is approved.
 - **Identity comes from typography, portrait composition and layout**, not glows, giant background words or expensive effects.

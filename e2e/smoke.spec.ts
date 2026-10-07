@@ -114,25 +114,19 @@ test("unknown URLs show the 404 page", async ({ page }) => {
   await expect(page).toHaveURL(/\/$/);
 });
 
-test("smooth scrolling follows the reduced-motion preference", async ({ page }, testInfo) => {
+test("native scrolling and no WebGL on the home page", async ({ page }, testInfo) => {
   test.skip(testInfo.project.name === "mobile-390", "checked on desktop widths");
   await page.goto("/");
 
-  await expect(page.locator("html")).toHaveClass(/\blenis\b/);
+  // DECISIONS 2026-10-08: no smooth-scroll library, no live 3D on load.
+  await expect(page.locator("html")).not.toHaveClass(/\blenis\b/);
+  await expect(page.locator("[data-hero] canvas")).toHaveCount(0);
+  await expect(page.locator('[data-hero] img[src*="apex-mark-render"]')).toHaveCount(1);
 
-  // Lenis adds `lenis-smooth` to <html> only while a smoothed scroll is running.
-  await page.evaluate(() => {
-    const root = document.documentElement;
-    root.dataset.sawSmooth = "false";
-    new MutationObserver(() => {
-      if (root.classList.contains("lenis-smooth")) root.dataset.sawSmooth = "true";
-    }).observe(root, { attributes: true, attributeFilter: ["class"] });
-  });
   await page.mouse.move(720, 450);
   await page.mouse.wheel(0, 600);
-  await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(0);
-  await page.waitForTimeout(800);
-
-  const sawSmooth = await page.evaluate(() => document.documentElement.dataset.sawSmooth);
-  expect(sawSmooth).toBe(testInfo.project.name === "reduced-motion" ? "false" : "true");
+  // Native wheel scrolling lands immediately (no eased catch-up).
+  await expect
+    .poll(() => page.evaluate(() => window.scrollY), { timeout: 1000 })
+    .toBeGreaterThan(0);
 });

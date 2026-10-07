@@ -9,21 +9,21 @@ import { chromium } from "@playwright/test";
 const BASE = process.env.BASE ?? "http://localhost:3000/";
 const RUNS = Number(process.argv[2] ?? 2);
 
-const VARIANTS = [
-  ["full", ""],
-  ["no-3d", "3d"],
-  ["no-bloom", "bloom"],
-  ["no-blob", "blob"],
-  ["no-env", "env"],
-  ["no-mark", "mark"],
-  ["no-pin", "pin"],
-  ["no-dither", "dither"],
-];
+// [label, value for ?perf-off=]. The per-effect switches only exist on branch
+// perf/profile-reel01 (see docs/PERFORMANCE_REVIEW.md); by default the current build is measured.
+const VARIANTS = process.env.PERF_VARIANTS
+  ? process.env.PERF_VARIANTS.split(";").map((v) => v.split(":"))
+  : [["current", ""]];
 
 const PROFILES = {
   desktop: { context: { viewport: { width: 1440, height: 900 }, deviceScaleFactor: 1 }, cpu: 1 },
   mobile: {
-    context: { viewport: { width: 390, height: 844 }, deviceScaleFactor: 3, isMobile: true, hasTouch: true },
+    context: {
+      viewport: { width: 390, height: 844 },
+      deviceScaleFactor: 3,
+      isMobile: true,
+      hasTouch: true,
+    },
     cpu: 4,
   },
 };
@@ -100,7 +100,9 @@ async function runOnce(profileName, off) {
         total: scrollTasks.reduce((s, [, d]) => s + d, 0),
         max: Math.max(0, ...scrollTasks.map(([, d]) => d)),
         frames: deltas.length,
-        p95: deltas.length ? [...deltas].sort((a, b) => a - b)[Math.floor(deltas.length * 0.95)] : null,
+        p95: deltas.length
+          ? [...deltas].sort((a, b) => a - b)[Math.floor(deltas.length * 0.95)]
+          : null,
         maxFrame: Math.max(0, ...deltas),
         jankPct: deltas.length ? (deltas.filter((d) => d > 34).length / deltas.length) * 100 : null,
       },
@@ -121,7 +123,8 @@ for (const profileName of Object.keys(PROFILES)) {
       runs: runs.length,
       scriptKB: Math.round(pick((r) => r.scriptKB)),
       hero3dReadyMs:
-        pick((r) => (r.hero3dCompiled && r.hero3dStart ? r.hero3dCompiled - r.hero3dStart : 0)) || null,
+        pick((r) => (r.hero3dCompiled && r.hero3dStart ? r.hero3dCompiled - r.hero3dStart : 0)) ||
+        null,
       ditherMs: Math.round(pick((r) => r.ditherMs)),
       loadLongTasks: pick((r) => r.load.tasks),
       loadLongTotalMs: Math.round(pick((r) => r.load.total)),
