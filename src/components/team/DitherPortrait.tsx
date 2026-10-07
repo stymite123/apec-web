@@ -3,6 +3,8 @@
 import Image from "next/image";
 import { useEffect, useRef } from "react";
 
+import { perfOff } from "@/lib/perf-switches";
+
 /** 4×4 Bayer matrix for ordered dithering. */
 const BAYER = [0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5];
 /** Cell sizes (source px per dot), coarse → fine. */
@@ -61,13 +63,14 @@ export function DitherPortrait({
 
   useEffect(() => {
     const el = holder.current;
-    if (!el) return;
+    if (!el || perfOff("dither")) return;
     let cancelled = false;
     const image = new window.Image();
     image.decoding = "async";
     image.src = src;
     image.onload = () => {
       if (cancelled) return;
+      const start = performance.now();
       el.replaceChildren(
         ...LEVELS.map((cell, index) => {
           const canvas = dither(image, cell);
@@ -76,6 +79,7 @@ export function DitherPortrait({
           return canvas;
         }),
       );
+      performance.measure(`dither:${src}`, { start, end: performance.now() });
     };
     return () => {
       cancelled = true;

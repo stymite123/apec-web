@@ -1,0 +1,54 @@
+﻿node : desktop full {"runs":3,"scriptKB":525,"hero3dReadyMs":1429.9000000001397,"ditherMs":176,"loadLongTasks":7,"loadL
+ongTotalMs":1537,"loadMaxTaskMs":935,"loadBlockingMs":1237,"scrollLongTotalMs":0,"scrollMaxTaskMs":0,"scrollP95FrameMs"
+:4,"scrollMaxFrameMs":39,"scrollJankPct":0}
+At line:1 char:584
++ ... | Out-Null; node scripts/profile/profile-home.mjs 3 2> docs\perf\prof ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (desktop full {"...rollJankPct":0}:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+desktop no-3d {"runs":3,"scriptKB":238,"hero3dReadyMs":null,"ditherMs":174,"loadLongTasks":2,"loadLongTotalMs":159,"loa
+dMaxTaskMs":87,"loadBlockingMs":59,"scrollLongTotalMs":0,"scrollMaxTaskMs":0,"scrollP95FrameMs":4,"scrollMaxFrameMs":36
+,"scrollJankPct":0}
+desktop no-bloom {"runs":3,"scriptKB":525,"hero3dReadyMs":1395.3999999999069,"ditherMs":145,"loadLongTasks":3,"loadLong
+TotalMs":1087,"loadMaxTaskMs":898,"loadBlockingMs":937,"scrollLongTotalMs":0,"scrollMaxTaskMs":0,"scrollP95FrameMs":4,"
+scrollMaxFrameMs":36,"scrollJankPct":0}
+desktop no-blob {"runs":3,"scriptKB":525,"hero3dReadyMs":1320.5,"ditherMs":172,"loadLongTasks":6,"loadLongTotalMs":1312
+,"loadMaxTaskMs":827,"loadBlockingMs":1012,"scrollLongTotalMs":0,"scrollMaxTaskMs":0,"scrollP95FrameMs":4,"scrollMaxFra
+meMs":39,"scrollJankPct":0}
+desktop no-env {"runs":3,"scriptKB":525,"hero3dReadyMs":594.3000000002794,"ditherMs":157,"loadLongTasks":5,"loadLongTot
+alMs":617,"loadMaxTaskMs":227,"loadBlockingMs":369,"scrollLongTotalMs":0,"scrollMaxTaskMs":0,"scrollP95FrameMs":4,"scro
+llMaxFrameMs":36,"scrollJankPct":0}
+desktop no-mark {"runs":3,"scriptKB":525,"hero3dReadyMs":584.1999999997206,"ditherMs":172,"loadLongTasks":5,"loadLongTo
+talMs":616,"loadMaxTaskMs":176,"loadBlockingMs":319,"scrollLongTotalMs":0,"scrollMaxTaskMs":0,"scrollP95FrameMs":4,"scr
+ollMaxFrameMs":39,"scrollJankPct":0}
+desktop no-pin {"runs":3,"scriptKB":525,"hero3dReadyMs":1401.6999999997206,"ditherMs":204,"loadLongTasks":4,"loadLongTo
+talMs":1415,"loadMaxTaskMs":908,"loadBlockingMs":1202,"scrollLongTotalMs":0,"scrollMaxTaskMs":0,"scrollP95FrameMs":4,"s
+crollMaxFrameMs":36,"scrollJankPct":0}
+desktop no-dither {"runs":3,"scriptKB":525,"hero3dReadyMs":1386.5,"ditherMs":0,"loadLongTasks":4,"loadLongTotalMs":1377
+,"loadMaxTaskMs":892,"loadBlockingMs":1173,"scrollLongTotalMs":0,"scrollMaxTaskMs":0,"scrollP95FrameMs":4,"scrollMaxFra
+meMs":39,"scrollJankPct":0}
+mobile full {"runs":3,"scriptKB":525,"hero3dReadyMs":2056.7999999998137,"ditherMs":587,"loadLongTasks":12,"loadLongTota
+lMs":3205,"loadMaxTaskMs":1382,"loadBlockingMs":2618,"scrollLongTotalMs":0,"scrollMaxTaskMs":0,"scrollP95FrameMs":11,"s
+crollMaxFrameMs":46,"scrollJankPct":0}
+mobile no-3d {"runs":3,"scriptKB":238,"hero3dReadyMs":null,"ditherMs":565,"loadLongTasks":9,"loadLongTotalMs":1226,"loa
+dMaxTaskMs":209,"loadBlockingMs":776,"scrollLongTotalMs":0,"scrollMaxTaskMs":0,"scrollP95FrameMs":11,"scrollMaxFrameMs"
+:46,"scrollJankPct":0}
+mobile no-bloom {"runs":3,"scriptKB":525,"hero3dReadyMs":2183.2000000001863,"ditherMs":557,"loadLongTasks":13,"loadLong
+TotalMs":3292,"loadMaxTaskMs":1399,"loadBlockingMs":2642,"scrollLongTotalMs":0,"scrollMaxTaskMs":0,"scrollP95FrameMs":1
+1,"scrollMaxFrameMs":43,"scrollJankPct":0}
+mobile no-blob {"runs":3,"scriptKB":525,"hero3dReadyMs":1921.6999999997206,"ditherMs":586,"loadLongTasks":12,"loadLongT
+otalMs":3120,"loadMaxTaskMs":1152,"loadBlockingMs":2520,"scrollLongTotalMs":0,"scrollMaxTaskMs":0,"scrollP95FrameMs":11
+,"scrollMaxFrameMs":47,"scrollJankPct":0}
+mobile no-env {"runs":3,"scriptKB":525,"hero3dReadyMs":1199.5,"ditherMs":576,"loadLongTasks":13,"loadLongTotalMs":2645,
+"loadMaxTaskMs":503,"loadBlockingMs":1995,"scrollLongTotalMs":0,"scrollMaxTaskMs":0,"scrollP95FrameMs":11,"scrollMaxFra
+meMs":46,"scrollJankPct":0}
+mobile no-mark {"runs":3,"scriptKB":525,"hero3dReadyMs":1220.7000000001863,"ditherMs":581,"loadLongTasks":12,"loadLongT
+otalMs":2530,"loadMaxTaskMs":551,"loadBlockingMs":1930,"scrollLongTotalMs":0,"scrollMaxTaskMs":0,"scrollP95FrameMs":11,
+"scrollMaxFrameMs":47,"scrollJankPct":0}
+mobile no-pin {"runs":3,"scriptKB":525,"hero3dReadyMs":2172.7000000001863,"ditherMs":554,"loadLongTasks":12,"loadLongTo
+talMs":3603,"loadMaxTaskMs":1399,"loadBlockingMs":3003,"scrollLongTotalMs":0,"scrollMaxTaskMs":0,"scrollP95FrameMs":11,
+"scrollMaxFrameMs":47,"scrollJankPct":0}
+mobile no-dither {"runs":3,"scriptKB":525,"hero3dReadyMs":2172.0999999996275,"ditherMs":0,"loadLongTasks":8,"loadLongTo
+talMs":2949,"loadMaxTaskMs":1404,"loadBlockingMs":2549,"scrollLongTotalMs":0,"scrollMaxTaskMs":0,"scrollP95FrameMs":11,
+"scrollMaxFrameMs":47,"scrollJankPct":0}
