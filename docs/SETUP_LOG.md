@@ -4,15 +4,17 @@
 
 ## Gate status: ❌ NOT PASSED
 
-Everything Claude Code can install or check is done. The gate stays open until a human completes the items below — do not mark it passed before then.
+Everything Claude Code can install or check is done. The gate stays open until the MCP approval and smoke tests below are done — do not mark it passed before then. Once they pass, Phase 3 foundations start (`docs/PHASE3_PLAN.md`).
 
 **Waiting on a human**
 - [ ] **Approve the 4 project MCP servers.** Open `apec-web/` itself as the Claude Code workspace (VS Code: *File → Open Folder → apec-web*, or run `claude` inside `apec-web/`) and approve `playwright`, `next-devtools`, `shadcn`, `context7`. Today `claude mcp list` shows them as *Pending approval*.
 - [ ] Smoke test: "Use playwright mcp to open https://stymite.me and take a screenshot." (needs the approval above)
 - [ ] Smoke test: "Use context7 to fetch the current GSAP ScrollTrigger docs." (needs the approval above)
-- [ ] Smoke test: `/codex:review` on a trivial change (human runs it inside Claude Code)
-- [ ] `gh auth login`
-- [ ] `vercel login`
+- [ ] Smoke test: `/codex:review` on a trivial change
+
+**Deferred — not passed** (agreed 2026-10-07: not needed until remote repo work / deployment; not part of the §2.7 gate)
+- [ ] `gh auth login` — before creating/pushing the GitHub repo
+- [ ] `vercel login` — before the first Vercel deploy
 
 **Done**
 - [x] Machine prerequisites (§2.1)
