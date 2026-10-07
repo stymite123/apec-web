@@ -1,26 +1,193 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+@import "lenis/dist/lenis.css";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* Dark-only site: <html class="dark">. Kept so shadcn's dark: variants resolve. */
+@custom-variant dark (&:is(.dark *));
+
+/* ---------------------------------------------------------------------------
+   Brand tokens (brief §6.2, §6.5, §6.8)
+   --------------------------------------------------------------------------- */
+@theme {
+  --color-void: #05060a;
+  --color-ink: #0a0e15;
+  --color-navy-900: #0b1424;
+  --color-navy-800: #0e1a2e;
+  --color-navy-700: #13233d;
+  --color-steel-300: #afbacb;
+  --color-steel-400: #8a9bb4;
+  --color-steel-600: #4e5f78;
+  --color-steel-800: #2a3646;
+  --color-silver-100: #eef1f5;
+  --color-silver-300: #c5ccd6;
+  --color-brand-300: #5cc2ff;
+  --color-brand-500: #1f7bff;
+  --color-brand-700: #0b3fa8;
+  --color-wine-400: #a33a50;
+  --color-wine-600: #7a1f33;
+  --color-wine-800: #4a1220;
+  --color-signal: #3ddc97;
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out-quart: cubic-bezier(0.76, 0, 0.24, 1);
+  --ease-out-back: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  --radius-card: 1.25rem;
+
+  /* Fluid type scale (brief §6.3) */
+  --text-hero: clamp(3.5rem, 11vw, 11rem);
+  --text-hero--line-height: 0.92;
+  --text-hero--letter-spacing: -0.03em;
+  --text-h2: clamp(2.25rem, 6vw, 5.5rem);
+  --text-h2--line-height: 0.95;
+  --text-h2--letter-spacing: -0.03em;
+  --text-h3: clamp(1.5rem, 3vw, 2.5rem);
+  --text-h3--line-height: 1.1;
+  --text-h3--letter-spacing: -0.02em;
+  --text-body: clamp(1rem, 1.1vw, 1.125rem);
+  --text-body--line-height: 1.6;
+  --text-label: 0.75rem;
+  --text-label--line-height: 1.4;
+  --text-label--letter-spacing: 0.12em;
 }
 
+/* Font families come from next/font CSS variables set on <html>, so they are inlined. */
 @theme inline {
+  --font-display: var(--font-clash), var(--font-geist-sans), system-ui, sans-serif;
+  --font-sans: var(--font-geist-sans), system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+  --font-serif: var(--font-instrument-serif), Georgia, serif;
+  --font-heading: var(--font-clash), var(--font-geist-sans), system-ui, sans-serif;
+
+  /* shadcn semantic colours → brand tokens */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+:root {
+  color-scheme: dark;
+
+  --background: var(--color-void);
+  --foreground: var(--color-silver-100);
+  --card: var(--color-navy-800);
+  --card-foreground: var(--color-silver-100);
+  --popover: var(--color-ink);
+  --popover-foreground: var(--color-silver-100);
+  /* void on brand-500 ≈ 5.1:1; silver on brand-500 is below 4.5:1 for small text */
+  --primary: var(--color-brand-500);
+  --primary-foreground: var(--color-void);
+  --secondary: var(--color-navy-700);
+  --secondary-foreground: var(--color-silver-100);
+  --muted: var(--color-navy-900);
+  --muted-foreground: var(--color-steel-400);
+  --accent: var(--color-navy-700);
+  --accent-foreground: var(--color-silver-100);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: var(--color-steel-800);
+  --input: var(--color-steel-800);
+  --ring: var(--color-brand-500);
+  --radius: 0.75rem;
+
+  --grad-brand: linear-gradient(160deg, #5cc2ff 0%, #1f7bff 45%, #0b3fa8 100%);
+  --grad-silver: linear-gradient(160deg, #ffffff 0%, #c5ccd6 55%, #8a9bb4 100%);
+  --glow-navy: radial-gradient(closest-side, #13233d, transparent);
+  --glow-wine: radial-gradient(closest-side, rgb(74 18 32 / 0.4), transparent);
+
+  --nav-height: 4.5rem;
+}
+
+/* ---------------------------------------------------------------------------
+   Utilities
+   --------------------------------------------------------------------------- */
+@utility container-site {
+  width: 100%;
+  max-width: 1440px;
+  margin-inline: auto;
+  padding-inline: clamp(1rem, 4vw, 3rem);
+}
+
+@utility label-mono {
+  font-family: var(--font-mono);
+  font-size: var(--text-label);
+  line-height: var(--text-label--line-height);
+  letter-spacing: var(--text-label--letter-spacing);
+  text-transform: uppercase;
+}
+
+@utility text-grad-silver {
+  background-image: var(--grad-silver);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+@utility text-grad-brand {
+  background-image: var(--grad-brand);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* ---------------------------------------------------------------------------
+   Base
+   --------------------------------------------------------------------------- */
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
   }
-}
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  html {
+    @apply bg-background font-sans text-foreground antialiased;
+    scroll-padding-top: var(--nav-height);
+  }
+
+  body {
+    @apply min-h-dvh bg-background text-body text-foreground;
+  }
+
+  ::selection {
+    background: var(--color-wine-600);
+    color: var(--color-silver-100);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-brand-500);
+    outline-offset: 3px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
 }
