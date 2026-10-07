@@ -34,7 +34,7 @@ Source of truth: `docs/APEC_BUILD_BRIEF.md`. API reference: `node_modules/next/d
 **4. Content model** (`src/content/`)
 - `schema.ts`: zod schemas for `TeamMember` (exactly brief §9.1) and `Site`. `TODO:` strings bypass length/word-count rules.
 - `team.ts`: the five — 01 Muhammad Huzaifa (SEO & ML Engineer), 02 Mustafa Ishaq (AI Agent Engineer), 03 Hamad Alam (Web Developer), 04 Mian Faizyab (App Developer), 05 Abdur Rahman (Graphic Designer); slugs = kebab-case names; bios, skills, projects etc. are `TODO:`; all skills `confirmed: false` until members confirm levels; Mustafa's `currently` = Atlus Bank (USA), `public: true` (Q4). No portraits wired yet (received photos are under the brief's resolution; grading is the design side's). Parsed at load → **invalid data fails the build**.
-- `site.ts`: name "APEC Digital", tagline "Innovate | Grow | Succeed", nav links, CTA label, §1 sub-headline draft, location line "Pakistan · Remote · Worldwide" (Q7), email contact.apecdigital@gmail.com and phone +923265698123 (both pending confirmation, Q6); WhatsApp/socials `TODO:`. English only, `lang="en"`, no locale routing (Q9).
+- `site.ts`: name "APEC Digital", tagline "Innovate | Grow | Succeed", nav links, CTA label, §1 sub-headline draft, location line "Pakistan · Remote · Worldwide" (Q7), email contact.apecdigital@gmail.com, phone + WhatsApp +923265698123 (Q6), APEC expansion "Agency for Professionalism, Experience and Creativity"; socials `TODO:`. The §1 sub-headline draft mentions "web apps" — use it only with a `TODO:` note until the copy is revised for mobile apps. English only, `lang="en"`, no locale routing (Q9).
 
 **5. Lib** (`src/lib/`)
 - `flags.ts`: `SHOW_WORK`, `SHOW_TESTIMONIALS`, `ENABLE_SOUND`, `ENABLE_3D` — all `false`.
@@ -58,7 +58,7 @@ Source of truth: `docs/APEC_BUILD_BRIEF.md`. API reference: `node_modules/next/d
 - Not used for the favicon, OG image or any exported asset. Next's default favicon stays until the designer's favicon set arrives.
 
 **9. Routes**
-- `layout.tsx`: fonts, `class="dark"`, `metadataBase` from `NEXT_PUBLIC_SITE_URL`, title template `%s | APEC Digital`, description = §1 sub-headline draft, `themeColor #05060A`; providers → SkipLink, Nav, `<main id="content">`, Footer.
+- `layout.tsx`: fonts, `class="dark"`, `metadataBase` from `NEXT_PUBLIC_SITE_URL`, title template `%s | APEC Digital`, description = `TODO: SEO copy` (member 01 owns it, brief §12; the §1 draft needs revising for mobile apps), `themeColor #05060A`; providers → SkipLink, Nav, `<main id="content">`, Footer.
 - `page.tsx`: **placeholder only** — h1 "Five specialists. *One* apex." (chosen 2026-10-07; styling is the design side's), sub-headline draft, location line, empty anchored sections `#team #services #process #contact`.
 - `not-found.tsx`: static, "This peak doesn't exist.", link home. (Falling-bars animation deferred.)
 - `next.config.ts`: `images.formats: ['image/avif','image/webp']`.

@@ -58,5 +58,11 @@ Format: date · decision · why · alternatives rejected
 - **Spelling:** "Abdur Rahman".
 - **Concept:** The Ascent, provisional (design side; final after the reels).
 
+## 2026-10-08 · Contact, APEC expansion, mobile apps, photos (Mustafa + design side)
+- **Contact:** contact.apecdigital@gmail.com; phone + WhatsApp +923265698123.
+- **APEC** = "Agency for Professionalism, Experience and Creativity".
+- **Member 04 (Mian Faizyab) builds mobile apps**, not web apps. Brief copy that says "web apps" (§1 sub-headline draft, §8.1 services/packages such as "Automate: AI + web app") must be revised before Phase 4 service copy is finalised.
+- **Photos:** the received copies are used for initial layouts; sharpness is checked at display size before asking for replacements.
+
 ## 2026-10-07 · Temporary logo is labelled as temporary everywhere
 - **Why:** only a raster logo exists (`references/brand/apec-logo-source.jpeg`). A rough SVG trace is needed for development, but it must not become the brand asset by accident. It lives in `TemporaryApexMark.tsx`, carries `data-temporary-logo`, is listed by the build's TODO report, and is not used for the favicon, OG image or any exported asset.
