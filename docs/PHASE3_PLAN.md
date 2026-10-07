@@ -1,6 +1,6 @@
 # Phase 3 — Technical foundations (plan)
 
-**Status:** revised 2026-10-07 after design feedback · approved · **in progress** (Phase 0 gate passed 2026-10-08) · owner of app code: Claude Code · owner of design + visual review: Codex (design side)
+**Status:** revised 2026-10-07 after design feedback · approved · **done 2026-10-08** (build, lint, typecheck, 14 smoke tests green; Lighthouse baseline in `docs/PERFORMANCE.md`). Superseded for later phases by the fast-path decision (DECISIONS 2026-10-08) · owner of app code: Claude Code · owner of design + visual review: Codex (design side)
 
 ## Context
 

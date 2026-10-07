@@ -64,5 +64,20 @@ Format: date · decision · why · alternatives rejected
 - **Member 04 (Mian Faizyab) builds mobile apps**, not web apps. Brief copy that says "web apps" (§1 sub-headline draft, §8.1 services/packages such as "Automate: AI + web app") must be revised before Phase 4 service copy is finalised.
 - **Photos:** the received copies are used for initial layouts; sharpness is checked at display size before asking for replacements.
 
+## 2026-10-08 · Fast path to a v1 launch (Mustafa)
+- **Build visuals now from the brief** (The Ascent, §6 tokens/type/motion); the design side reviews the live preview afterwards instead of approving mockups first. Supersedes the "defer signature visuals" part of the Phase 3 split.
+- **Claude drafts missing copy** (sub-headline, meta description, manifesto, services, process, member headlines) from known facts only — no invented clients, results or experience. Every draft is listed in `docs/COPY_REVIEW.md` for approval.
+- **Contact in v1 = email + WhatsApp buttons.** The Resend form (brief §13) moves to after launch.
+- **Deferred past v1:** 3D hero (static mark instead), preloader, custom cursor, case studies, contact form.
+- **Skills:** the "known skills" from brief §9.2 / the flyer are treated as confirmed facts and shown without a level until members confirm levels; candidate skills stay hidden.
+
+## 2026-10-08 · Clash Display is committed to the repo
+- **Why:** the ITF Free Font License allows commercial use and self-hosting on our own site, and internal sharing within the organisation. It forbids modifying the file (incl. subsetting/format conversion) and redistributing it. The variable WOFF2 is used unmodified, with the licence file beside it.
+- **Condition:** the repo must stay private. If it ever becomes public, remove the font from git history and fetch it at build time instead.
+
+## 2026-10-08 · Lenis `anchors` off; own reduced-motion hook
+- Lenis' `anchors` option intercepts in-page links, which stopped the skip link from moving focus to `#content`; anchors now jump natively.
+- `usePrefersReducedMotion` (matchMedia + `useSyncExternalStore`) instead of Motion's hook, so Motion loads only where it's used.
+
 ## 2026-10-07 · Temporary logo is labelled as temporary everywhere
 - **Why:** only a raster logo exists (`references/brand/apec-logo-source.jpeg`). A rough SVG trace is needed for development, but it must not become the brand asset by accident. It lives in `TemporaryApexMark.tsx`, carries `data-temporary-logo`, is listed by the build's TODO report, and is not used for the favicon, OG image or any exported asset.

@@ -1,0 +1,28 @@
+{
+  "ci": {
+    "collect": {
+      "startServerCommand": "pnpm exec next start -p 3200",
+      "startServerReadyPattern": "Ready",
+      "url": ["http://localhost:3200/"],
+      "numberOfRuns": 5
+    },
+    "assert": {
+      "assertions": {
+        "categories:performance": ["warn", { "minScore": 0.9, "aggregationMethod": "median-run" }],
+        "categories:accessibility": [
+          "warn",
+          { "minScore": 0.95, "aggregationMethod": "median-run" }
+        ],
+        "categories:best-practices": [
+          "warn",
+          { "minScore": 0.95, "aggregationMethod": "median-run" }
+        ],
+        "categories:seo": ["warn", { "minScore": 1, "aggregationMethod": "median-run" }]
+      }
+    },
+    "upload": {
+      "target": "filesystem",
+      "outputDir": ".lighthouseci/reports"
+    }
+  }
+}
