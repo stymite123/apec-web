@@ -135,13 +135,34 @@ export function TeamShowcase({ members, eyebrow, title, intro, viewProfile }: Te
         });
       });
 
+      // Reduced motion: no pin, no scrubbing, no movement — slides stack vertically and
+      // each portrait dissolves from dither to photo once (opacity steps only) when in view.
+      mm.add("(prefers-reduced-motion: reduce)", () => {
+        slides.forEach((slide, index) => {
+          const portrait = portraits[index] ?? null;
+          if (!portrait) return;
+          setResolve(portrait, 0);
+          ScrollTrigger.create({
+            trigger: slide,
+            start: "top 75%",
+            once: true,
+            onEnter: () => gsap.to(portrait, { "--resolve": 1, duration: 1.6, ease: "none" }),
+          });
+        });
+      });
+
       return () => mm.revert();
     },
     { scope: root },
   );
 
   return (
-    <section ref={root} id="team" aria-labelledby="team-title" className="relative bg-void">
+    <section
+      ref={root}
+      id="team"
+      aria-labelledby="team-title"
+      className="relative overflow-x-clip bg-void"
+    >
       <div className="container-site flex flex-col gap-6 pt-28 pb-12 md:flex-row md:items-end md:justify-between">
         <div>
           <p className="label-mono text-steel-400">{eyebrow}</p>
@@ -155,12 +176,16 @@ export function TeamShowcase({ members, eyebrow, title, intro, viewProfile }: Te
         {intro && <p className="max-w-sm text-steel-300">{intro}</p>}
       </div>
 
-      <ol ref={track} className="flex flex-col md:h-svh md:w-max md:flex-row">
+      {/* Reduced motion: vertical stack on every width (no pinned sideways track). */}
+      <ol
+        ref={track}
+        className="flex flex-col md:h-svh md:w-max md:flex-row motion-reduce:md:h-auto! motion-reduce:md:w-full! motion-reduce:md:flex-col!"
+      >
         {members.map((member, index) => (
           <li
             key={member.slug}
             data-slide
-            className="relative flex min-h-svh w-full items-center overflow-hidden border-t border-steel-800 md:h-svh md:w-screen md:border-t-0 md:border-l"
+            className="relative flex min-h-svh w-full items-center overflow-hidden border-t border-steel-800 md:h-svh md:w-screen md:border-t-0 md:border-l motion-reduce:md:h-auto! motion-reduce:md:min-h-[85svh]! motion-reduce:md:w-full! motion-reduce:md:border-t! motion-reduce:md:border-l-0!"
           >
             {/* Giant call-name behind the portrait (meshwork "VANTA" move). */}
             <p

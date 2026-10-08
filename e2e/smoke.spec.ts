@@ -23,6 +23,12 @@ test("home renders the headline and the five, with no TODO text", async ({ page 
 
   await expect(page.locator("body")).not.toContainText("TODO:");
   await expect(page.locator("[data-todo]")).toHaveCount(0);
+
+  // No sideways scrolling at any width or motion setting (the team track is 5 screens wide).
+  const overflow = await page.evaluate(
+    () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
+  );
+  expect(overflow).toBeLessThanOrEqual(0);
   expect(errors).toEqual([]);
 });
 
