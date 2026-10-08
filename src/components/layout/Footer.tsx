@@ -15,7 +15,7 @@ export function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="border-t border-steel-800 bg-ink">
+    <footer className="border-t border-grey-800 bg-oxblood-950">
       <div className="container-site grid gap-12 py-16 md:grid-cols-12">
         <div className="space-y-4 md:col-span-6">
           <Link
@@ -26,19 +26,19 @@ export function Footer() {
             <span>{site.name}</span>
           </Link>
           {shouldRender(site.expansion) && (
-            <p className="max-w-sm text-steel-400">
+            <p className="max-w-sm text-grey-400">
               <Copy value={site.expansion} />
             </p>
           )}
           {shouldRender(site.tagline) && (
-            <p className="label-mono text-steel-400">
+            <p className="label-mono text-grey-400">
               <Copy value={site.tagline} />
             </p>
           )}
         </div>
 
         <nav aria-labelledby="footer-explore" className="md:col-span-3">
-          <h2 id="footer-explore" className="label-mono text-steel-400">
+          <h2 id="footer-explore" className="label-mono text-grey-400">
             {site.labels.footerExplore}
           </h2>
           <ul className="mt-4 space-y-2">
@@ -46,7 +46,7 @@ export function Footer() {
               <li key={item.href}>
                 <Link
                   href={item.href}
-                  className="text-steel-300 transition-colors hover:text-silver-100"
+                  className="text-grey-300 transition-colors hover:text-silver-100"
                 >
                   {item.label}
                 </Link>
@@ -56,8 +56,8 @@ export function Footer() {
         </nav>
 
         <div className="md:col-span-3">
-          <h2 className="label-mono text-steel-400">{site.labels.footerContact}</h2>
-          <ul className="mt-4 space-y-2 text-steel-300">
+          <h2 className="label-mono text-grey-400">{site.labels.footerContact}</h2>
+          <ul className="mt-4 space-y-2 text-grey-300">
             <li>
               <a
                 href={`mailto:${email}`}
@@ -92,8 +92,8 @@ export function Footer() {
 
       <FooterWordmark text={site.shortName} />
 
-      <div className="border-t border-steel-800">
-        <div className="container-site flex flex-col gap-2 py-6 text-sm text-steel-400 md:flex-row md:items-center md:justify-between">
+      <div className="border-t border-grey-800">
+        <div className="container-site flex flex-col gap-2 py-6 text-sm text-grey-400 md:flex-row md:items-center md:justify-between">
           <p>
             © {year} {site.name}
           </p>

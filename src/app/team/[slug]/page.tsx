@@ -41,7 +41,7 @@ function Block({ id, title, children }: { id: string; title: string; children: R
   return (
     <section
       aria-labelledby={id}
-      className="grid gap-6 border-t border-steel-800 py-14 md:grid-cols-12"
+      className="grid gap-6 border-t border-grey-800 py-14 md:grid-cols-12"
     >
       <SplitReveal
         as="h2"
@@ -133,7 +133,7 @@ export default async function MemberPage({ params }: PageProps<"/team/[slug]">) 
       />
 
       <header className="grid gap-10 py-12 md:grid-cols-12 md:items-end md:py-20">
-        <div className="relative overflow-hidden rounded-card border border-steel-800 bg-navy-800 md:col-span-5">
+        <div className="relative overflow-hidden rounded-card border border-grey-800 bg-grey-800 md:col-span-5">
           <div aria-hidden className={cn("absolute inset-x-0 top-0 z-10 h-0.5", accent.line)} />
           {member.portrait ? (
             <Image
@@ -146,27 +146,27 @@ export default async function MemberPage({ params }: PageProps<"/team/[slug]">) 
               className="aspect-[4/5] h-auto w-full object-cover object-top"
             />
           ) : (
-            <div className="flex aspect-[4/5] items-center justify-center font-display text-hero text-steel-600">
+            <div className="flex aspect-[4/5] items-center justify-center font-display text-hero text-grey-500">
               {member.name.slice(0, 1)}
             </div>
           )}
         </div>
 
         <div className="flex flex-col gap-6 md:col-span-7">
-          <p className="label-mono text-steel-400">
+          <p className="label-mono text-grey-400">
             {pad(member.order)} / {pad(team.length)} — {member.role}
           </p>
           <h1 className="font-display text-[clamp(3rem,7vw,7rem)] leading-[0.92] font-semibold tracking-[-0.03em] text-silver-100">
             {member.name}
           </h1>
           {shouldRender(member.headline) && (
-            <p className="max-w-xl text-lg text-steel-300">
+            <p className="max-w-xl text-lg text-grey-300">
               <Copy value={member.headline} />
             </p>
           )}
           {showCurrently && member.currently && (
-            <p className="text-steel-300">
-              <span className="mr-3 label-mono text-steel-400">{copy.currently}</span>
+            <p className="text-grey-300">
+              <span className="mr-3 label-mono text-grey-400">{copy.currently}</span>
               {member.currently.title} · {member.currently.org}
             </p>
           )}
@@ -176,7 +176,7 @@ export default async function MemberPage({ params }: PageProps<"/team/[slug]">) 
 
       {shouldRender(member.bio) && (
         <Block id="about" title={copy.about}>
-          <p className="max-w-2xl text-lg text-steel-300">
+          <p className="max-w-2xl text-lg text-grey-300">
             <Copy value={member.bio} />
           </p>
         </Block>
@@ -189,13 +189,13 @@ export default async function MemberPage({ params }: PageProps<"/team/[slug]">) 
               <li
                 key={skill.name}
                 className={cn(
-                  "flex items-center gap-2 rounded-full border px-4 py-2 text-steel-300",
-                  skill.confirmed ? "border-steel-800" : "border-dashed border-wine-400",
+                  "flex items-center gap-2 rounded-full border px-4 py-2 text-grey-300",
+                  skill.confirmed ? "border-grey-800" : "border-dashed border-wine-400",
                 )}
               >
                 {skill.name}
                 {!isTodo(skill.level) && (
-                  <span className="label-mono text-steel-400">{skill.level}</span>
+                  <span className="label-mono text-grey-400">{skill.level}</span>
                 )}
               </li>
             ))}
@@ -209,7 +209,7 @@ export default async function MemberPage({ params }: PageProps<"/team/[slug]">) 
             {member.tools.map((tool) => (
               <li
                 key={tool}
-                className="rounded-full border border-steel-800 px-4 py-2 text-steel-300"
+                className="rounded-full border border-grey-800 px-4 py-2 text-grey-300"
               >
                 {tool}
               </li>
@@ -220,7 +220,7 @@ export default async function MemberPage({ params }: PageProps<"/team/[slug]">) 
 
       {member.experience.length > 0 && (
         <Block id="experience" title={copy.experience}>
-          <ol className="space-y-8 border-l border-steel-800 pl-6">
+          <ol className="space-y-8 border-l border-grey-800 pl-6">
             {member.experience.map((role) => (
               <li key={`${role.title}-${role.org}`} className="relative">
                 <span
@@ -231,12 +231,12 @@ export default async function MemberPage({ params }: PageProps<"/team/[slug]">) 
                   {role.title} · {role.org}
                 </p>
                 {shouldRender(role.start) && (
-                  <p className="mt-1 label-mono text-steel-400">
+                  <p className="mt-1 label-mono text-grey-400">
                     <Copy value={role.start} /> — {role.end ?? copy.present}
                   </p>
                 )}
                 {shouldRender(role.summary) && (
-                  <p className="mt-2 text-steel-300">
+                  <p className="mt-2 text-grey-300">
                     <Copy value={role.summary} />
                   </p>
                 )}
@@ -252,13 +252,13 @@ export default async function MemberPage({ params }: PageProps<"/team/[slug]">) 
             {member.projects.map((project) => (
               <li
                 key={project.slug}
-                className="rounded-card border border-steel-800 bg-navy-900 p-6"
+                className="rounded-card border border-grey-800 bg-grey-900 p-6"
               >
                 <p className="font-display text-xl font-semibold text-silver-100">
                   {project.title}
                 </p>
                 {shouldRender(project.summary) && (
-                  <p className="mt-2 text-steel-300">
+                  <p className="mt-2 text-grey-300">
                     <Copy value={project.summary} />
                   </p>
                 )}
@@ -266,13 +266,13 @@ export default async function MemberPage({ params }: PageProps<"/team/[slug]">) 
             ))}
           </ul>
         )}
-        {member.projects.length < 3 && <p className="mt-4 text-steel-400">{copy.projectsComing}</p>}
+        {member.projects.length < 3 && <p className="mt-4 text-grey-400">{copy.projectsComing}</p>}
         {member.projects.length === 0 && (
           <Todo className="mt-4">TODO: 2–4 projects (title, problem, what you did, result)</Todo>
         )}
       </Block>
 
-      <section className="my-14 rounded-card border border-steel-800 bg-navy-900 p-8 md:p-12">
+      <section className="my-14 rounded-card border border-grey-800 bg-grey-900 p-8 md:p-12">
         <h2 className="font-display text-h3 font-semibold text-silver-100">
           {fill(copy.ctaTitle, name)}
         </h2>
@@ -281,14 +281,14 @@ export default async function MemberPage({ params }: PageProps<"/team/[slug]">) 
 
       <nav
         aria-label={copy.allMembers}
-        className="grid grid-cols-2 gap-4 border-t border-steel-800 py-10 text-steel-300"
+        className="grid grid-cols-2 gap-4 border-t border-grey-800 py-10 text-grey-300"
       >
         {previous && (
           <Link
             href={`/team/${previous.slug}`}
             className="group flex flex-col gap-1 hover:text-silver-100"
           >
-            <span className="flex items-center gap-2 label-mono text-steel-400">
+            <span className="flex items-center gap-2 label-mono text-grey-400">
               <ArrowLeftIcon aria-hidden className="size-3.5" /> {copy.previous}
             </span>
             <span className="font-display text-lg font-semibold">{previous.name}</span>
@@ -299,7 +299,7 @@ export default async function MemberPage({ params }: PageProps<"/team/[slug]">) 
             href={`/team/${next.slug}`}
             className="group flex flex-col items-end gap-1 text-right hover:text-silver-100"
           >
-            <span className="flex items-center gap-2 label-mono text-steel-400">
+            <span className="flex items-center gap-2 label-mono text-grey-400">
               {copy.next} <ArrowRightIcon aria-hidden className="size-3.5" />
             </span>
             <span className="font-display text-lg font-semibold">{next.name}</span>

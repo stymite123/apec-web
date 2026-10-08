@@ -2,6 +2,22 @@
 
 Format: date · decision · why · alternatives rejected
 
+## 2026-10-08 · Preview feedback round 2 (Mustafa)
+- **Gradients, not flat colours:** display text uses a top-to-bottom gradient (`text-grad`, colours via `--g-from`/`--g-to`): hero lines light to deep blue with *Creatives* pink to deep rose; names white to rose; titles, phrases and the tagline band white to grey; buttons, nav CTA, pill dots and scribbles in pinkish-red gradients. Vertical on purpose: letters split for animation each paint their own box, and a vertical ramp stays continuous along a line.
+- **Two rendering fixes that came with it:** gradient boxes are padded (equal negative margin, no layout change) so ascenders, descenders and italics are not clipped ("Mustafa" had read "Mustata"); once text is split into gradient letters/lines the parent stops painting (`text-grad-split`), otherwise a ghost copy showed behind the animated letters.
+- **Scroll cost:** gradient text repaints while it moves. The hero title, phrase and name letters and the tagline rows get `will-change: transform`; measured A/B on the same build, slowest 5% of desktop frames 25 ms → 11–14 ms.
+- **Mian Faizyab** sits 9% lower on his card (his photo frames him higher than the others).
+
+## 2026-10-08 · Preview feedback round 1 (Mustafa)
+- **Headline:** "Five specialists. One apex." removed; the hero now reads **"Agency for Professionals, Experienced & Creatives"** (also used as `site.expansion`, footer and share image). *Creatives* in pinkish-red italic.
+- **Name:** the agency is **APEC**, never "apex", in all visible copy (contact title now "Bring your next build to APEC.").
+- **Intro statement** rewritten (docs/COPY_REVIEW.md).
+- **Team cards** show full names (Mian Faizyab kept with the flyer's spelling; Mustafa typed "Fiazyab", to confirm).
+- **No repeated photos:** the phrase stage floats the five disciplines as text tags; the services index is text only.
+- **What we do** rebuilt as a numbered index: serif titles rise out of a mask, hairlines draw, details fade (once); hover fills the row blackish red; each row links to its lead.
+- **"Combined" packages removed** (content and schema); replaced by a tagline band, "Innovate ✦ Grow ✦ Succeed", two scroll-scrubbed rows on blackish red.
+- **Palette:** pinkish red (rose-300/400/600), blackish red (oxblood-950…700) and neutral grey (grey-300…900) added across the site; the blue-grey "steel" text and navy panels became grey; buttons (primary) and the nav CTA are pinkish red. Blue stays for the logo, aura and hero headline. Section titles use the display serif.
+
 ## 2026-10-08 · Animated preview: GSAP Field rhythm on the lag-fixed hero (Mustafa)
 - **Request:** restore the lag-fixed hero (pre-rendered mark + blue aura), keep the blackish theme, and follow The GSAP Field's actual layout rhythm, typography and animation sequences for hero → team. Branch `preview/field-hero`; the rest of the site is unchanged until approved.
 - **Reference used for observation only** (screens captured in a browser). No Webflow plan, no source, photos or assets taken. Scribble paths, layout code and copy are our own.

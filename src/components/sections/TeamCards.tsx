@@ -5,13 +5,12 @@ import Link from "next/link";
 import { useRef } from "react";
 
 import { gsap, MOTION_OK, SplitText, useGSAP } from "@/lib/gsap";
-import { whenIdle } from "@/lib/idle";
+import { whenIdleEach } from "@/lib/idle";
 import { scrub } from "@/lib/motion";
 
 export type CardMember = {
   slug: string;
   name: string;
-  callName: string;
   role: string;
   /** Person cut out at build time (scripts/cutout-portraits.py); falls back to the photo. */
   figure: string;
@@ -20,7 +19,58 @@ export type CardMember = {
   /** Blurred, darkened backdrop made from the photo at build time (pnpm dither). */
   backdrop: string;
   cutout: boolean;
+  /** Moves the person down (% of their height) when the photo frames them higher. */
+  figureOffset?: number;
 };
+
+/**
+ * One card's scroll motion. Arrival: the card slides up natively and its contents settle
+ * as it lands (name rises by letter, person settles, dither resolves to photo).
+ * Covered by the next card: it shrinks back and dims.
+ */
+function setUpCard(item: HTMLElement, next: HTMLElement | undefined, first: boolean) {
+  const card = item.querySelector<HTMLElement>("[data-card]");
+  const name = item.querySelector<HTMLElement>("[data-card-name]");
+  const figure = item.querySelector<HTMLElement>("[data-card-figure]");
+  const portrait = item.querySelector<HTMLElement>(".dither-portrait");
+  if (!card || !name || !figure || !portrait) return;
+  const split = SplitText.create(name, { type: "chars", charsClass: "text-grad" });
+  // The letters paint the gradient now; the word spans must not (ghost copy).
+  const words = [...name.children];
+  words.forEach((word) => word.classList.add("text-grad-split"));
+
+  gsap
+    .timeline({
+      defaults: { ease: "none" },
+      scrollTrigger: {
+        trigger: item,
+        start: first ? "top 90%" : "top bottom",
+        end: "top top",
+        scrub,
+      },
+    })
+    .fromTo(
+      split.chars,
+      { yPercent: 55, opacity: 0 },
+      { yPercent: 0, opacity: 1, stagger: 0.04, duration: 0.5 },
+      0.3,
+    )
+    .fromTo(figure, { yPercent: 10, scale: 1.06 }, { yPercent: 0, scale: 1, duration: 1 }, 0)
+    .fromTo(portrait, { "--resolve": 0 }, { "--resolve": 1, duration: 0.75 }, 0.25);
+
+  if (next) {
+    gsap
+      .timeline({
+        defaults: { ease: "none" },
+        scrollTrigger: { trigger: next, start: "top bottom", end: "top top", scrub },
+      })
+      .to(card, { scale: 0.92, yPercent: -2 }, 0)
+      .to(item.querySelector("[data-card-dim]"), { opacity: 0.7 }, 0);
+  }
+
+  // Runs on context revert, after the split is undone.
+  return () => words.forEach((word) => word.classList.remove("text-grad-split"));
+}
 
 /**
  * The five as stacked full-screen cards (GSAP Field "characters" panels): caption on
@@ -47,78 +97,36 @@ export function TeamCards({
       const el = root.current;
       if (!el) return;
       const mm = gsap.matchMedia();
-      // Below the fold: set up in its own idle-time task, not during hydration.
-      const cancel = whenIdle(() => {
-        const items = gsap.utils.toArray<HTMLElement>("[data-card-item]", el);
+      const items = gsap.utils.toArray<HTMLElement>("[data-card-item]", el);
 
-        mm.add(MOTION_OK, () => {
-          const splits: SplitText[] = [];
-          items.forEach((item, i) => {
-            const card = item.querySelector<HTMLElement>("[data-card]");
-            const name = item.querySelector<HTMLElement>("[data-card-name]");
-            const figure = item.querySelector<HTMLElement>("[data-card-figure]");
-            const portrait = item.querySelector<HTMLElement>(".dither-portrait");
-            if (!card || !name || !figure || !portrait) return;
-            const split = SplitText.create(name, { type: "chars" });
-            splits.push(split);
-
-            // Arrival: the card slides up natively; its contents settle as it lands.
-            const arrive = gsap.timeline({
-              defaults: { ease: "none" },
-              scrollTrigger: {
-                trigger: item,
-                start: i === 0 ? "top 90%" : "top bottom",
-                end: "top top",
-                scrub,
-              },
-            });
-            arrive
-              .fromTo(
-                split.chars,
-                { yPercent: 55, opacity: 0 },
-                { yPercent: 0, opacity: 1, stagger: 0.04, duration: 0.5 },
-                0.3,
-              )
-              .fromTo(
-                figure,
-                { yPercent: 10, scale: 1.06 },
-                { yPercent: 0, scale: 1, duration: 1 },
-                0,
-              )
-              .fromTo(portrait, { "--resolve": 0 }, { "--resolve": 1, duration: 0.75 }, 0.25);
-
-            // Covered by the next card: shrink back and dim.
-            const next = items[i + 1];
-            if (next) {
-              gsap
-                .timeline({
-                  defaults: { ease: "none" },
-                  scrollTrigger: { trigger: next, start: "top bottom", end: "top top", scrub },
-                })
-                .to(card, { scale: 0.92, yPercent: -2 }, 0)
-                .to(item.querySelector("[data-card-dim]"), { opacity: 0.7 }, 0);
-            }
-          });
-          return () => splits.forEach((split) => split.revert());
-        });
-
-        // Reduced motion: no movement; portraits dissolve once when in view.
-        mm.add("(prefers-reduced-motion: reduce)", () => {
-          for (const portrait of el.querySelectorAll<HTMLElement>(".dither-portrait")) {
-            gsap.set(portrait, { "--resolve": 0 });
-            gsap.to(portrait, {
-              "--resolve": 1,
-              duration: 1.6,
-              ease: "none",
-              scrollTrigger: { trigger: portrait, start: "top 75%", once: true },
-            });
-          }
-        });
+      mm.add(MOTION_OK, () => {
+        // Below the fold: one card per idle slice, so no setup step becomes a long task.
+        const contexts: gsap.Context[] = [];
+        const cancel = whenIdleEach(
+          items.map((item, i) => () => {
+            contexts.push(gsap.context(() => setUpCard(item, items[i + 1], i === 0)));
+          }),
+        );
+        return () => {
+          cancel();
+          contexts.forEach((context) => context.revert());
+        };
       });
-      return () => {
-        cancel();
-        mm.revert();
-      };
+
+      // Reduced motion: no movement; portraits dissolve once when in view.
+      mm.add("(prefers-reduced-motion: reduce)", () => {
+        for (const portrait of el.querySelectorAll<HTMLElement>(".dither-portrait")) {
+          gsap.set(portrait, { "--resolve": 0 });
+          gsap.to(portrait, {
+            "--resolve": 1,
+            duration: 1.6,
+            ease: "none",
+            scrollTrigger: { trigger: portrait, start: "top 75%", once: true },
+          });
+        }
+      });
+
+      return () => mm.revert();
     },
     { scope: root },
   );
@@ -139,7 +147,7 @@ export function TeamCards({
             <article
               data-card
               aria-labelledby={`card-${member.slug}`}
-              className="relative isolate h-full overflow-hidden rounded-[10px] bg-navy-900 will-change-transform"
+              className="relative isolate h-full overflow-hidden rounded-[10px] bg-grey-900 will-change-transform"
             >
               {/* Backdrop: the photo, blurred and darkened at build time. */}
               <Image
@@ -152,26 +160,38 @@ export function TeamCards({
               />
               <div
                 aria-hidden
-                className="absolute inset-0 -z-10 bg-[radial-gradient(45%_40%_at_0%_100%,rgb(122_31_51/0.38),transparent),radial-gradient(90%_75%_at_50%_70%,rgb(11_63_168/0.28),rgb(5_6_10/0.9)_80%)]"
+                className="absolute inset-0 -z-10 bg-[radial-gradient(50%_45%_at_0%_100%,rgb(150_32_62/0.45),transparent),radial-gradient(40%_35%_at_100%_0%,rgb(150_32_62/0.22),transparent),radial-gradient(90%_75%_at_50%_70%,rgb(58_15_27/0.3),rgb(5_6_10/0.88)_80%)]"
               />
 
               {/* Caption (reference "FIELD CHARACTERS 01 / 03"). */}
-              <p className="absolute inset-x-0 top-[7%] z-30 text-center label-mono text-[11px] text-brand-300">
+              <p className="absolute inset-x-0 top-[7%] z-30 text-center label-mono text-[11px] text-grey-400">
                 {caption}
                 <br />
-                <span className="text-wine-200">
+                <span className="text-rose-300">
                   {String(i + 1).padStart(2, "0")} / {String(members.length).padStart(2, "0")}
                 </span>
               </p>
 
-              {/* Giant name behind the person. */}
+              {/* Giant full name behind the person: one line on desktop, first/last on phones. */}
               <h3
                 id={`card-${member.slug}`}
-                className="absolute inset-x-0 top-[24%] z-10 text-center font-field text-[clamp(4.5rem,15vw,15rem)] leading-[0.85] tracking-[-0.04em] text-brand-300 [font-variation-settings:'opsz'_72] md:top-[19%]"
+                className="absolute inset-x-0 top-[24%] z-10 text-center font-field text-[17vw] leading-[0.85] tracking-[-0.04em] [--g-from:#ffffff] [--g-to:#e88aa1] [font-variation-settings:'opsz'_72] md:top-[19%] md:text-[8.4vw]"
               >
                 <span className="sr-only">{member.name}</span>
                 <span aria-hidden data-card-name className="inline-block">
-                  {member.callName}
+                  {member.name.split(" ").map((part, index) => (
+                    // Word gap as margin: the per-letter split drops space-only text.
+                    <span
+                      key={index}
+                      className={
+                        index > 0
+                          ? "text-grad block md:ml-[0.28em] md:inline-block"
+                          : "text-grad block md:inline-block"
+                      }
+                    >
+                      {part}
+                    </span>
+                  ))}
                 </span>
               </h3>
 
@@ -184,8 +204,9 @@ export function TeamCards({
                   className="dither-portrait absolute inset-0"
                   style={
                     member.cutout
-                      ? undefined
+                      ? { translate: `0 ${member.figureOffset ?? 0}%` }
                       : {
+                          translate: `0 ${member.figureOffset ?? 0}%`,
                           maskImage:
                             "radial-gradient(70% 80% at 50% 45%, black 55%, transparent 100%)",
                         }
@@ -220,17 +241,15 @@ export function TeamCards({
               <div className="absolute inset-x-0 bottom-[7%] z-30 flex flex-col items-center gap-4 px-4 text-center">
                 <Link
                   href={`/team/${member.slug}`}
-                  className="group inline-flex h-12 items-center gap-3 rounded-full bg-void/80 py-1.5 pr-5 pl-1.5 label-mono text-[11px] text-brand-300 ring-1 ring-steel-800 transition-colors hover:bg-navy-800"
+                  className="group inline-flex h-12 items-center gap-3 rounded-full bg-void/80 py-1.5 pr-5 pl-1.5 label-mono text-[11px] text-rose-300 ring-1 ring-grey-700 transition-colors hover:bg-grey-800"
                 >
                   <span
                     aria-hidden
-                    className="size-9 rounded-full bg-wine-300 transition-transform duration-500 ease-out-expo group-hover:scale-90"
+                    className="size-9 rounded-full bg-linear-to-br from-rose-300 via-rose-400 to-rose-600 transition-transform duration-500 ease-out-expo group-hover:scale-90"
                   />
-                  {viewProfile.replace("{name}", member.callName)}
+                  {viewProfile.replace("{name}", member.name)}
                 </Link>
-                <p className="max-w-[46ch] label-mono text-[11px] text-silver-100/90">
-                  {member.name} · {member.role}
-                </p>
+                <p className="max-w-[46ch] label-mono text-[11px] text-grey-300">{member.role}</p>
               </div>
 
               <div

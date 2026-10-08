@@ -8,7 +8,9 @@ Owner for SEO wording (brief §12): **Muhammad Huzaifa**.
 
 | Where | Draft |
 |---|---|
-| Hero sub-headline (preview: intro panel paragraph) | A five-person digital studio for SEO, AI agents, websites, mobile apps and brand design. AI gives us speed; our specialists bring the judgement. |
+| Hero headline (given by Mustafa, not a draft) | Agency for Professionals, Experienced & Creatives |
+| Hero caption | SEO · AI agents · Websites · Mobile apps · Brand design |
+| Intro statement (rewritten on request, 2026-10-08) | Five specialists, one standard. Search, AI agents, websites, mobile apps and brand design, each led by the person who actually does the work. AI sets our pace; craft sets the bar. |
 | Meta description (Google, share cards) | APEC Digital is a five-person studio from Pakistan for SEO, AI agents, web development, mobile apps and brand design, working with clients worldwide. |
 | Manifesto | AI makes us fast. / Specialists make it right. / You get both. |
 | Team intro | One specialist per discipline, working as one team on your project. |
@@ -16,6 +18,7 @@ Owner for SEO wording (brief §12): **Muhammad Huzaifa**.
 | Team card caption (preview) | APEC Digital · The five |
 | Services title + intro | What we do — Five disciplines, each led by the person who practises it. |
 | Process title | How we work |
+| Contact title (APEC, not apex) | Bring your next build to APEC. |
 | Contact intro | Tell us what you’re building. Email or WhatsApp — whichever is easier for you. |
 | WhatsApp pre-filled message (home) | Hi APEC Digital, I'd like to talk about a project. |
 | WhatsApp pre-filled message (member) | Hi {name}, I found you on the APEC Digital website and I'd like to talk about a project. |
@@ -29,8 +32,6 @@ Owner for SEO wording (brief §12): **Muhammad Huzaifa**.
 | Web Development (Hamad) | Fast, accessible websites that are easy to update and built to be found. |
 | Mobile Apps (Faizyab) | Mobile apps from first prototype to release, designed around how people use them. |
 | Brand & Graphic Design (Abdur Rahman) | Brand identity and graphic design that keep every touchpoint consistent. |
-| Package: Launch | A new brand, website and search foundation, delivered together. (Brand + Web + SEO) |
-| Package: Automate | AI agents wired into your website or app, so the busywork runs itself. (AI + Web + Mobile) |
 
 ## Process (`src/content/services.ts`)
 

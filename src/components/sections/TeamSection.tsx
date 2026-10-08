@@ -3,7 +3,10 @@ import { join } from "node:path";
 
 import { TeamCards, type CardMember } from "@/components/sections/TeamCards";
 import { site } from "@/content/site";
-import { callName, team } from "@/content/team";
+import { team } from "@/content/team";
+
+/** Photos that frame the person higher than the others (Mustafa 2026-10-08). */
+const FIGURE_OFFSET: Record<string, number> = { "mian-faizyab": 9 };
 
 /** Build-time portrait assets (scripts/cutout-portraits.py, scripts/dither-portraits.mjs). */
 const hasPublicFile = (src: string) => existsSync(join(process.cwd(), "public", src));
@@ -29,9 +32,9 @@ export function TeamSection() {
           {
             slug: member.slug,
             name: member.name,
-            callName: callName(member),
             role: member.role,
             ...cardAssets(member.slug, member.portrait.src),
+            figureOffset: FIGURE_OFFSET[member.slug],
           },
         ]
       : [],

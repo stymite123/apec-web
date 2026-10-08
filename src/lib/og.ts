@@ -13,6 +13,7 @@ export const ogColors = {
   steel800: "#2A3646",
   silver100: "#EEF1F5",
   brand300: "#5CC2FF",
+  rose400: "#E5577A",
   brand500: "#1F7BFF",
 };
 

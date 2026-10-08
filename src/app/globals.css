@@ -23,10 +23,21 @@
   --color-brand-300: #5cc2ff;
   --color-brand-500: #1f7bff;
   --color-brand-700: #0b3fa8;
-  /* Burgundy accent (Mustafa 2026-10-08: "a little burgundy premium touch").
-     wine-300 for large/decorative use (3.6:1 on void), wine-200 for small text (6.9:1). */
-  --color-wine-200: #d97a8e;
-  --color-wine-300: #c45a72;
+  /* Pinkish red + blackish red + grey (Mustafa 2026-10-08: more of these across the theme;
+     blue stays for the logo and hero). rose-400 on void 5.9:1, rose-300 on void 8:1. */
+  --color-rose-300: #f08aa2;
+  --color-rose-400: #e5577a;
+  --color-rose-600: #b8304f;
+  --color-oxblood-950: #0d0406;
+  --color-oxblood-900: #160609;
+  --color-oxblood-800: #22090f;
+  --color-oxblood-700: #3a0f1b;
+  --color-grey-300: #c4c6cc;
+  --color-grey-400: #9a9ca3;
+  --color-grey-500: #74767d;
+  --color-grey-700: #34363b;
+  --color-grey-800: #1f2024;
+  --color-grey-900: #131417;
   --color-wine-400: #a33a50;
   --color-wine-600: #7a1f33;
   --color-wine-800: #4a1220;
@@ -133,25 +144,25 @@
   --card-foreground: var(--color-silver-100);
   --popover: var(--color-ink);
   --popover-foreground: var(--color-silver-100);
-  /* void on brand-500 ≈ 5.1:1; silver on brand-500 is below 4.5:1 for small text */
-  --primary: var(--color-brand-500);
+  /* void on rose-400 ≈ 5.9:1 (buttons are void-on-rose) */
+  --primary: var(--color-rose-400);
   --primary-foreground: var(--color-void);
   --secondary: var(--color-navy-700);
   --secondary-foreground: var(--color-silver-100);
   --muted: var(--color-navy-900);
-  --muted-foreground: var(--color-steel-400);
+  --muted-foreground: var(--color-grey-400);
   --accent: var(--color-navy-700);
   --accent-foreground: var(--color-silver-100);
   --destructive: oklch(0.704 0.191 22.216);
-  --border: var(--color-steel-800);
-  --input: var(--color-steel-800);
+  --border: var(--color-grey-800);
+  --input: var(--color-grey-700);
   --ring: var(--color-brand-500);
   --radius: 0.75rem;
 
   --grad-brand: linear-gradient(160deg, #5cc2ff 0%, #1f7bff 45%, #0b3fa8 100%);
   --grad-silver: linear-gradient(160deg, #ffffff 0%, #c5ccd6 55%, #8a9bb4 100%);
   --glow-navy: radial-gradient(closest-side, #13233d, transparent);
-  --glow-wine: radial-gradient(closest-side, rgb(74 18 32 / 0.4), transparent);
+  --glow-wine: radial-gradient(closest-side, rgb(150 32 62 / 0.42), transparent);
 
   --nav-height: 4.5rem;
 }
@@ -185,6 +196,39 @@
 @utility grain {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   background-size: 160px 160px;
+}
+
+/* Gradient text, top → bottom, colours from --g-from / --g-to (inherited, so letters
+   created by SplitText pick them up from their heading). Vertical on purpose: split
+   letters each paint their own box, and a vertical ramp stays continuous along a line. */
+@utility text-grad {
+  background-image: linear-gradient(180deg, var(--g-from, #ffffff), var(--g-to, #9a9ca3));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  /* The gradient only paints inside the box; with tight leading, ascenders, descenders and
+     italic overhangs stick out of it and were cut off. Padding grows the painted box,
+     the equal negative margin keeps the layout unchanged. */
+  padding: 0.18em 0.08em;
+  margin: -0.18em -0.08em;
+}
+
+/* Set on a gradient element once SplitText has split it into gradient letters or lines:
+   the parent stops painting its own copy (it showed as ghost letters behind the animated
+   ones) but keeps its transparent fill, padding and margins, so nothing shifts. */
+.text-grad-split {
+  background-image: none;
+}
+
+/* Gradient text that moves while scrolling gets its own GPU layer; otherwise every frame
+   repaints the gradient (measured 2026-10-08: slowest 5% of frames 25 ms → 11–14 ms). */
+[data-hero-title],
+[data-phrase-text] .text-grad,
+[data-card-name] .text-grad,
+[data-band-a],
+[data-band-b] {
+  will-change: transform;
 }
 
 @utility text-grad-brand {
