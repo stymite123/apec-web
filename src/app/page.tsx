@@ -1,14 +1,12 @@
 import type { Metadata } from "next";
 
 import { Contact } from "@/components/sections/Contact";
+import { FieldIntro } from "@/components/sections/FieldIntro";
 import { Hero } from "@/components/sections/Hero";
-import { Manifesto } from "@/components/sections/Manifesto";
-import { Marquee } from "@/components/sections/Marquee";
 import { Process } from "@/components/sections/Process";
 import { Services } from "@/components/sections/Services";
 import { TeamSection } from "@/components/sections/TeamSection";
 import { JsonLd } from "@/components/seo/JsonLd";
-import { services } from "@/content/services";
 import { site } from "@/content/site";
 import { team } from "@/content/team";
 import { isTodo } from "@/lib/todo";
@@ -17,7 +15,11 @@ export const metadata: Metadata = {
   alternates: { canonical: "/" },
 };
 
-/** Home (brief §8.1). Work, Toolbelt and Testimonials stay hidden until real content exists. */
+/**
+ * Home (brief §8.1). Work, Toolbelt and Testimonials stay hidden until real content exists.
+ * Hero → intro/phrases → team follow the GSAP Field rhythm (preview, DECISIONS 2026-10-08);
+ * the manifesto lines now play in the phrase stage, replacing the marquee + manifesto blocks.
+ */
 export default function Home() {
   return (
     <>
@@ -41,9 +43,16 @@ export default function Home() {
           sameAs: site.socials.map((social) => social.url),
         }}
       />
-      <Hero />
-      <Marquee items={services.map((service) => service.title)} />
-      <Manifesto />
+      {/* The hero is sticky inside this wrapper, so the intro panel slides over it. */}
+      <div className="relative">
+        <Hero />
+        <FieldIntro
+          label={site.sections.team.scrollLabel}
+          intro={site.subheadline}
+          phrases={site.sections.manifesto.lines}
+          floats={team.flatMap((member) => (member.portrait ? [member.portrait.src] : []))}
+        />
+      </div>
       <TeamSection />
       <Services />
       <Process />

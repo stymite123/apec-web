@@ -2,6 +2,10 @@
 // Usage: pnpm dither   (re-run whenever a photo in public/team/*.jpg changes)
 // Output: public/team/dither/<slug>-<level>.png — tiny 2-colour PNGs, scaled up in CSS
 // with `image-rendering: pixelated`, so the browser does no image processing.
+// Team cards also get:
+//   public/team/dither/<slug>-cut-<level>.png  dither of the cut-out (scripts/cutout-portraits.py)
+//   public/team/backdrop/<slug>.jpg             tiny blurred, darkened, blue-tinted backdrop
+import { existsSync } from "node:fs";
 import { mkdir, readdir } from "node:fs/promises";
 import { join } from "node:path";
 
@@ -9,6 +13,8 @@ import sharp from "sharp";
 
 const SRC = "public/team";
 const OUT = "public/team/dither";
+const CUTOUT = "public/team/cutout";
+const BACKDROP = "public/team/backdrop";
 /** Output widths per level, coarse → fine (the display is ~480 CSS px wide). */
 const WIDTHS = [72, 150, 300];
 /** Dot colour = silver-300. */
@@ -36,14 +42,18 @@ const BAYER8 = (() => {
   return matrix;
 })();
 
-async function ditherOne(file, slug) {
+/** `cutout`: dither a transparent cut-out; dots only where the person is, no vignette. */
+async function ditherOne(input, name, { cutout = false } = {}) {
   for (const [level, width] of WIDTHS.entries()) {
-    const { data, info } = await sharp(join(SRC, file))
+    const { data, info } = await sharp(input)
       .resize({ width })
       .greyscale()
       .normalise()
       .raw()
       .toBuffer({ resolveWithObject: true });
+    const alpha = cutout
+      ? await sharp(input).resize({ width }).ensureAlpha().extractChannel(3).raw().toBuffer()
+      : null;
 
     const { width: w, height: h } = info;
     const rgba = Buffer.alloc(w * h * 4);
@@ -53,8 +63,8 @@ async function ditherOne(file, slug) {
         // Vignette centred on the face (upper middle) so busy backgrounds fall away.
         const dx = (x / w - 0.5) * 1.7;
         const dy = (y / h - 0.4) * 1.25;
-        const vignette = Math.max(0, 1 - (dx * dx + dy * dy));
-        const tone = ((lum - 0.5) * 1.45 + 0.47) * (0.28 + 0.72 * vignette);
+        const vignette = alpha ? alpha[y * w + x] / 255 : Math.max(0, 1 - (dx * dx + dy * dy));
+        const tone = ((lum - 0.5) * 1.45 + 0.47) * (alpha ? vignette : 0.28 + 0.72 * vignette);
         const threshold = (BAYER8[y % 8][x % 8] + 0.5) / 64;
         const i = (y * w + x) * 4;
         rgba[i] = DOT[0];
@@ -64,7 +74,7 @@ async function ditherOne(file, slug) {
       }
     }
 
-    const out = join(OUT, `${slug}-${level}.png`);
+    const out = join(OUT, `${name}-${level}.png`);
     const result = await sharp(rgba, { raw: { width: w, height: h, channels: 4 } })
       .png({ palette: true, colours: 2, compressionLevel: 9 })
       .toFile(out);
@@ -72,6 +82,30 @@ async function ditherOne(file, slug) {
   }
 }
 
+async function backdropOne(file, slug) {
+  const out = join(BACKDROP, `${slug}.jpg`);
+  await sharp(join(SRC, file))
+    .resize(192, 192, { fit: "cover", position: "top" })
+    .blur(6)
+    // Luminance mapped onto a dark navy → blue ramp (a dark duotone).
+    .recomb([
+      [0.036, 0.071, 0.013],
+      [0.078, 0.153, 0.029],
+      [0.168, 0.33, 0.062],
+    ])
+    .linear(1, 8)
+    .jpeg({ quality: 72 })
+    .toFile(out);
+  console.log(out);
+}
+
 await mkdir(OUT, { recursive: true });
+await mkdir(BACKDROP, { recursive: true });
 const files = (await readdir(SRC)).filter((f) => f.endsWith(".jpg"));
-for (const file of files) await ditherOne(file, file.replace(/\.jpg$/, ""));
+for (const file of files) {
+  const slug = file.replace(/\.jpg$/, "");
+  await ditherOne(join(SRC, file), slug);
+  await backdropOne(file, slug);
+  const cut = join(CUTOUT, `${slug}.png`);
+  if (existsSync(cut)) await ditherOne(cut, `${slug}-cut`, { cutout: true });
+}

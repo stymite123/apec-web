@@ -181,7 +181,13 @@ export const siteSchema = z.object({
   /** Home page section copy; `id` is the anchor used by the nav. */
   sections: z.object({
     manifesto: z.object({ lines: z.array(nonEmpty).min(1).max(3) }),
-    team: sectionSchema.extend({ viewProfile: nonEmpty }),
+    team: sectionSchema.extend({
+      viewProfile: nonEmpty,
+      /** Mono caption on each card (GSAP Field "FIELD CHARACTERS"). */
+      cardCaption: nonEmpty,
+      /** Two-line mono label beside the intro paragraph. */
+      scrollLabel: z.tuple([nonEmpty, nonEmpty]),
+    }),
     services: sectionSchema.extend({ packagesTitle: nonEmpty, ledBy: nonEmpty }),
     process: sectionSchema,
     contact: sectionSchema.extend({

@@ -59,7 +59,7 @@ varying float vNoise;
 varying vec3 vNormal;
 varying vec3 vView;
 void main(){
-  float fresnel = pow(1.0 - abs(dot(vNormal, vView)), 2.2);
+  float fresnel = pow(clamp(1.0 - abs(dot(normalize(vNormal), normalize(vView))), 0.0, 1.0), 2.2);
   float t = clamp(vNoise * 0.5 + 0.5, 0.0, 1.0);
   vec3 color = mix(uDeep, uMid, t);
   color = mix(color, uHot, fresnel);
@@ -67,7 +67,21 @@ void main(){
   gl_FragColor = vec4(color * (0.6 + fresnel * 1.6), alpha);
 }`;
 
-export function LiquidBlob({ animate, scale = 1.6 }: { animate: boolean; scale?: number }) {
+/** External time source (offline frame rendering): seconds, set by the caller. */
+export type BlobClock = { time: number };
+
+/** Turns per second of the slow spin (both real-time and clock-driven). */
+const SPIN = 0.04;
+
+export function LiquidBlob({
+  animate,
+  scale = 1.6,
+  clock,
+}: {
+  animate: boolean;
+  scale?: number;
+  clock?: BlobClock;
+}) {
   const mesh = useRef<Mesh>(null);
   const uniforms = useMemo(
     () => ({
@@ -82,8 +96,9 @@ export function LiquidBlob({ animate, scale = 1.6 }: { animate: boolean; scale?:
 
   useFrame((_, delta) => {
     if (!animate || !mesh.current) return;
-    (mesh.current.material as ShaderMaterial).uniforms.uTime.value += delta;
-    mesh.current.rotation.z += delta * 0.04;
+    const time = (mesh.current.material as ShaderMaterial).uniforms.uTime;
+    time.value = clock ? clock.time : time.value + delta;
+    mesh.current.rotation.z = time.value * SPIN;
   });
 
   return (

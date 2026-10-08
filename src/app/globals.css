@@ -23,6 +23,10 @@
   --color-brand-300: #5cc2ff;
   --color-brand-500: #1f7bff;
   --color-brand-700: #0b3fa8;
+  /* Burgundy accent (Mustafa 2026-10-08: "a little burgundy premium touch").
+     wine-300 for large/decorative use (3.6:1 on void), wine-200 for small text (6.9:1). */
+  --color-wine-200: #d97a8e;
+  --color-wine-300: #c45a72;
   --color-wine-400: #a33a50;
   --color-wine-600: #7a1f33;
   --color-wine-800: #4a1220;
@@ -88,6 +92,7 @@
   --font-sans: var(--font-geist-sans), system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, monospace;
   --font-serif: var(--font-instrument-serif), Georgia, serif;
+  --font-field: var(--font-newsreader), Georgia, serif;
   --font-heading: var(--font-clash), var(--font-geist-sans), system-ui, sans-serif;
 
   /* shadcn semantic colours → brand tokens */
@@ -220,6 +225,60 @@
 }
 
 /* ---------------------------------------------------------------------------
+   GSAP Field direction: load sequence (CSS only, runs before hydration)
+   --------------------------------------------------------------------------- */
+/* Characters light up one after another (components/motion/CharLight.tsx). */
+.field-char {
+  opacity: 0.14;
+  animation: field-light 0.9s var(--ease-out-expo) forwards;
+  animation-delay: calc(0.25s + var(--i, 0) * 38ms);
+}
+/* Bottom captions after the mark: set --d for the delay. */
+.field-rise {
+  animation: field-rise 0.9s var(--ease-out-expo) both;
+  animation-delay: var(--d, 0s);
+}
+/* Nav boxes drop in one by one: set --i. */
+.field-drop {
+  animation: field-drop 0.7s var(--ease-out-expo) both;
+  animation-delay: calc(1.05s + var(--i, 0) * 55ms);
+}
+@keyframes field-light {
+  to {
+    opacity: 1;
+  }
+}
+@keyframes field-rise {
+  from {
+    opacity: 0;
+    transform: translateY(1rem);
+  }
+}
+@keyframes field-drop {
+  from {
+    opacity: 0;
+    transform: translateY(-0.75rem);
+  }
+}
+
+/* Boxed nav (components/layout/Nav.tsx): equal-width mono boxes, like the reference. */
+@utility nav-box {
+  position: relative;
+  display: flex;
+  height: 2rem;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  overflow: hidden;
+  border-radius: 3px;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* ---------------------------------------------------------------------------
    Base
    --------------------------------------------------------------------------- */
 @layer base {
@@ -259,7 +318,9 @@
       animation: none !important;
     }
     .animate-mark-in,
-    .animate-rise {
+    .animate-rise,
+    .field-rise,
+    .field-drop {
       animation-name: apex-fade !important;
     }
     /* Menu sheet: fade instead of slide. */

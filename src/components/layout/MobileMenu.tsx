@@ -4,15 +4,15 @@ import { MenuIcon } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
-import { Button, buttonVariants } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 
 type NavLink = { label: string; href: string };
 
 /**
- * Small-screen navigation. Functional and neutral for now; the full-screen
- * menu choreography waits for the approved design (docs/PHASE3_PLAN.md).
+ * Small-screen navigation. The trigger is a nav box (GSAP Field rhythm); the sheet
+ * itself is unchanged until the preview is approved.
  */
 type MobileMenuProps = {
   links: NavLink[];
@@ -27,9 +27,14 @@ export function MobileMenu({ links, cta, labels }: MobileMenuProps) {
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
-        <Button variant="ghost" size="icon-lg" className="md:hidden" aria-label={labels.openMenu}>
-          <MenuIcon className="size-5" />
-        </Button>
+        <button
+          type="button"
+          aria-label={labels.openMenu}
+          className="field-drop nav-box bg-steel-800/70 px-3 text-silver-100 [--i:1] md:hidden"
+        >
+          {labels.menuTitle}
+          <MenuIcon aria-hidden className="size-3.5" />
+        </button>
       </SheetTrigger>
       <SheetContent
         side="right"

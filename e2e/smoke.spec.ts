@@ -24,7 +24,7 @@ test("home renders the headline and the five, with no TODO text", async ({ page 
   await expect(page.locator("body")).not.toContainText("TODO:");
   await expect(page.locator("[data-todo]")).toHaveCount(0);
 
-  // No sideways scrolling at any width or motion setting (the team track is 5 screens wide).
+  // No sideways scrolling at any width or motion setting.
   const overflow = await page.evaluate(
     () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
   );
@@ -86,7 +86,7 @@ test("team cards open member pages with prev/next navigation", async ({ page }) 
   const errors = collectErrors(page);
   await page.goto("/");
 
-  // Slides 2–5 sit off-screen inside the pinned horizontal track, so check links, then visit.
+  // Cards 2–5 are stacked below the first (sticky), so check links, then visit.
   const slideLinks = page.locator("#team ol > li a");
   await expect(slideLinks).toHaveCount(5);
   await expect(slideLinks.nth(1)).toHaveAttribute("href", "/team/mustafa-ishaq");
@@ -127,7 +127,9 @@ test("native scrolling and no WebGL on the home page", async ({ page }, testInfo
   // DECISIONS 2026-10-08: no smooth-scroll library, no live 3D on load.
   await expect(page.locator("html")).not.toHaveClass(/\blenis\b/);
   await expect(page.locator("[data-hero] canvas")).toHaveCount(0);
-  await expect(page.locator('[data-hero] img[src*="apex-mark-render"]')).toHaveCount(1);
+  await expect(page.locator('[data-hero] img[src*="apex-mark-layer"]')).toHaveCount(1);
+  // The aura is a pre-rendered video loop, not live 3D.
+  await expect(page.locator('[data-hero] video source[src*="apex-aura"]')).toHaveCount(2);
 
   await page.mouse.move(720, 450);
   await page.mouse.wheel(0, 600);

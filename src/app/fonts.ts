@@ -1,4 +1,4 @@
-import { Geist, Geist_Mono, Instrument_Serif } from "next/font/google";
+import { Geist, Geist_Mono, Instrument_Serif, Newsreader } from "next/font/google";
 import localFont from "next/font/local";
 
 /**
@@ -31,6 +31,18 @@ export const instrumentSerif = Instrument_Serif({
   variable: "--font-instrument-serif",
   weight: "400",
   style: "italic",
+  subsets: ["latin"],
+  display: "swap",
+});
+
+/**
+ * Display serif for the GSAP Field direction (free, OFL). The reference uses LT Superior
+ * Serif (commercial); Newsreader's display optical size is the closest free match.
+ */
+export const newsreader = Newsreader({
+  variable: "--font-newsreader",
+  style: ["normal", "italic"],
+  axes: ["opsz"],
   subsets: ["latin"],
   display: "swap",
 });

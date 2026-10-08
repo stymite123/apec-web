@@ -1,22 +1,36 @@
 "use client";
 
 import { Environment, Lightformer } from "@react-three/drei";
-import { Canvas, useFrame } from "@react-three/fiber";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Bloom, EffectComposer } from "@react-three/postprocessing";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { MathUtils, type Group } from "three";
 
 import { ApexMark3D } from "./ApexMark3D";
-import { LiquidBlob } from "./LiquidBlob";
+import { LiquidBlob, type BlobClock } from "./LiquidBlob";
 
 /** Fixed pose for the pre-rendered artwork: a slight three-quarter turn. */
 const POSE = { rotationY: 0.32, rotationX: -0.06, scale: 1.02, blobScale: 1.6 };
 
-function Mark() {
+/** `all` = the original single image; `mark` / `aura` = separate layers for the hero. */
+export type RenderLayer = "all" | "mark" | "aura";
+
+declare global {
+  interface Window {
+    /** Set by layered render mode: jump the aura to time `t` (s) and draw one frame. */
+    __renderMarkAt?: (t: number) => Promise<void>;
+  }
+}
+
+function Mark({ still }: { still: boolean }) {
   const group = useRef<Group>(null);
   useFrame((state, delta) => {
     const g = group.current;
     if (!g) return;
+    if (still) {
+      g.rotation.set(POSE.rotationX, POSE.rotationY, 0);
+      return;
+    }
     const damp = 1 - Math.exp(-delta * 4);
     g.rotation.y = MathUtils.lerp(
       g.rotation.y,
@@ -32,13 +46,40 @@ function Mark() {
   );
 }
 
+/** Layered mode: the script sets the aura time per frame (even spacing, deterministic). */
+function FrameDriver({ clock }: { clock: BlobClock }) {
+  const { invalidate } = useThree();
+  useEffect(() => {
+    window.__renderMarkAt = (t) =>
+      new Promise((resolve) => {
+        clock.time = t;
+        invalidate();
+        // Two frames: one to render, one to be sure it reached the screen.
+        requestAnimationFrame(() => requestAnimationFrame(() => resolve()));
+      });
+    return () => {
+      delete window.__renderMarkAt;
+    };
+  }, [clock, invalidate]);
+  return null;
+}
+
 /**
- * Offline renderer for the hero artwork (`pnpm render:mark`, `/?render-mark`).
- * Visitors never load this: the hero shows the pre-rendered image instead
+ * Offline renderer for the hero artwork (`pnpm render:layers`, `/?render-mark=mark|aura`).
+ * Visitors never load this: the hero shows pre-rendered media instead
  * (DECISIONS 2026-10-08 — no live 3D on initial load).
  * three.js can't read CSS variables, so brand colours appear as hex here.
  */
-export default function HeroScene({ onReady }: { onReady?: () => void }) {
+export default function HeroScene({
+  onReady,
+  layer = "all",
+}: {
+  onReady?: () => void;
+  layer?: RenderLayer;
+}) {
+  const layered = layer !== "all";
+  const [clock] = useState<BlobClock>(() => ({ time: 0 }));
+
   return (
     <Canvas
       dpr={2}
@@ -70,8 +111,14 @@ export default function HeroScene({ onReady }: { onReady?: () => void }) {
         />
       </Environment>
 
-      <LiquidBlob animate scale={POSE.blobScale} />
-      <Mark />
+      {/* The aura is additive: on a transparent canvas its result depends on how the
+          browser composites alpha, so the video layer renders on an opaque page colour. */}
+      {layer === "aura" && <color attach="background" args={["#05060A"]} />}
+      {layer !== "mark" && (
+        <LiquidBlob animate scale={POSE.blobScale} clock={layered ? clock : undefined} />
+      )}
+      {layer !== "aura" && <Mark still={layered} />}
+      {layered && <FrameDriver clock={clock} />}
 
       <EffectComposer multisampling={4}>
         <Bloom mipmapBlur intensity={0.6} luminanceThreshold={0.72} radius={0.6} />
