@@ -8,10 +8,12 @@ Owner for SEO wording (brief §12): **Muhammad Huzaifa**.
 
 | Where | Draft |
 |---|---|
-| Hero sub-headline | A five-person digital studio for SEO, AI agents, websites, mobile apps and brand design. AI gives us speed; our specialists bring the judgement. |
+| Hero sub-headline (preview: intro panel paragraph) | A five-person digital studio for SEO, AI agents, websites, mobile apps and brand design. AI gives us speed; our specialists bring the judgement. |
 | Meta description (Google, share cards) | APEC Digital is a five-person studio from Pakistan for SEO, AI agents, web development, mobile apps and brand design, working with clients worldwide. |
 | Manifesto | AI makes us fast. / Specialists make it right. / You get both. |
 | Team intro | One specialist per discipline, working as one team on your project. |
+| Intro panel label (preview) | Scroll gently / into the five |
+| Team card caption (preview) | APEC Digital · The five |
 | Services title + intro | What we do — Five disciplines, each led by the person who practises it. |
 | Process title | How we work |
 | Contact intro | Tell us what you’re building. Email or WhatsApp — whichever is easier for you. |

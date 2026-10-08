@@ -43,6 +43,8 @@ export const site = siteSchema.parse({
       // DRAFT
       intro: "One specialist per discipline, working as one team on your project.",
       viewProfile: "Meet {name}",
+      cardCaption: "APEC Digital · The five",
+      scrollLabel: ["Scroll gently", "into the five"],
     },
     services: {
       id: "services",

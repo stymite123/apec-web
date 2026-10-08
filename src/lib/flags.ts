@@ -5,6 +5,6 @@ export const SHOW_TESTIMONIALS = false;
 export const ENABLE_SOUND = false;
 /**
  * Live WebGL on page load. Off: the hero uses artwork pre-rendered from the 3D
- * scene (`pnpm render:mark`) — DECISIONS 2026-10-08, docs/PERFORMANCE_REVIEW.md.
+ * scene (`pnpm render:layers`) — DECISIONS 2026-10-08, docs/PERFORMANCE_REVIEW.md.
  */
 export const ENABLE_3D = false;

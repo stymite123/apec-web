@@ -7,26 +7,39 @@ import { useEffect, useRef, useState } from "react";
 import { gsap, MOTION_OK, useGSAP } from "@/lib/gsap";
 import { scrub } from "@/lib/motion";
 
-/** Offline 3D renderer â€” only loaded with `?render-mark` (pnpm render:mark). */
+import type { RenderLayer } from "@/components/three/HeroScene";
+
+/** Offline 3D renderer: only loaded with `?render-mark` (pnpm render:layers). */
 const HeroScene = dynamic(() => import("@/components/three/HeroScene"), { ssr: false });
 
-/** Pre-rendered from the 3D scene by `pnpm render:mark`. TEMPORARY: based on the logo trace. */
-const ARTWORK = "/brand/apex-mark-render.png";
+/**
+ * Pre-rendered from the 3D scene by `pnpm render:layers` (TEMPORARY: based on the logo trace):
+ * the mark as a transparent image, and its morphing aura as a seamless video loop.
+ */
+const MARK = "/brand/apex-mark-layer.png";
+const AURA = {
+  webm: "/brand/apex-aura.webm",
+  mp4: "/brand/apex-aura.mp4",
+  poster: "/brand/apex-aura-poster.jpg",
+};
 
 /**
  * Client half of the hero. Visitors get pre-rendered artwork (no WebGL on load,
- * DECISIONS 2026-10-08); motion is transform/opacity only: entrance + float (CSS),
- * pointer tilt (desktop) and scroll drift (GSAP, native scrolling).
+ * DECISIONS 2026-10-08): a transparent mark over a looping aura video. Motion is the
+ * video plus transform/opacity: entrance + float (CSS), pointer tilt with aura parallax
+ * (desktop) and recede-on-cover (GSAP scrub, native scrolling).
  */
 export function HeroStage() {
   const root = useRef<HTMLDivElement>(null);
   const art = useRef<HTMLDivElement>(null);
-  const [renderMode, setRenderMode] = useState(false);
+  const aura = useRef<HTMLVideoElement>(null);
+  const [renderMode, setRenderMode] = useState<RenderLayer | null>(null);
 
   useEffect(() => {
-    if (new URLSearchParams(window.location.search).has("render-mark")) {
+    const param = new URLSearchParams(window.location.search).get("render-mark");
+    if (param !== null) {
       // eslint-disable-next-line react-hooks/set-state-in-effect -- one-off tooling switch
-      setRenderMode(true);
+      setRenderMode(param === "mark" || param === "aura" ? param : "all");
     }
   }, []);
 
@@ -37,18 +50,29 @@ export function HeroStage() {
       if (!hero || !target) return;
       const mm = gsap.matchMedia();
 
+      // As the next panel slides over the (sticky) hero, the hero recedes.
+      const cover = hero.parentElement?.querySelector<HTMLElement>("[data-cover]");
       mm.add(MOTION_OK, () => {
+        if (!cover) return;
         gsap
           .timeline({
-            scrollTrigger: { trigger: hero, start: "top top", end: "bottom top", scrub },
+            scrollTrigger: { trigger: cover, start: "top bottom", end: "top top", scrub },
           })
-          .to(target, { yPercent: -16, scale: 0.9, opacity: 0.25, ease: "none" }, 0)
+          .to(target, { yPercent: -12, scale: 0.88, opacity: 0.3, ease: "none" }, 0)
           .to(
-            hero.querySelector("[data-hero-wordmark]"),
-            { yPercent: -18, opacity: 0.15, ease: "none" },
+            hero.querySelector("[data-hero-title]"),
+            { yPercent: -14, opacity: 0.25, ease: "none" },
             0,
           )
-          .to(hero.querySelectorAll("[data-hero-fade]"), { y: -60, opacity: 0, ease: "none" }, 0);
+          .to(hero.querySelectorAll("[data-hero-fade]"), { y: -40, opacity: 0, ease: "none" }, 0);
+      });
+
+      // The aura loop plays unless the visitor prefers reduced motion (then: still poster).
+      mm.add(MOTION_OK, () => {
+        const video = aura.current;
+        if (!video) return;
+        video.play().catch(() => {});
+        return () => video.pause();
       });
 
       // Pointer tilt: desktop with a fine pointer only.
@@ -58,12 +82,17 @@ export function HeroStage() {
         const toX = gsap.quickTo(tilt, "x", { duration: 0.9, ease: "power3.out" });
         const toY = gsap.quickTo(tilt, "y", { duration: 0.9, ease: "power3.out" });
         const toR = gsap.quickTo(tilt, "rotation", { duration: 0.9, ease: "power3.out" });
+        const shift = target.querySelector<HTMLElement>("[data-aura-shift]");
+        const auraX = shift && gsap.quickTo(shift, "x", { duration: 1.4, ease: "power3.out" });
+        const auraY = shift && gsap.quickTo(shift, "y", { duration: 1.4, ease: "power3.out" });
         const onMove = (event: PointerEvent) => {
           const nx = (event.clientX / window.innerWidth) * 2 - 1;
           const ny = (event.clientY / window.innerHeight) * 2 - 1;
           toX(nx * 14);
           toY(ny * 10);
           toR(nx * 1.5);
+          auraX?.(nx * 18);
+          auraY?.(ny * 14);
         };
         window.addEventListener("pointermove", onMove, { passive: true });
         return () => window.removeEventListener("pointermove", onMove);
@@ -77,7 +106,7 @@ export function HeroStage() {
   if (renderMode) {
     return (
       <div aria-hidden className="absolute inset-0" data-render-mark>
-        <HeroScene onReady={() => performance.mark("render-mark:ready")} />
+        <HeroScene layer={renderMode} onReady={() => performance.mark("render-mark:ready")} />
       </div>
     );
   }
@@ -87,18 +116,35 @@ export function HeroStage() {
       {/* Blend on the outermost wrapper: inner transform layers are isolated, so a blend
           set there couldn't reach the wordmark behind. `lighten` lets the artwork's dark
           backdrop disappear over the page. */}
-      <div className="absolute top-[calc(var(--nav-height)+0.5rem)] left-1/2 w-[min(108vw,520px)] -translate-x-1/2 mix-blend-lighten md:top-1/2 md:right-[-3%] md:left-auto md:w-[min(56vw,860px)] md:translate-x-0 md:-translate-y-1/2">
+      <div className="absolute top-[50%] left-1/2 w-[min(108vw,560px)] -translate-x-1/2 -translate-y-1/2 mix-blend-lighten md:top-[52%] md:right-[-2%] md:left-auto md:w-[min(58vw,900px)] md:translate-x-0">
         <div ref={art} className="will-change-transform">
           <div data-art-tilt>
-            <div className="animate-mark-in">
-              <div className="animate-float">
+            <div className="animate-mark-in [animation-delay:0.85s] [animation-duration:1.8s]">
+              <div className="relative animate-float [mask-image:radial-gradient(closest-side,black_64%,transparent)]">
+                {/* The aura moves on its own (video, GPU-decoded) and a little more than
+                    the mark under the pointer, for depth. */}
+                <div data-aura-shift className="absolute inset-0">
+                  <video
+                    ref={aura}
+                    muted
+                    loop
+                    playsInline
+                    preload="auto"
+                    poster={AURA.poster}
+                    className="size-full"
+                  >
+                    <source src={AURA.webm} type="video/webm" />
+                    <source src={AURA.mp4} type="video/mp4" />
+                  </video>
+                </div>
                 <Image
-                  src={ARTWORK}
+                  src={MARK}
                   alt=""
                   width={1600}
                   height={1600}
-                  sizes="(min-width: 768px) 56vw, 108vw"
-                  className="h-auto w-full [mask-image:radial-gradient(closest-side,black_64%,transparent)]"
+                  priority
+                  sizes="(min-width: 768px) 58vw, 108vw"
+                  className="relative h-auto w-full"
                 />
               </div>
             </div>
