@@ -51,3 +51,4 @@ next-env.d.ts
 /references/reels/*.mp4
 /content-intake/
 .playwright-mcp/
+/references/frames/
