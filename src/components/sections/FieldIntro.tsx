@@ -1,10 +1,9 @@
 "use client";
 
-import Image from "next/image";
-import { useRef } from "react";
+import { useId, useRef } from "react";
 
 import { gsap, MOTION_OK, SplitText, useGSAP } from "@/lib/gsap";
-import { whenIdle } from "@/lib/idle";
+import { whenIdleEach } from "@/lib/idle";
 import { scrub } from "@/lib/motion";
 
 /**
@@ -38,12 +37,20 @@ type ScribbleName = keyof typeof SCRIBBLES;
 
 function Scribble({ name, className }: { name: ScribbleName; className?: string }) {
   const { viewBox, d, stroke } = SCRIBBLES[name];
+  const gradient = `scribble-${useId().replace(/:/g, "")}`;
   return (
     <svg aria-hidden viewBox={viewBox} fill="none" className={className} data-scribble>
+      <defs>
+        <linearGradient id={gradient} x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="#f8b4c4" />
+          <stop offset="55%" stopColor="#e5577a" />
+          <stop offset="100%" stopColor="#b8304f" />
+        </linearGradient>
+      </defs>
       <path
         d={d}
         pathLength={1}
-        stroke="currentColor"
+        stroke={`url(#${gradient})`}
         strokeWidth={stroke}
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -60,33 +67,34 @@ const PHRASE_SCRIBBLES: { name: ScribbleName; className: string }[] = [
   { name: "loop", className: "-top-[30%] left-[52%] w-[34%]" },
 ];
 
-/** Floating portrait cards (whole portraits, never cropped to fragments). */
-const FLOATS = [
-  { left: "5%", width: "w-[clamp(130px,19vw,280px)]", at: 0 },
-  { left: "73%", width: "w-[clamp(120px,17vw,250px)]", at: 0.4 },
-  { left: "26%", width: "w-[clamp(100px,13vw,190px)]", at: 0.95 },
-  { left: "79%", width: "w-[clamp(130px,20vw,290px)]", at: 1.4 },
-  { left: "9%", width: "w-[clamp(120px,16vw,240px)]", at: 1.65 },
+/** Floating discipline tags (text only: Mustafa 2026-10-08, no repeated photos). */
+const FLOATS: { side: "left" | "right"; offset: string; at: number }[] = [
+  { side: "left", offset: "6%", at: 0 },
+  { side: "right", offset: "7%", at: 0.4 },
+  { side: "left", offset: "22%", at: 0.95 },
+  { side: "right", offset: "12%", at: 1.4 },
+  { side: "left", offset: "9%", at: 1.65 },
 ];
 
 /**
  * The panel that slides over the sticky hero (GSAP Field "base" section), adapted to
  * APEC's dark theme: intro paragraph whose words light up + drawn arrow, then
  * a pinned stage (CSS sticky, native scroll) where the manifesto phrases swap
- * character by character, each with its scribble, while the five float past. It ends in void, handing over to the team cards.
+ * character by character, each with its scribble, while the five disciplines float past
+ * as tags. It ends in void, handing over to the team cards.
  * Motion: transform/opacity, plus stroke drawing on the small scribble paths.
  */
 export function FieldIntro({
   label,
   intro,
   phrases,
-  floats,
+  tags,
 }: {
   label: [string, string];
   intro: string;
   phrases: string[];
-  /** Portrait per member, in team order. */
-  floats: string[];
+  /** One tag per discipline: a number and a name. */
+  tags: { number: string; label: string }[];
 }) {
   const root = useRef<HTMLDivElement>(null);
 
@@ -96,101 +104,127 @@ export function FieldIntro({
       if (!el) return;
       const q = gsap.utils.selector(el);
       const mm = gsap.matchMedia();
-      // Below the fold: set up in its own idle-time task, not during hydration.
-      const cancel = whenIdle(() => {
-        mm.add(MOTION_OK, () => {
-          // 1. Intro: words light up, arrow draws.
-          const words = SplitText.create(q("[data-intro]")[0], { type: "words" });
-          gsap
-            .timeline({
-              scrollTrigger: {
-                trigger: q("[data-intro-block]")[0],
-                start: "top 85%",
-                end: "bottom 35%",
-                scrub,
-              },
-            })
-            .fromTo(words.words, { opacity: 0.16 }, { opacity: 1, stagger: 0.08, ease: "none" }, 0)
-            .fromTo(
-              q("[data-intro-block] [data-scribble] path"),
-              { strokeDashoffset: 1 },
-              { strokeDashoffset: 0, ease: "none", duration: 0.6 * words.words.length * 0.08 },
-              0.25 * words.words.length * 0.08,
-            );
-
-          // 2. Pinned phrases: chars out/in, scribbles draw, cards float, then fade to void.
-          const phraseEls = q<HTMLElement>("[data-phrase]");
-          const splits = phraseEls.map((p) =>
-            SplitText.create(p.querySelector("[data-phrase-text]"), { type: "words,chars" }),
-          );
-          const tl = gsap.timeline({
-            defaults: { ease: "none" },
-            scrollTrigger: {
-              trigger: q("[data-phrases]")[0],
-              start: "top top",
-              end: "bottom bottom",
-              scrub,
-              invalidateOnRefresh: true,
-            },
-          });
-          phraseEls.forEach((phrase, i) => {
-            const chars = splits[i].chars;
-            const path = phrase.querySelector("[data-scribble] path");
-            const kicker = phrase.querySelector("[data-phrase-kicker]");
-            tl.set(phrase, { autoAlpha: 1 }, i);
-            if (i > 0) {
-              tl.fromTo(
-                chars,
-                { yPercent: 70, opacity: 0 },
-                { yPercent: 0, opacity: 1, stagger: 0.012, duration: 0.25 },
-                i,
-              ).fromTo(kicker, { opacity: 0 }, { opacity: 1, duration: 0.2 }, i);
-            }
-            tl.fromTo(
-              path,
-              { strokeDashoffset: 1 },
-              { strokeDashoffset: 0, duration: 0.35 },
-              i + 0.2,
-            );
-            if (i < phraseEls.length - 1) {
-              tl.to(chars, { yPercent: -70, opacity: 0, stagger: 0.012, duration: 0.25 }, i + 0.72)
-                .to([kicker, path], { opacity: 0, duration: 0.2 }, i + 0.72)
-                .set(phrase, { autoAlpha: 0 }, i + 1);
-            }
-          });
-          const span = phraseEls.length;
-          q<HTMLElement>("[data-float]").forEach((card, i) => {
-            const at = FLOATS[i]?.at ?? i * 0.5;
-            tl.fromTo(
-              card,
-              { y: () => window.innerHeight * 1.05, rotation: i % 2 ? 4 : -4 },
-              { y: () => -card.offsetHeight * 1.2, rotation: i % 2 ? -3 : 3, duration: 1.3 },
-              at,
-            );
-          });
-          tl.to(q("[data-to-void]"), { opacity: 1, duration: 0.2 }, span - 0.2);
-
-          return () => {
-            words.revert();
-            splits.forEach((s) => s.revert());
-          };
-        });
-
-        // Reduced motion: no movement; phrases fade in once as they arrive.
-        mm.add("(prefers-reduced-motion: reduce)", () => {
-          for (const phrase of q<HTMLElement>("[data-phrase]")) {
-            gsap.from(phrase, {
-              opacity: 0,
-              duration: 1.2,
-              scrollTrigger: { trigger: phrase, start: "top 80%", once: true },
-            });
-          }
-        });
+      mm.add(MOTION_OK, () => {
+        // Below the fold: intro and phrases are set up in separate idle slices.
+        const contexts: gsap.Context[] = [];
+        const cancel = whenIdleEach([
+          () =>
+            contexts.push(
+              gsap.context(() => {
+                // 1. Intro: words light up, arrow draws.
+                const words = SplitText.create(q("[data-intro]")[0], { type: "words" });
+                gsap
+                  .timeline({
+                    scrollTrigger: {
+                      trigger: q("[data-intro-block]")[0],
+                      start: "top 85%",
+                      end: "bottom 35%",
+                      scrub,
+                    },
+                  })
+                  .fromTo(
+                    words.words,
+                    { opacity: 0.16 },
+                    { opacity: 1, stagger: 0.08, ease: "none" },
+                    0,
+                  )
+                  .fromTo(
+                    q("[data-intro-block] [data-scribble] path"),
+                    { strokeDashoffset: 1 },
+                    {
+                      strokeDashoffset: 0,
+                      ease: "none",
+                      duration: 0.6 * words.words.length * 0.08,
+                    },
+                    0.25 * words.words.length * 0.08,
+                  );
+              }),
+            ),
+          () =>
+            contexts.push(
+              gsap.context(() => {
+                // 2. Pinned phrases: chars out/in, scribbles draw, cards float, then fade to void.
+                const phraseEls = q<HTMLElement>("[data-phrase]");
+                const splits = phraseEls.map((p) =>
+                  SplitText.create(p.querySelector("[data-phrase-text]"), {
+                    type: "words,chars",
+                    charsClass: "text-grad",
+                  }),
+                );
+                // The letters paint the gradient now; the phrase itself must not (ghost copy).
+                const texts = phraseEls.map((p) => p.querySelector("[data-phrase-text]"));
+                texts.forEach((text) => text?.classList.add("text-grad-split"));
+                const tl = gsap.timeline({
+                  defaults: { ease: "none" },
+                  scrollTrigger: {
+                    trigger: q("[data-phrases]")[0],
+                    start: "top top",
+                    end: "bottom bottom",
+                    scrub,
+                    invalidateOnRefresh: true,
+                  },
+                });
+                phraseEls.forEach((phrase, i) => {
+                  const chars = splits[i].chars;
+                  const path = phrase.querySelector("[data-scribble] path");
+                  const kicker = phrase.querySelector("[data-phrase-kicker]");
+                  tl.set(phrase, { autoAlpha: 1 }, i);
+                  if (i > 0) {
+                    tl.fromTo(
+                      chars,
+                      { yPercent: 70, opacity: 0 },
+                      { yPercent: 0, opacity: 1, stagger: 0.012, duration: 0.25 },
+                      i,
+                    ).fromTo(kicker, { opacity: 0 }, { opacity: 1, duration: 0.2 }, i);
+                  }
+                  tl.fromTo(
+                    path,
+                    { strokeDashoffset: 1 },
+                    { strokeDashoffset: 0, duration: 0.35 },
+                    i + 0.2,
+                  );
+                  if (i < phraseEls.length - 1) {
+                    tl.to(
+                      chars,
+                      { yPercent: -70, opacity: 0, stagger: 0.012, duration: 0.25 },
+                      i + 0.72,
+                    )
+                      .to([kicker, path], { opacity: 0, duration: 0.2 }, i + 0.72)
+                      .set(phrase, { autoAlpha: 0 }, i + 1);
+                  }
+                });
+                const span = phraseEls.length;
+                q<HTMLElement>("[data-float]").forEach((card, i) => {
+                  const at = FLOATS[i]?.at ?? i * 0.5;
+                  tl.fromTo(
+                    card,
+                    { y: () => window.innerHeight * 1.05, rotation: i % 2 ? 4 : -4 },
+                    { y: () => -card.offsetHeight * 1.2, rotation: i % 2 ? -3 : 3, duration: 1.3 },
+                    at,
+                  );
+                });
+                tl.to(q("[data-to-void]"), { opacity: 1, duration: 0.2 }, span - 0.2);
+                return () => texts.forEach((text) => text?.classList.remove("text-grad-split"));
+              }),
+            ),
+        ]);
+        return () => {
+          cancel();
+          contexts.forEach((context) => context.revert());
+        };
       });
-      return () => {
-        cancel();
-        mm.revert();
-      };
+
+      // Reduced motion: no movement; phrases fade in once as they arrive.
+      mm.add("(prefers-reduced-motion: reduce)", () => {
+        for (const phrase of q<HTMLElement>("[data-phrase]")) {
+          gsap.from(phrase, {
+            opacity: 0,
+            duration: 1.2,
+            scrollTrigger: { trigger: phrase, start: "top 80%", once: true },
+          });
+        }
+      });
+      return () => mm.revert();
     },
     { scope: root },
   );
@@ -199,19 +233,19 @@ export function FieldIntro({
     <div
       ref={root}
       data-cover
-      className="relative z-10 rounded-t-[14px] bg-navy-900 shadow-[0_-40px_90px_rgb(0_0_0/0.65)]"
+      className="relative z-10 rounded-t-[14px] bg-oxblood-900 shadow-[0_-40px_90px_rgb(0_0_0/0.65)]"
     >
       {/* Burgundy hairline along the panel's leading edge. */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-x-[10%] top-0 h-px bg-linear-to-r from-transparent via-wine-300/80 to-transparent"
+        className="pointer-events-none absolute inset-x-[10%] top-0 h-px bg-linear-to-r from-transparent via-rose-400/80 to-transparent"
       />
       {/* Intro: mono label left, paragraph right (reference "Somewhere between the code…"). */}
       <div
         data-intro-block
         className="relative grid min-h-[70svh] content-start gap-10 px-4 pt-14 pb-24 md:grid-cols-2 md:px-6 md:pt-14"
       >
-        <p className="label-mono text-[11px] text-steel-400">
+        <p className="label-mono text-[11px] text-grey-400">
           {label[0]}
           <br />
           {label[1]}
@@ -225,7 +259,7 @@ export function FieldIntro({
           </p>
           <Scribble
             name="arrow"
-            className="pointer-events-none absolute top-[62%] right-[8%] w-[clamp(120px,15vw,220px)] text-brand-300"
+            className="pointer-events-none absolute top-[62%] right-[8%] w-[clamp(120px,15vw,220px)] text-rose-400"
           />
         </div>
       </div>
@@ -237,22 +271,22 @@ export function FieldIntro({
       >
         <div className="sticky top-0 h-svh overflow-hidden motion-reduce:static motion-reduce:h-auto motion-reduce:space-y-[30svh] motion-reduce:overflow-visible">
           <div aria-hidden className="absolute inset-0 motion-reduce:hidden">
-            {floats.map((src, i) => (
-              <div
-                key={src}
-                data-float
-                className={`absolute top-0 ${FLOATS[i]?.width ?? "w-40"} aspect-[4/5] overflow-hidden rounded-md bg-navy-800 ring-1 ring-steel-800`}
-                style={{ left: FLOATS[i]?.left ?? "50%", transform: "translateY(110vh)" }}
-              >
-                <Image
-                  src={src}
-                  alt=""
-                  fill
-                  sizes="(min-width: 768px) 20vw, 34vw"
-                  className="object-cover object-top"
-                />
-              </div>
-            ))}
+            {tags.map((tag, i) => {
+              const place = FLOATS[i % FLOATS.length];
+              return (
+                <div
+                  key={tag.label}
+                  data-float
+                  className="absolute top-0 flex items-baseline gap-3 rounded-md border border-grey-700 bg-grey-900/90 px-4 py-3 whitespace-nowrap shadow-[0_20px_40px_rgb(0_0_0/0.35)] md:px-5 md:py-4"
+                  style={{ [place.side]: place.offset, transform: "translateY(110vh)" }}
+                >
+                  <span className="label-mono text-[11px] text-rose-400">{tag.number}</span>
+                  <span className="font-field text-[clamp(1.05rem,1.9vw,1.75rem)] text-grey-300 [font-variation-settings:'opsz'_72]">
+                    {tag.label}
+                  </span>
+                </div>
+              );
+            })}
           </div>
 
           {phrases.map((phrase, i) => (
@@ -262,18 +296,18 @@ export function FieldIntro({
               className={`absolute inset-0 grid place-items-center px-4 motion-reduce:visible motion-reduce:static motion-reduce:opacity-100 ${i === 0 ? "" : "invisible opacity-0"}`}
             >
               <div className="relative text-center">
-                <p data-phrase-kicker className="mb-3 label-mono text-[11px] text-wine-200">
+                <p data-phrase-kicker className="mb-3 label-mono text-[11px] text-rose-300">
                   {String(i + 1).padStart(2, "0")} / {String(phrases.length).padStart(2, "0")}
                 </p>
                 <p
                   data-phrase-text
-                  className="font-field text-[clamp(2.4rem,5vw,4.75rem)] leading-[1] tracking-[-0.03em] text-balance text-silver-100 [font-variation-settings:'opsz'_72] md:whitespace-nowrap"
+                  className="text-grad font-field text-[clamp(2.4rem,5vw,4.75rem)] leading-[1] tracking-[-0.03em] text-balance [--g-from:#ffffff] [--g-to:#a9abb2] [font-variation-settings:'opsz'_72] md:whitespace-nowrap"
                 >
                   {phrase}
                 </p>
                 <Scribble
                   name={PHRASE_SCRIBBLES[i % PHRASE_SCRIBBLES.length].name}
-                  className={`pointer-events-none absolute text-brand-300 ${PHRASE_SCRIBBLES[i % PHRASE_SCRIBBLES.length].className}`}
+                  className={`pointer-events-none absolute text-rose-400 ${PHRASE_SCRIBBLES[i % PHRASE_SCRIBBLES.length].className}`}
                 />
               </div>
             </div>

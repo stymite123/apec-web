@@ -30,7 +30,7 @@ export function MobileMenu({ links, cta, labels }: MobileMenuProps) {
         <button
           type="button"
           aria-label={labels.openMenu}
-          className="field-drop nav-box bg-steel-800/70 px-3 text-silver-100 [--i:1] md:hidden"
+          className="field-drop nav-box bg-grey-800 px-3 text-silver-100 [--i:1] md:hidden"
         >
           {labels.menuTitle}
           <MenuIcon aria-hidden className="size-3.5" />
@@ -38,7 +38,7 @@ export function MobileMenu({ links, cta, labels }: MobileMenuProps) {
       </SheetTrigger>
       <SheetContent
         side="right"
-        className="w-full border-steel-800 bg-ink sm:max-w-sm"
+        className="w-full border-grey-800 bg-oxblood-950 sm:max-w-sm"
         aria-describedby={undefined}
       >
         <SheetTitle className="sr-only">{labels.menuTitle}</SheetTitle>

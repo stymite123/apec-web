@@ -8,12 +8,17 @@ import { siteSchema } from "./schema";
 export const site = siteSchema.parse({
   name: "APEC Digital",
   shortName: "APEC",
-  expansion: "Agency for Professionalism, Experience and Creativity",
+  expansion: "Agency for Professionals, Experienced & Creatives",
   tagline: "Innovate | Grow | Succeed",
-  headline: { lead: "Five specialists.", accent: "One", tail: "apex." },
+  headline: {
+    lines: ["Agency for", "Professionals,", "Experienced", "& Creatives"],
+    accent: "Creatives",
+  },
+  // DRAFT
+  heroCaption: "SEO · AI agents · Websites · Mobile apps · Brand design",
   // DRAFT
   subheadline:
-    "A five-person digital studio for SEO, AI agents, websites, mobile apps and brand design. AI gives us speed; our specialists bring the judgement.",
+    "Five specialists, one standard. Search, AI agents, websites, mobile apps and brand design, each led by the person who actually does the work. AI sets our pace; craft sets the bar.",
   // DRAFT
   description:
     "APEC Digital is a five-person studio from Pakistan for SEO, AI agents, web development, mobile apps and brand design, working with clients worldwide.",
@@ -52,7 +57,6 @@ export const site = siteSchema.parse({
       title: "What we do",
       // DRAFT
       intro: "Five disciplines, each led by the person who practises it.",
-      packagesTitle: "Combined",
       ledBy: "Led by",
     },
     process: {
@@ -63,7 +67,7 @@ export const site = siteSchema.parse({
     contact: {
       id: "contact",
       eyebrow: "04 — Contact",
-      title: "Let’s build something at the apex.",
+      title: "Bring your next build to APEC.",
       // DRAFT
       intro: "Tell us what you’re building. Email or WhatsApp — whichever is easier for you.",
       emailLabel: "Email us",

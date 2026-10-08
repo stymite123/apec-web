@@ -20,7 +20,7 @@ export function Contact() {
     <section
       id={copy.id}
       aria-labelledby={`${copy.id}-title`}
-      className="relative isolate overflow-hidden border-t border-steel-800"
+      className="relative isolate overflow-hidden border-t border-grey-800 bg-oxblood-950"
     >
       <div
         aria-hidden
@@ -28,18 +28,18 @@ export function Contact() {
       />
       <div
         aria-hidden
-        className="pointer-events-none absolute top-[-30%] right-[-10%] -z-10 aspect-square w-[60vw] rounded-full bg-(image:--glow-navy) blur-2xl"
+        className="pointer-events-none absolute top-[-30%] right-[-10%] -z-10 aspect-square w-[60vw] rounded-full bg-[radial-gradient(closest-side,rgb(52_54_59/0.55),transparent)] blur-2xl"
       />
       <div className="container-site py-32">
-        <p className="label-mono text-steel-400">{copy.eyebrow}</p>
+        <p className="label-mono text-rose-400">{copy.eyebrow}</p>
         <SplitReveal
           id={`${copy.id}-title`}
-          className="mt-4 max-w-[16ch] font-display text-h2 font-semibold text-silver-100"
+          className="text-grad mt-5 max-w-[14ch] font-field text-[clamp(3rem,7vw,7rem)] leading-[0.9] tracking-[-0.035em] [--g-from:#ffffff] [--g-to:#a9abb2] [font-variation-settings:'opsz'_72]"
         >
           {copy.title}
         </SplitReveal>
         {copy.intro && shouldRender(copy.intro) && (
-          <p className="mt-6 max-w-xl text-lg text-steel-300">
+          <p className="mt-6 max-w-xl text-lg text-grey-300">
             <Copy value={copy.intro} />
           </p>
         )}
@@ -64,9 +64,9 @@ export function Contact() {
             {copy.whatsappLabel}
           </a>
         </div>
-        <dl className="mt-12 grid gap-6 text-steel-300 sm:grid-cols-2 md:max-w-2xl">
+        <dl className="mt-12 grid gap-6 text-grey-300 sm:grid-cols-2 md:max-w-2xl">
           <div>
-            <dt className="label-mono text-steel-400">{copy.emailTerm}</dt>
+            <dt className="label-mono text-grey-400">{copy.emailTerm}</dt>
             <dd className="mt-2 break-all">
               <a href={`mailto:${email}`} className="hover:text-silver-100">
                 {email}
@@ -74,7 +74,7 @@ export function Contact() {
             </dd>
           </div>
           <div>
-            <dt className="label-mono text-steel-400">{copy.phoneTerm}</dt>
+            <dt className="label-mono text-grey-400">{copy.phoneTerm}</dt>
             <dd className="mt-2">
               <a href={`tel:+${site.contact.whatsapp}`} className="hover:text-silver-100">
                 {phone}

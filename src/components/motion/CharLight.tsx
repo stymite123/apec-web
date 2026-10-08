@@ -12,9 +12,15 @@ export function CharLight({
   label,
   start = 0,
   className,
+  lineClassNames,
+  charClassName,
 }: {
   /** Each line is a list of runs; `em` runs render in italic. */
   lines: { text: string; em?: boolean; className?: string }[][];
+  /** Optional class per line (e.g. gradient colours). */
+  lineClassNames?: string[];
+  /** Class added to every letter (e.g. `text-grad`). */
+  charClassName?: string;
   label: string;
   /** Index offset, so several blocks can share one stagger. */
   start?: number;
@@ -27,7 +33,10 @@ export function CharLight({
       <span className="sr-only">{label}</span>
       <span aria-hidden className={className}>
         {lines.map((runs, lineIndex) => (
-          <span key={lineIndex} className="block whitespace-nowrap">
+          <span
+            key={lineIndex}
+            className={cn("block whitespace-nowrap", lineClassNames?.[lineIndex])}
+          >
             {runs.map((run, runIndex) => (
               <span key={runIndex} className={cn(run.em && "italic", run.className)}>
                 {[...run.text].map((char, charIndex) => (
@@ -36,7 +45,7 @@ export function CharLight({
                       " "
                     ) : (
                       <span
-                        className="field-char"
+                        className={cn("field-char", charClassName)}
                         style={{ "--i": index++ } as React.CSSProperties}
                       >
                         {char}

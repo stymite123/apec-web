@@ -87,13 +87,13 @@ async function backdropOne(file, slug) {
   await sharp(join(SRC, file))
     .resize(192, 192, { fit: "cover", position: "top" })
     .blur(6)
-    // Luminance mapped onto a dark navy → blue ramp (a dark duotone).
+    // Luminance mapped onto a blackish-red ramp (a dark duotone).
     .recomb([
-      [0.036, 0.071, 0.013],
-      [0.078, 0.153, 0.029],
-      [0.168, 0.33, 0.062],
+      [0.129, 0.254, 0.047],
+      [0.042, 0.083, 0.015],
+      [0.06, 0.118, 0.022],
     ])
-    .linear(1, 8)
+    .linear(1, 6)
     .jpeg({ quality: 72 })
     .toFile(out);
   console.log(out);

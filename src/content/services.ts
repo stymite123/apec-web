@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { packageSchema, processStepSchema, serviceSchema } from "./schema";
+import { processStepSchema, serviceSchema } from "./schema";
 import { team } from "./team";
 
 /** DRAFT copy throughout — see docs/COPY_REVIEW.md. One discipline per member. */
@@ -45,31 +45,6 @@ export const services = z
       throw new Error(`services: lead "${service.lead}" is not a team member`);
     }
     return service;
-  });
-
-export const packages = z
-  .array(packageSchema)
-  .parse([
-    {
-      slug: "launch",
-      title: "Launch",
-      summary: "A new brand, website and search foundation, delivered together.",
-      includes: ["brand-design", "web", "seo"],
-    },
-    {
-      slug: "automate",
-      title: "Automate",
-      summary: "AI agents wired into your website or app, so the busywork runs itself.",
-      includes: ["ai-agents", "web", "mobile-apps"],
-    },
-  ])
-  .map((pkg) => {
-    for (const slug of pkg.includes) {
-      if (!services.some((service) => service.slug === slug)) {
-        throw new Error(`packages: "${pkg.slug}" includes unknown service "${slug}"`);
-      }
-    }
-    return pkg;
   });
 
 /** Brief §8.1 #7: Discover → Design → Build (AI-accelerated) → Launch & Grow. */

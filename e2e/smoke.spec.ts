@@ -15,7 +15,7 @@ test("home renders the headline and the five, with no TODO text", async ({ page 
 
   const h1 = page.getByRole("heading", { level: 1 });
   await expect(h1).toHaveCount(1);
-  await expect(h1).toHaveText(/Five specialists\.\s+One\s+apex\./);
+  await expect(h1).toContainText("Agency for Professionals, Experienced & Creatives");
   await expect(page.locator("#team ol > li")).toHaveCount(5);
   for (const id of ["services", "process", "contact"]) {
     await expect(page.locator(`#${id}-title`)).toBeAttached();

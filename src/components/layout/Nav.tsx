@@ -17,7 +17,7 @@ export function Nav() {
       <div className="grid grid-cols-[1fr_auto] gap-2 px-4 pt-4 md:grid-cols-6 md:px-6">
         <Link
           href="/"
-          className="field-drop nav-box justify-start bg-ink/90 px-3 text-brand-300 [--i:0] md:justify-center"
+          className="field-drop nav-box justify-start bg-oxblood-900 px-3 text-rose-300 [--i:0] md:justify-center"
         >
           <TemporaryApexMark className="w-5" />
           {site.name}
@@ -30,7 +30,7 @@ export function Nav() {
                 <Link
                   href={item.href}
                   data-nav-box={item.href.replace("/#", "")}
-                  className="field-drop group nav-box bg-steel-800/70 text-silver-100 transition-colors hover:bg-steel-600/80"
+                  className="field-drop group nav-box bg-grey-800 text-silver-100 transition-colors hover:bg-grey-700"
                   style={{ "--i": index + 1 } as React.CSSProperties}
                 >
                   {item.label}
@@ -58,7 +58,7 @@ export function Nav() {
 
         <Link
           href={site.cta.href}
-          className="field-drop nav-box hidden bg-brand-500 font-medium text-void transition-colors [--i:5] hover:bg-brand-300 md:flex"
+          className="field-drop nav-box hidden bg-linear-to-r from-rose-300 via-rose-400 to-rose-600 font-medium text-void transition-[filter] [--i:5] hover:brightness-110 md:flex"
         >
           {site.cta.label}
         </Link>

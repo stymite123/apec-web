@@ -150,14 +150,6 @@ export const serviceSchema = z.object({
   lead: slug,
 });
 
-export const packageSchema = z.object({
-  slug,
-  title: nonEmpty,
-  summary: orTodo(nonEmpty),
-  /** Service slugs combined in this package. */
-  includes: z.array(slug).min(2),
-});
-
 export const processStepSchema = z.object({
   title: nonEmpty,
   summary: orTodo(nonEmpty),
@@ -168,8 +160,12 @@ export const siteSchema = z.object({
   shortName: nonEmpty,
   expansion: orTodo(nonEmpty),
   tagline: orTodo(nonEmpty),
-  /** Hero headline; `accent` is set in the serif italic (brief §6.3: one word max). */
-  headline: z.object({ lead: nonEmpty, accent: nonEmpty, tail: nonEmpty }),
+  /** Hero headline, one entry per line; `accent` (a word in the last line) is set in italic. */
+  headline: z
+    .object({ lines: z.array(nonEmpty).min(1).max(4), accent: nonEmpty })
+    .refine((h) => h.lines.at(-1)?.includes(h.accent), "headline.accent must be in the last line"),
+  /** Mono caption along the bottom of the hero. */
+  heroCaption: orTodo(nonEmpty),
   subheadline: orTodo(nonEmpty),
   description: orTodo(nonEmpty.max(160)),
   location: orTodo(nonEmpty),
@@ -188,7 +184,7 @@ export const siteSchema = z.object({
       /** Two-line mono label beside the intro paragraph. */
       scrollLabel: z.tuple([nonEmpty, nonEmpty]),
     }),
-    services: sectionSchema.extend({ packagesTitle: nonEmpty, ledBy: nonEmpty }),
+    services: sectionSchema.extend({ ledBy: nonEmpty }),
     process: sectionSchema,
     contact: sectionSchema.extend({
       emailLabel: nonEmpty,
@@ -250,5 +246,4 @@ export type Accent = z.infer<typeof accentSchema>;
 export type TeamMember = z.infer<typeof teamMemberSchema>;
 export type Site = z.infer<typeof siteSchema>;
 export type Service = z.infer<typeof serviceSchema>;
-export type ServicePackage = z.infer<typeof packageSchema>;
 export type ProcessStep = z.infer<typeof processStepSchema>;

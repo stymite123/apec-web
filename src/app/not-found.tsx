@@ -17,7 +17,7 @@ export default function NotFound() {
   return (
     <section className="container-site flex min-h-[calc(100svh-var(--nav-height))] flex-col items-start justify-center gap-8 py-24">
       <TemporaryApexMark className="w-24" />
-      <p className="label-mono text-steel-400">{copy.eyebrow}</p>
+      <p className="label-mono text-grey-400">{copy.eyebrow}</p>
       <h1 className="font-display text-h2 font-semibold text-silver-100">{copy.title}</h1>
       <Link
         href={copy.cta.href}

@@ -13,16 +13,16 @@ export function SectionHeader({ id, eyebrow, title, intro }: SectionHeaderProps)
   return (
     <div className="grid gap-6 md:grid-cols-12 md:items-end">
       <div className="md:col-span-8">
-        <p className="label-mono text-steel-400">{eyebrow}</p>
+        <p className="label-mono text-rose-400">{eyebrow}</p>
         <SplitReveal
           id={`${id}-title`}
-          className="mt-4 font-display text-h2 font-semibold text-silver-100"
+          className="text-grad mt-5 font-field text-[clamp(3rem,7vw,7rem)] leading-[0.9] tracking-[-0.035em] [--g-from:#ffffff] [--g-to:#a9abb2] [font-variation-settings:'opsz'_72]"
         >
           {title}
         </SplitReveal>
       </div>
       {intro && shouldRender(intro) && (
-        <p className="max-w-md text-steel-300 md:col-span-4">
+        <p className="max-w-md text-grey-400 md:col-span-4">
           <Copy value={intro} />
         </p>
       )}

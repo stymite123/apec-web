@@ -21,17 +21,20 @@ export function Process() {
           <li
             key={step.title}
             className={cn(
-              "relative rounded-card border border-steel-800 bg-navy-900 p-6",
+              "relative rounded-card border border-grey-800 bg-grey-900 p-6",
               climb[index],
             )}
           >
-            <span aria-hidden className="absolute inset-x-6 top-0 h-px bg-(image:--grad-brand)" />
-            <p className="label-mono text-brand-300">{pad(index + 1)}</p>
-            <h3 className="mt-6 font-display text-2xl font-semibold text-silver-100">
+            <span
+              aria-hidden
+              className="absolute inset-x-6 top-0 h-px bg-linear-to-r from-rose-400 via-rose-600 to-transparent"
+            />
+            <p className="label-mono text-rose-400">{pad(index + 1)}</p>
+            <h3 className="text-grad mt-6 font-field text-3xl tracking-[-0.02em] [--g-from:#ffffff] [--g-to:#a9abb2] [font-variation-settings:'opsz'_72]">
               {step.title}
             </h3>
             {shouldRender(step.summary) && (
-              <p className="mt-3 text-steel-300">
+              <p className="mt-3 text-grey-300">
                 <Copy value={step.summary} />
               </p>
             )}

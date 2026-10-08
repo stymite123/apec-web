@@ -5,10 +5,13 @@ import { FieldIntro } from "@/components/sections/FieldIntro";
 import { Hero } from "@/components/sections/Hero";
 import { Process } from "@/components/sections/Process";
 import { Services } from "@/components/sections/Services";
+import { TaglineBand } from "@/components/sections/TaglineBand";
 import { TeamSection } from "@/components/sections/TeamSection";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { site } from "@/content/site";
+import { services } from "@/content/services";
 import { team } from "@/content/team";
+import { pad } from "@/lib/accent";
 import { isTodo } from "@/lib/todo";
 
 export const metadata: Metadata = {
@@ -50,11 +53,18 @@ export default function Home() {
           label={site.sections.team.scrollLabel}
           intro={site.subheadline}
           phrases={site.sections.manifesto.lines}
-          floats={team.flatMap((member) => (member.portrait ? [member.portrait.src] : []))}
+          tags={services.map((service, index) => ({
+            number: pad(index + 1),
+            label: service.title,
+          }))}
         />
       </div>
       <TeamSection />
       <Services />
+      <TaglineBand
+        words={site.tagline.split("|").map((word) => word.trim())}
+        label={site.tagline}
+      />
       <Process />
       <Contact />
     </>
