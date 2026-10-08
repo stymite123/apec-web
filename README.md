@@ -1,36 +1,54 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# APEC Digital website
 
-## Getting Started
+Portfolio site for **APEC Digital** — Agency for Professionals, Experienced & Creatives.
+Next.js 16 (App Router) · Tailwind CSS 4 · GSAP · TypeScript.
 
-First, run the development server:
+> **Private repo.** It contains a licensed font (Clash Display, ITF Free Font License)
+> that may not be published on public servers or repositories. Keep it private.
+
+## Run it locally
+
+Needs [Node.js](https://nodejs.org) 24+ and pnpm (`corepack enable` sets pnpm up).
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+pnpm install
+pnpm dev            # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Production build: `pnpm build && pnpm start`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Optional settings go in `.env.local` (see `.env.example`); the site runs without them.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Where things are
 
-## Learn More
+| Path | What |
+|---|---|
+| `src/content/` | All copy: `site.ts` (headline, sections, contact), `team.ts` (the five), `services.ts` |
+| `src/app/` | Pages: home (`page.tsx`), member pages (`team/[slug]`), 404, SEO files |
+| `src/components/sections/` | Home sections: Hero, FieldIntro (intro + phrases), TeamCards, Services, TaglineBand, Process, Contact |
+| `src/app/globals.css` | Colours, fonts, gradients, animations |
+| `public/brand/` | Logo layer + aura video for the hero |
+| `public/team/` | Team photos, cut-outs, dither layers, card backdrops |
+| `references/originals/` | The original files we were given (photos, flyer, logo) |
+| `docs/` | Brief, decisions log, copy for review, performance notes |
 
-To learn more about Next.js, take a look at the following resources:
+## Changing photos or the logo render
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- **Team photo:** replace `public/team/<slug>.jpg`, then run
+  `python scripts/cutout-portraits.py` (needs `pip install "rembg[cpu]"`) and `pnpm dither`.
+- **Hero logo + aura:** rendered offline from the 3D scene: `pnpm build && pnpm start`,
+  then `pnpm render:layers` (needs ffmpeg). Visitors never load 3D.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Checks
 
-## Deploy on Vercel
+```bash
+pnpm lint && pnpm typecheck
+pnpm exec playwright install chromium   # first time only
+pnpm e2e                                # smoke tests
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Branches
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- `main` — the current site.
+- `preview/field-hero` — the animated GSAP-Field-style preview (same as `main` now).
+- Tag `design-attempt-reel01` — an earlier, rejected design, kept for reference.
