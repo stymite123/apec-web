@@ -246,14 +246,34 @@
     outline-offset: 3px;
   }
 
+  /*
+   * Reduced motion (brief §6.5): remove movement, keep gentle fades. Many Windows
+   * users have animations off for speed, so a completely static site isn't the goal.
+   */
   @media (prefers-reduced-motion: reduce) {
-    *,
-    *::before,
-    *::after {
-      animation-duration: 0.01ms !important;
-      animation-iteration-count: 1 !important;
-      transition-duration: 0.01ms !important;
-      scroll-behavior: auto !important;
+    html {
+      scroll-behavior: auto;
     }
+    .animate-float,
+    .animate-marquee {
+      animation: none !important;
+    }
+    .animate-mark-in,
+    .animate-rise {
+      animation-name: apex-fade !important;
+    }
+    /* Menu sheet: fade instead of slide. */
+    [data-slot="sheet-content"] {
+      --tw-enter-translate-x: 0 !important;
+      --tw-enter-translate-y: 0 !important;
+      --tw-exit-translate-x: 0 !important;
+      --tw-exit-translate-y: 0 !important;
+    }
+  }
+}
+
+@keyframes apex-fade {
+  from {
+    opacity: 0;
   }
 }

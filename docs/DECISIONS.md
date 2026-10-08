@@ -2,6 +2,11 @@
 
 Format: date · decision · why · alternatives rejected
 
+## 2026-10-08 · Reduced motion = less movement, not no animation (Mustafa)
+- **Why:** Mustafa's Windows has "Show animations" off (common, often for speed), so Chrome reports `prefers-reduced-motion: reduce` and the site showed no animation at all.
+- **Rule:** with reduced motion, remove movement (float, tilt, scroll drift, pinned sideways track, marquee, sheet slide) but keep gentle opacity effects: the hero artwork fades in, and portraits dissolve from dither to photo once when in view (time-based, not scroll-scrubbed). The team stacks vertically on every width.
+- **Bug fixed alongside:** the 5-screen-wide team track made the desktop page 5,760 px wider than the screen (sideways scrolling). The team section now clips horizontal overflow, and a smoke test fails if the page is ever wider than the viewport.
+
 ## 2026-10-08 · Lag fix on the current version (Mustafa)
 - **Kept by request:** the APEC mark look (now as pre-rendered artwork) and the dither-to-photo portraits (now pre-generated, improved). Pinned team scroll and editorial layout left as-is until Codex's design replaces them.
 - **Live 3D → pre-rendered artwork** (`pnpm render:mark`; WebGL only in the offline `?render-mark` mode). `ENABLE_3D = false`. The artwork is TEMPORARY: rendered from the logo trace.
