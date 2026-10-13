@@ -1,17 +1,14 @@
-import { Geist, Geist_Mono, Instrument_Serif, Newsreader } from "next/font/google";
-import localFont from "next/font/local";
+import { Geist, Geist_Mono, Instrument_Serif, Newsreader, Unbounded } from "next/font/google";
 
 /**
- * Clash Display (Fontshare, ITF Free Font License — src/assets/fonts/ClashDisplay-LICENSE-FFL.txt).
- * The licence forbids modifying the file (incl. subsetting/format conversion):
- * it is served exactly as downloaded. Keep the repo private (DECISIONS 2026-10-08).
+ * Display sans (footer wordmark, member pages, menus): Unbounded (Google Fonts, OFL),
+ * the brief's free fallback. Replaced Clash Display, whose licence forbids publishing
+ * the font file in a public repository (DECISIONS 2026-10-14).
  */
-export const clashDisplay = localFont({
-  src: "../assets/fonts/ClashDisplay-Variable.woff2",
-  variable: "--font-clash",
-  weight: "200 700",
+export const displaySans = Unbounded({
+  variable: "--font-display-sans",
+  subsets: ["latin"],
   display: "swap",
-  preload: true,
 });
 
 export const geistSans = Geist({

@@ -2,6 +2,12 @@
 
 Format: date · decision · why · alternatives rejected
 
+## 2026-10-14 · Public GitHub repo (Mustafa)
+- **Request:** push everything to a public GitHub repo so his brother can use it.
+- **Clash Display removed** (its ITF licence forbids publishing the font file on public repositories/servers). Display sans is now **Unbounded** (Google Fonts, OFL), the brief's fallback. The font file is also stripped from the published git history.
+- **Left out:** the Instagram reel video and frames extracted from it (third-party content), also stripped from history.
+- **Added:** `references/originals/` (team photos, flyer, Canva logo export as received).
+
 ## 2026-10-08 · Preview feedback round 2 (Mustafa)
 - **Gradients, not flat colours:** display text uses a top-to-bottom gradient (`text-grad`, colours via `--g-from`/`--g-to`): hero lines light to deep blue with *Creatives* pink to deep rose; names white to rose; titles, phrases and the tagline band white to grey; buttons, nav CTA, pill dots and scribbles in pinkish-red gradients. Vertical on purpose: letters split for animation each paint their own box, and a vertical ramp stays continuous along a line.
 - **Two rendering fixes that came with it:** gradient boxes are padded (equal negative margin, no layout change) so ascenders, descenders and italics are not clipped ("Mustafa" had read "Mustata"); once text is split into gradient letters/lines the parent stops painting (`text-grad-split`), otherwise a ghost copy showed behind the animated letters.
@@ -125,7 +131,7 @@ Format: date · decision · why · alternatives rejected
 
 ## 2026-10-08 · Clash Display is committed to the repo
 - **Why:** the ITF Free Font License allows commercial use and self-hosting on our own site, and internal sharing within the organisation. It forbids modifying the file (incl. subsetting/format conversion) and redistributing it. The variable WOFF2 is used unmodified, with the licence file beside it.
-- **Condition:** the repo must stay private. If it ever becomes public, remove the font from git history and fetch it at build time instead.
+- **Condition:** the repo must stay private. *(Superseded 2026-10-14: font replaced, repo public.)*
 
 ## 2026-10-08 · Lenis `anchors` off; own reduced-motion hook
 - Lenis' `anchors` option intercepts in-page links, which stopped the skip link from moving focus to `#content`; anchors now jump natively.
