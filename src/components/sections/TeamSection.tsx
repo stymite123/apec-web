@@ -5,8 +5,8 @@ import { TeamCards, type CardMember } from "@/components/sections/TeamCards";
 import { site } from "@/content/site";
 import { team } from "@/content/team";
 
-/** Photos that frame the person higher than the others (Mustafa 2026-10-08). */
-const FIGURE_OFFSET: Record<string, number> = { "mian-faizyab": 9 };
+/** Photos framed differently from the rest (Mustafa 2026-10-14: new waist-up shot of Faizyab). */
+const FRAMING: Record<string, CardMember["framing"]> = { "mian-faizyab": { scale: 1.28 } };
 
 /** Build-time portrait assets (scripts/cutout-portraits.py, scripts/dither-portraits.mjs). */
 const hasPublicFile = (src: string) => existsSync(join(process.cwd(), "public", src));
@@ -34,7 +34,7 @@ export function TeamSection() {
             name: member.name,
             role: member.role,
             ...cardAssets(member.slug, member.portrait.src),
-            figureOffset: FIGURE_OFFSET[member.slug],
+            framing: FRAMING[member.slug],
           },
         ]
       : [],

@@ -19,9 +19,19 @@ export type CardMember = {
   /** Blurred, darkened backdrop made from the photo at build time (pnpm dither). */
   backdrop: string;
   cutout: boolean;
-  /** Moves the person down (% of their height) when the photo frames them higher. */
-  figureOffset?: number;
+  /**
+   * Per-photo framing so all five read at the same size: `y` moves the person down
+   * (% of their height), `scale` zooms in from the head for wider shots.
+   */
+  framing?: { y?: number; scale?: number };
 };
+
+/** Inline framing for a member's figure (CSS `translate`/`scale`, separate from GSAP's transform). */
+const framing = (member: CardMember): React.CSSProperties => ({
+  translate: `0 ${member.framing?.y ?? 0}%`,
+  scale: member.framing?.scale ?? 1,
+  transformOrigin: "50% 15%",
+});
 
 /**
  * One card's scroll motion. Arrival: the card slides up natively and its contents settle
@@ -204,9 +214,9 @@ export function TeamCards({
                   className="dither-portrait absolute inset-0"
                   style={
                     member.cutout
-                      ? { translate: `0 ${member.figureOffset ?? 0}%` }
+                      ? framing(member)
                       : {
-                          translate: `0 ${member.figureOffset ?? 0}%`,
+                          ...framing(member),
                           maskImage:
                             "radial-gradient(70% 80% at 50% 45%, black 55%, transparent 100%)",
                         }
