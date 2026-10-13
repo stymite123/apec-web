@@ -2,6 +2,13 @@
 
 Format: date · decision · why · alternatives rejected
 
+## 2026-10-14 · Design consistency + How we work (Mustafa)
+- **Hero headline** white → silver; *Creatives* keeps a restrained rose. Blue stays only in the logo and its aura.
+- **Footer "APEC"** fills silver with a faint rose foot (no multicolour gradient); dim base is grey.
+- **How we work** rebuilt to match What we do: steps on one rail (horizontal on desktop, vertical on phones) that fills in rose as you scroll; each step lights up when the fill reaches its node. Transform/opacity only, set up at idle time, no continuous rendering. Reduced motion: everything shown, one-time fade via IntersectionObserver (a ScrollTrigger-based fade never fired under reduced motion, leaving the steps invisible).
+- **Performance** (`docs/perf/profile-2026-10-14.json`): desktop blocking 52 ms, scroll p95 11 ms. Mobile (4x throttle) is inconsistent on this machine: traced runs 113–318 ms blocking, longest task ≤ 204 ms (within budget), but untraced profile runs 438–1179 ms with occasional single 550–880 ms tasks that did not reproduce under the tracer (low free RAM). Same pattern as before these changes; confirm on a real phone before launch.
+- Projects and testimonials stay hidden until real material arrives. Not deployed.
+
 ## 2026-10-14 · Public GitHub repo (Mustafa)
 - **Request:** push everything to a public GitHub repo so his brother can use it.
 - **Clash Display removed** (its ITF licence forbids publishing the font file on public repositories/servers). Display sans is now **Unbounded** (Google Fonts, OFL), the brief's fallback. The font file is also stripped from the published git history.

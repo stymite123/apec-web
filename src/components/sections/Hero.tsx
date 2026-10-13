@@ -20,7 +20,7 @@ export function Hero() {
     if (at < 0) return [{ text: line }];
     return [
       { text: line.slice(0, at) },
-      { text: accent, em: true, className: "[--g-from:#f8b4c4] [--g-to:#c8325a]" },
+      { text: accent, em: true, className: "[--g-from:#f6b9c8] [--g-to:#d9506f]" },
       { text: line.slice(at + accent.length) },
     ].filter((run) => run.text);
   });
@@ -56,10 +56,10 @@ export function Hero() {
           lines={runs}
           charClassName="text-grad"
           lineClassNames={[
-            "[--g-from:#c9ecff] [--g-to:#7fd0ff]",
-            "[--g-from:#7fd0ff] [--g-to:#4aaeff]",
-            "[--g-from:#4aaeff] [--g-to:#2a86ff]",
-            "[--g-from:#2a86ff] [--g-to:#1a64e0]",
+            "[--g-from:#ffffff] [--g-to:#e4e6ea]",
+            "[--g-from:#f4f5f7] [--g-to:#d6d9de]",
+            "[--g-from:#e9ebee] [--g-to:#c8ccd2]",
+            "[--g-from:#dfe2e6] [--g-to:#bcc0c7]",
           ]}
         />
       </h1>
