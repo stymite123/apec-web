@@ -12,7 +12,7 @@ import { reportTodosAtBuild } from "@/lib/todo-report";
 import { cn } from "@/lib/utils";
 import { GsapRegister } from "@/providers/GsapRegister";
 
-import { clashDisplay, geistMono, geistSans, instrumentSerif, newsreader } from "./fonts";
+import { displaySans, geistMono, geistSans, instrumentSerif, newsreader } from "./fonts";
 import "./globals.css";
 
 const defaultTitle = isTodo(site.tagline) ? site.name : `${site.name} — ${site.tagline}`;
@@ -53,7 +53,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="en"
       className={cn(
         "dark",
-        clashDisplay.variable,
+        displaySans.variable,
         geistSans.variable,
         geistMono.variable,
         instrumentSerif.variable,

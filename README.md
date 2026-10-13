@@ -3,8 +3,8 @@
 Portfolio site for **APEC Digital** — Agency for Professionals, Experienced & Creatives.
 Next.js 16 (App Router) · Tailwind CSS 4 · GSAP · TypeScript.
 
-> **Private repo.** It contains a licensed font (Clash Display, ITF Free Font License)
-> that may not be published on public servers or repositories. Keep it private.
+All fonts are free (Google Fonts, OFL): Newsreader, Unbounded, Geist, Geist Mono and
+Instrument Serif. Team photos and the APEC logo belong to APEC Digital.
 
 ## Run it locally
 
