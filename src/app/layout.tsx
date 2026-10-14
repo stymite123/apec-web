@@ -3,7 +3,6 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { Metadata, Viewport } from "next";
 
 import { Footer } from "@/components/layout/Footer";
-import { Grain } from "@/components/layout/Grain";
 import { Nav } from "@/components/layout/Nav";
 import { SkipLink } from "@/components/layout/SkipLink";
 import { site } from "@/content/site";
@@ -12,7 +11,7 @@ import { reportTodosAtBuild } from "@/lib/todo-report";
 import { cn } from "@/lib/utils";
 import { GsapRegister } from "@/providers/GsapRegister";
 
-import { displaySans, geistMono, geistSans, instrumentSerif, newsreader } from "./fonts";
+import { archivo, jetbrainsMono } from "./fonts";
 import "./globals.css";
 
 const defaultTitle = isTodo(site.tagline) ? site.name : `${site.name} — ${site.tagline}`;
@@ -49,17 +48,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   reportTodosAtBuild();
 
   return (
-    <html
-      lang="en"
-      className={cn(
-        "dark",
-        displaySans.variable,
-        geistSans.variable,
-        geistMono.variable,
-        instrumentSerif.variable,
-        newsreader.variable,
-      )}
-    >
+    <html lang="en" className={cn("dark", archivo.variable, jetbrainsMono.variable)}>
       <body>
         <SkipLink label={site.labels.skipLink} />
         <GsapRegister />
@@ -68,7 +57,6 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           {children}
         </main>
         <Footer />
-        <Grain />
         {onVercel && (
           <>
             <Analytics />

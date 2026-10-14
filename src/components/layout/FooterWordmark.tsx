@@ -6,7 +6,7 @@ import { gsap, MOTION_OK, useGSAP } from "@/lib/gsap";
 import { scrub } from "@/lib/motion";
 
 /**
- * Giant dim wordmark that fills silver (with a faint rose foot) as you reach the
+ * Giant dim wordmark that fills star-white (with an apricot foot) as you reach the
  * bottom (brief §6.6 #8). The fill is revealed with two opposing translateY
  * transforms (no clip-path); fully filled with reduced motion or without JS.
  */
@@ -34,18 +34,17 @@ export function FooterWordmark({ text }: { text: string }) {
     { scope: ref },
   );
 
-  const word =
-    "block font-display text-[clamp(5rem,27vw,26rem)] leading-[0.8] font-bold tracking-[-0.04em]";
+  const word = "type-display block text-center text-[clamp(7rem,44vw,44rem)] leading-[0.78]";
 
   return (
-    <div ref={ref} aria-hidden className="container-site overflow-hidden pt-10 select-none">
+    <div ref={ref} aria-hidden className="overflow-hidden pt-16 select-none">
       <div className="relative">
         {/* Dim fill, not a stroke: the variable font's overlapping contours show through text-stroke. */}
-        <span className={`${word} text-grey-800`}>{text}</span>
+        <span className={`${word} text-night-800`}>{text}</span>
         <div data-fill-mask className="absolute inset-0 overflow-hidden">
           <span
             data-fill-text
-            className={`${word} bg-[linear-gradient(180deg,#ffffff_0%,#cdd0d6_70%,#c7a0aa_100%)] bg-clip-text text-transparent`}
+            className={`${word} bg-[linear-gradient(180deg,var(--color-star)_0%,var(--color-night-300)_62%,var(--color-apricot)_100%)] bg-clip-text text-transparent`}
           >
             {text}
           </span>

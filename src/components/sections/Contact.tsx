@@ -1,82 +1,89 @@
 import { MailIcon, MessageCircleIcon } from "lucide-react";
+import Image from "next/image";
 
 import { Copy } from "@/components/dev/Todo";
-import { SplitReveal } from "@/components/motion/SplitReveal";
-import { buttonVariants } from "@/components/ui/button";
+import { Magnetic } from "@/components/motion/Magnetic";
+import { ShapeLink } from "@/components/ui/shape-link";
 import { site } from "@/content/site";
 import { whatsappHref } from "@/lib/contact";
 import { shouldRender } from "@/lib/todo";
-import { cn } from "@/lib/utils";
 
 /**
- * Contact (brief §8.1 #11). v1 = email + WhatsApp buttons (DECISIONS 2026-10-08).
- * Burgundy glow is one of the brief's allowed burgundy moments.
+ * Night again, at the top: the summit with the flag planted. Contact (brief §8.1 #11)
+ * is email + WhatsApp (DECISIONS 2026-10-08). The details sit on a ticket stub.
  */
 export function Contact() {
   const copy = site.sections.contact;
-  const { email, phone } = site.contact;
+  const { email, phone, whatsapp } = site.contact;
 
   return (
     <section
       id={copy.id}
+      data-theme="night"
       aria-labelledby={`${copy.id}-title`}
-      className="relative isolate overflow-hidden border-t border-grey-800 bg-oxblood-950"
+      className="relative isolate overflow-hidden bg-night-900"
     >
+      <div aria-hidden className="absolute inset-0 -z-10">
+        <Image src="/art/night-sky.webp" alt="" fill className="object-cover" />
+      </div>
       <div
         aria-hidden
-        className="pointer-events-none absolute bottom-[-40%] left-[-10%] -z-10 aspect-square w-[70vw] rounded-full bg-(image:--glow-wine) blur-2xl"
-      />
-      <div
-        aria-hidden
-        className="pointer-events-none absolute top-[-30%] right-[-10%] -z-10 aspect-square w-[60vw] rounded-full bg-[radial-gradient(closest-side,rgb(52_54_59/0.55),transparent)] blur-2xl"
-      />
-      <div className="container-site py-32">
-        <p className="label-mono text-rose-400">{copy.eyebrow}</p>
-        <SplitReveal
+        className="absolute right-0 bottom-0 -z-10 h-[42%] w-full opacity-70 md:top-0 md:h-auto md:w-[75%] md:opacity-100"
+      >
+        <Image
+          src="/art/night-summit.webp"
+          alt=""
+          fill
+          className="object-cover object-[100%_100%]"
+        />
+      </div>
+
+      <div className="container-site flex min-h-[100svh] flex-col justify-center gap-10 py-32">
+        <h2
           id={`${copy.id}-title`}
-          className="text-grad mt-5 max-w-[14ch] font-field text-[clamp(3rem,7vw,7rem)] leading-[0.9] tracking-[-0.035em] [--g-from:#ffffff] [--g-to:#a9abb2] [font-variation-settings:'opsz'_72]"
+          className="max-w-[11ch] type-display text-display leading-[0.84] text-star"
         >
           {copy.title}
-        </SplitReveal>
+        </h2>
         {copy.intro && shouldRender(copy.intro) && (
-          <p className="mt-6 max-w-xl text-lg text-grey-300">
+          <p className="max-w-[40ch] text-lead text-night-300">
             <Copy value={copy.intro} />
           </p>
         )}
-        <div className="mt-10 flex flex-wrap gap-3">
-          <a
-            href={`mailto:${email}`}
-            className={cn(buttonVariants({ size: "lg" }), "h-12 rounded-full px-6 text-base")}
-          >
-            <MailIcon aria-hidden />
-            {copy.emailLabel}
-          </a>
-          <a
-            href={whatsappHref(copy.whatsappMessage)}
-            target="_blank"
-            rel="noopener noreferrer"
-            className={cn(
-              buttonVariants({ variant: "outline", size: "lg" }),
-              "h-12 rounded-full px-6 text-base",
-            )}
-          >
-            <MessageCircleIcon aria-hidden />
-            {copy.whatsappLabel}
-          </a>
+        <div className="flex flex-wrap items-center gap-5">
+          <Magnetic>
+            <ShapeLink href={`mailto:${email}`}>
+              <MailIcon aria-hidden className="size-4.5" />
+              {copy.emailLabel}
+            </ShapeLink>
+          </Magnetic>
+          <Magnetic>
+            <ShapeLink
+              href={whatsappHref(copy.whatsappMessage)}
+              external
+              variant="outline"
+              fill="var(--color-star)"
+            >
+              <MessageCircleIcon aria-hidden className="size-4.5" />
+              {copy.whatsappLabel}
+            </ShapeLink>
+          </Magnetic>
         </div>
-        <dl className="mt-12 grid gap-6 text-grey-300 sm:grid-cols-2 md:max-w-2xl">
-          <div>
-            <dt className="label-mono text-grey-400">{copy.emailTerm}</dt>
-            <dd className="mt-2 break-all">
-              <a href={`mailto:${email}`} className="hover:text-silver-100">
+
+        {/* Ticket stub: notched sides, perforation between the two halves. */}
+        <dl className="ticket grid w-fit max-w-full rounded-[10px] bg-star text-night-950 sm:grid-cols-[auto_auto]">
+          <div className="px-8 py-4">
+            <dt className="type-ui text-[13px] text-night-700">{copy.emailTerm}</dt>
+            <dd className="mt-1 text-[17px] font-semibold break-all">
+              <a href={`mailto:${email}`} className="hover:underline">
                 {email}
               </a>
             </dd>
           </div>
-          <div>
-            <dt className="label-mono text-grey-400">{copy.phoneTerm}</dt>
-            <dd className="mt-2">
-              <a href={`tel:+${site.contact.whatsapp}`} className="hover:text-silver-100">
+          <div className="border-dashed border-night-300 px-8 py-4 max-sm:border-t-2 sm:border-l-2">
+            <dt className="type-ui text-[13px] text-night-700">{copy.phoneTerm}</dt>
+            <dd className="mt-1 text-[17px] font-semibold">
+              <a href={`tel:+${whatsapp}`} className="hover:underline">
                 {phone}
               </a>
             </dd>

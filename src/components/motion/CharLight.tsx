@@ -19,7 +19,7 @@ export function CharLight({
   lines: { text: string; em?: boolean; className?: string }[][];
   /** Optional class per line (e.g. gradient colours). */
   lineClassNames?: string[];
-  /** Class added to every letter (e.g. `text-grad`). */
+  /** Class added to every letter. */
   charClassName?: string;
   label: string;
   /** Index offset, so several blocks can share one stagger. */

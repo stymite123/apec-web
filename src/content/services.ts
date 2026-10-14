@@ -9,6 +9,7 @@ export const services = z
   .parse([
     {
       slug: "seo",
+      short: "SEO",
       title: "SEO & Machine Learning",
       summary:
         "Technical and on-page SEO, keyword research and analytics, with machine learning where your data can sharpen decisions.",
@@ -16,6 +17,7 @@ export const services = z
     },
     {
       slug: "ai-agents",
+      short: "AI agents",
       title: "AI Agents & Automation",
       summary:
         "LLM agents, workflow and CRM automation, and API integrations that take repetitive work off your team.",
@@ -23,18 +25,21 @@ export const services = z
     },
     {
       slug: "web",
+      short: "Websites",
       title: "Web Development",
       summary: "Fast, accessible websites that are easy to update and built to be found.",
       lead: "hamad-alam",
     },
     {
       slug: "mobile-apps",
+      short: "Mobile apps",
       title: "Mobile Apps",
       summary: "Mobile apps from first prototype to release, designed around how people use them.",
       lead: "mian-faizyab",
     },
     {
       slug: "brand-design",
+      short: "Brand design",
       title: "Brand & Graphic Design",
       summary: "Brand identity and graphic design that keep every touchpoint consistent.",
       lead: "abdur-rahman",

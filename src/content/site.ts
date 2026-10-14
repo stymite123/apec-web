@@ -15,23 +15,21 @@ export const site = siteSchema.parse({
     accent: "Creatives",
   },
   // DRAFT
-  heroCaption: "SEO · AI agents · Websites · Mobile apps · Brand design",
-  // DRAFT
   subheadline:
-    "Five specialists, one standard. Search, AI agents, websites, mobile apps and brand design, each led by the person who actually does the work. AI sets our pace; craft sets the bar.",
+    "Five specialists, one standard. Search, AI agents, websites, mobile apps and brand design, each led by the person who actually does the work.",
   // DRAFT
   description:
     "APEC Digital is a five-person studio from Pakistan for SEO, AI agents, web development, mobile apps and brand design, working with clients worldwide.",
   location: "Pakistan · Remote · Worldwide",
   url: process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
-  themeColor: "#05060A",
+  themeColor: "#0B1233",
   nav: [
     { label: "Team", href: "/#team" },
     { label: "Services", href: "/#services" },
     { label: "Process", href: "/#process" },
     { label: "Contact", href: "/#contact" },
   ],
-  cta: { label: "Start a project", href: "/#contact" },
+  cta: { label: "Contact", href: "/#contact" },
   heroCtas: [
     { label: "Meet the five", href: "/#team" },
     { label: "Start a project", href: "/#contact" },
@@ -43,30 +41,19 @@ export const site = siteSchema.parse({
     },
     team: {
       id: "team",
-      eyebrow: "01 — The team",
       title: "The Five",
-      // DRAFT
-      intro: "One specialist per discipline, working as one team on your project.",
-      viewProfile: "Meet {name}",
-      cardCaption: "APEC Digital · The five",
-      scrollLabel: ["Scroll gently", "into the five"],
     },
     services: {
       id: "services",
-      eyebrow: "02 — Services",
       title: "What we do",
-      // DRAFT
-      intro: "Five disciplines, each led by the person who practises it.",
       ledBy: "Led by",
     },
     process: {
       id: "process",
-      eyebrow: "03 — Process",
       title: "How we work",
     },
     contact: {
       id: "contact",
-      eyebrow: "04 — Contact",
       title: "Bring your next build to APEC.",
       // DRAFT
       intro: "Tell us what you’re building. Email or WhatsApp — whichever is easier for you.",

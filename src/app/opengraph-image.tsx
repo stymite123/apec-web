@@ -25,11 +25,11 @@ export default function OpengraphImage() {
         flexDirection: "column",
         justifyContent: "space-between",
         padding: 80,
-        background: `radial-gradient(circle at 85% 15%, ${ogColors.navy800}, ${ogColors.void} 60%)`,
-        color: ogColors.silver100,
+        background: `radial-gradient(circle at 85% 15%, ${ogColors.night700}, ${ogColors.night950} 60%)`,
+        color: ogColors.star,
       }}
     >
-      <div style={{ display: "flex", fontSize: 28, letterSpacing: 6, color: ogColors.steel400 }}>
+      <div style={{ display: "flex", fontSize: 28, letterSpacing: 6, color: ogColors.night300 }}>
         {site.name.toUpperCase()}
       </div>
       <div
@@ -47,11 +47,11 @@ export default function OpengraphImage() {
         ))}
         <span style={{ display: "flex", whiteSpace: "pre" }}>
           {before}
-          <span style={{ color: ogColors.rose400, fontStyle: "italic" }}>{accent}</span>
+          <span style={{ color: ogColors.apricot, fontStyle: "italic" }}>{accent}</span>
           {after}
         </span>
       </div>
-      <div style={{ display: "flex", fontSize: 28, color: ogColors.steel400 }}>
+      <div style={{ display: "flex", fontSize: 28, color: ogColors.night300 }}>
         {site.tagline} · {site.location}
       </div>
     </div>,

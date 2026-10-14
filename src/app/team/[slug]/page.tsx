@@ -8,10 +8,9 @@ import type { ReactNode } from "react";
 import { Copy, Todo } from "@/components/dev/Todo";
 import { SplitReveal } from "@/components/motion/SplitReveal";
 import { JsonLd } from "@/components/seo/JsonLd";
-import { buttonVariants } from "@/components/ui/button";
+import { ShapeLink } from "@/components/ui/shape-link";
 import { site } from "@/content/site";
 import { callName, getMember, team, visibleSkills } from "@/content/team";
-import { accentStyles, pad } from "@/lib/accent";
 import { whatsappHref } from "@/lib/contact";
 import { isTodo, shouldRender } from "@/lib/todo";
 import { cn } from "@/lib/utils";
@@ -41,13 +40,9 @@ function Block({ id, title, children }: { id: string; title: string; children: R
   return (
     <section
       aria-labelledby={id}
-      className="grid gap-6 border-t border-grey-800 py-14 md:grid-cols-12"
+      className="grid gap-6 border-t border-night-800 py-14 md:grid-cols-12"
     >
-      <SplitReveal
-        as="h2"
-        id={id}
-        className="font-display text-h3 font-semibold text-silver-100 md:col-span-4"
-      >
+      <SplitReveal as="h2" id={id} className="type-display text-title text-star md:col-span-4">
         {title}
       </SplitReveal>
       <div className="md:col-span-8">{children}</div>
@@ -55,7 +50,23 @@ function Block({ id, title, children }: { id: string; title: string; children: R
   );
 }
 
-/** Member CV page (brief §8.2). Only real content renders in production. */
+/** Slanted tag (skills, tools). */
+function Tag({ children, dashed }: { children: ReactNode; dashed?: boolean }) {
+  return (
+    <li className="relative px-4 py-2 text-star">
+      <span
+        aria-hidden
+        className={cn(
+          "absolute inset-0 -skew-x-12 rounded-[3px] border-2",
+          dashed ? "border-dashed border-wine-400" : "border-night-700 bg-night-800",
+        )}
+      />
+      <span className="relative flex items-center gap-2">{children}</span>
+    </li>
+  );
+}
+
+/** Member CV page (brief §8.2): the character card, then the record. Only real content renders in production. */
 export default async function MemberPage({ params }: PageProps<"/team/[slug]">) {
   const member = getMember((await params).slug);
   if (!member) notFound();
@@ -66,31 +77,23 @@ export default async function MemberPage({ params }: PageProps<"/team/[slug]">) 
   const previous = team[(index - 1 + team.length) % team.length];
   const next = team[(index + 1) % team.length];
   const skills = visibleSkills(member);
-  const accent = accentStyles[member.accent];
   const showCurrently = member.currently?.public;
   const pageUrl = `${site.url}/team/${member.slug}`;
 
   const contactButtons = (
-    <div className="flex flex-wrap gap-3">
-      <a
-        href={whatsappHref(fill(copy.whatsappMessage, name))}
-        target="_blank"
-        rel="noopener noreferrer"
-        className={cn(buttonVariants({ size: "lg" }), "h-12 rounded-full px-6 text-base")}
-      >
-        <MessageCircleIcon aria-hidden />
+    <div className="flex flex-wrap gap-4">
+      <ShapeLink href={whatsappHref(fill(copy.whatsappMessage, name))} external>
+        <MessageCircleIcon aria-hidden className="size-4.5" />
         {fill(copy.workWith, name)}
-      </a>
-      <a
+      </ShapeLink>
+      <ShapeLink
         href={`mailto:${site.contact.email}?subject=${encodeURIComponent(fill(copy.emailSubject, name))}`}
-        className={cn(
-          buttonVariants({ variant: "outline", size: "lg" }),
-          "h-12 rounded-full px-6 text-base",
-        )}
+        variant="outline"
+        fill="var(--color-star)"
       >
-        <MailIcon aria-hidden />
+        <MailIcon aria-hidden className="size-4.5" />
         {copy.emailLabel}
-      </a>
+      </ShapeLink>
     </div>
   );
 
@@ -132,9 +135,9 @@ export default async function MemberPage({ params }: PageProps<"/team/[slug]">) 
         }}
       />
 
-      <header className="grid gap-10 py-12 md:grid-cols-12 md:items-end md:py-20">
-        <div className="relative overflow-hidden rounded-card border border-grey-800 bg-grey-800 md:col-span-5">
-          <div aria-hidden className={cn("absolute inset-x-0 top-0 z-10 h-0.5", accent.line)} />
+      <header className="grid gap-10 pt-10 pb-14 md:grid-cols-12 md:items-end md:pt-16 md:pb-20">
+        {/* Portrait in black and white, as on the home page. */}
+        <div className="relative overflow-hidden rounded-[6px] bg-[#0e0e0e] md:col-span-5">
           {member.portrait ? (
             <Image
               src={member.portrait.src}
@@ -143,31 +146,29 @@ export default async function MemberPage({ params }: PageProps<"/team/[slug]">) 
               height={1500}
               priority
               sizes="(min-width: 768px) 40vw, 100vw"
-              className="aspect-[4/5] h-auto w-full object-cover object-top"
+              className="aspect-[4/5] h-auto w-full object-cover object-top contrast-[1.08] grayscale"
             />
           ) : (
-            <div className="flex aspect-[4/5] items-center justify-center font-display text-hero text-grey-500">
+            <div className="flex aspect-[4/5] items-center justify-center type-display text-mega text-white/40">
               {member.name.slice(0, 1)}
             </div>
           )}
         </div>
 
         <div className="flex flex-col gap-6 md:col-span-7">
-          <p className="label-mono text-grey-400">
-            {pad(member.order)} / {pad(team.length)} — {member.role}
-          </p>
-          <h1 className="font-display text-[clamp(3rem,7vw,7rem)] leading-[0.92] font-semibold tracking-[-0.03em] text-silver-100">
+          <p className="type-ui text-[15px] text-night-300">{member.role}</p>
+          <h1 className="type-display text-[clamp(3.25rem,8vw,8rem)] leading-[0.84] text-star">
             {member.name}
           </h1>
           {shouldRender(member.headline) && (
-            <p className="max-w-xl text-lg text-grey-300">
+            <p className="max-w-xl text-lead text-night-300">
               <Copy value={member.headline} />
             </p>
           )}
           {showCurrently && member.currently && (
-            <p className="text-grey-300">
-              <span className="mr-3 label-mono text-grey-400">{copy.currently}</span>
-              {member.currently.title} · {member.currently.org}
+            <p className="text-star">
+              <span className="mr-3 type-ui text-[14px] text-apricot">{copy.currently}</span>
+              {member.currently.title}, {member.currently.org}
             </p>
           )}
           {contactButtons}
@@ -176,7 +177,7 @@ export default async function MemberPage({ params }: PageProps<"/team/[slug]">) 
 
       {shouldRender(member.bio) && (
         <Block id="about" title={copy.about}>
-          <p className="max-w-2xl text-lg text-grey-300">
+          <p className="max-w-2xl text-lead text-night-300">
             <Copy value={member.bio} />
           </p>
         </Block>
@@ -184,20 +185,14 @@ export default async function MemberPage({ params }: PageProps<"/team/[slug]">) 
 
       {skills.length > 0 && (
         <Block id="skills" title={copy.skills}>
-          <ul className="flex flex-wrap gap-2">
+          <ul className="flex flex-wrap gap-3">
             {skills.map((skill) => (
-              <li
-                key={skill.name}
-                className={cn(
-                  "flex items-center gap-2 rounded-full border px-4 py-2 text-grey-300",
-                  skill.confirmed ? "border-grey-800" : "border-dashed border-wine-400",
-                )}
-              >
+              <Tag key={skill.name} dashed={!skill.confirmed}>
                 {skill.name}
                 {!isTodo(skill.level) && (
-                  <span className="label-mono text-grey-400">{skill.level}</span>
+                  <span className="type-ui text-[12px] text-night-300">{skill.level}</span>
                 )}
-              </li>
+              </Tag>
             ))}
           </ul>
         </Block>
@@ -205,14 +200,9 @@ export default async function MemberPage({ params }: PageProps<"/team/[slug]">) 
 
       {member.tools.length > 0 && (
         <Block id="tools" title={copy.tools}>
-          <ul className="flex flex-wrap gap-2">
+          <ul className="flex flex-wrap gap-3">
             {member.tools.map((tool) => (
-              <li
-                key={tool}
-                className="rounded-full border border-grey-800 px-4 py-2 text-grey-300"
-              >
-                {tool}
-              </li>
+              <Tag key={tool}>{tool}</Tag>
             ))}
           </ul>
         </Block>
@@ -220,23 +210,23 @@ export default async function MemberPage({ params }: PageProps<"/team/[slug]">) 
 
       {member.experience.length > 0 && (
         <Block id="experience" title={copy.experience}>
-          <ol className="space-y-8 border-l border-grey-800 pl-6">
+          <ol className="space-y-8 border-l-2 border-dashed border-night-700 pl-8">
             {member.experience.map((role) => (
               <li key={`${role.title}-${role.org}`} className="relative">
                 <span
                   aria-hidden
-                  className={cn("absolute top-2 -left-[29px] size-2 rounded-full", accent.line)}
+                  className="absolute top-0.5 -left-[45px] size-6 bg-apricot clip-hex"
                 />
-                <p className="font-display text-xl font-semibold text-silver-100">
-                  {role.title} · {role.org}
+                <p className="text-xl font-semibold text-star">
+                  {role.title}, {role.org}
                 </p>
                 {shouldRender(role.start) && (
-                  <p className="mt-1 label-mono text-grey-400">
-                    <Copy value={role.start} /> — {role.end ?? copy.present}
+                  <p className="mt-1 type-ui text-[14px] text-night-300">
+                    <Copy value={role.start} /> to {role.end ?? copy.present}
                   </p>
                 )}
                 {shouldRender(role.summary) && (
-                  <p className="mt-2 text-grey-300">
+                  <p className="mt-2 text-night-300">
                     <Copy value={role.summary} />
                   </p>
                 )}
@@ -250,15 +240,10 @@ export default async function MemberPage({ params }: PageProps<"/team/[slug]">) 
         {member.projects.length > 0 && (
           <ul className="grid gap-4 sm:grid-cols-2">
             {member.projects.map((project) => (
-              <li
-                key={project.slug}
-                className="rounded-card border border-grey-800 bg-grey-900 p-6"
-              >
-                <p className="font-display text-xl font-semibold text-silver-100">
-                  {project.title}
-                </p>
+              <li key={project.slug} className="bg-night-800 p-6 [--cut:16px] clip-chamfer">
+                <p className="text-xl font-semibold text-star">{project.title}</p>
                 {shouldRender(project.summary) && (
-                  <p className="mt-2 text-grey-300">
+                  <p className="mt-2 text-night-300">
                     <Copy value={project.summary} />
                   </p>
                 )}
@@ -266,43 +251,45 @@ export default async function MemberPage({ params }: PageProps<"/team/[slug]">) 
             ))}
           </ul>
         )}
-        {member.projects.length < 3 && <p className="mt-4 text-grey-400">{copy.projectsComing}</p>}
+        {member.projects.length < 3 && <p className="mt-4 text-night-300">{copy.projectsComing}</p>}
         {member.projects.length === 0 && (
           <Todo className="mt-4">TODO: 2–4 projects (title, problem, what you did, result)</Todo>
         )}
       </Block>
 
-      <section className="my-14 rounded-card border border-grey-800 bg-grey-900 p-8 md:p-12">
-        <h2 className="font-display text-h3 font-semibold text-silver-100">
-          {fill(copy.ctaTitle, name)}
-        </h2>
-        <div className="mt-6">{contactButtons}</div>
+      <section className="relative my-14 overflow-hidden rounded-[6px] border border-white/15 bg-black p-8 md:p-12">
+        <h2 className="relative type-display text-title text-white">{fill(copy.ctaTitle, name)}</h2>
+        <div className="relative mt-8">{contactButtons}</div>
       </section>
 
       <nav
         aria-label={copy.allMembers}
-        className="grid grid-cols-2 gap-4 border-t border-grey-800 py-10 text-grey-300"
+        className="grid grid-cols-2 gap-4 border-t border-night-800 py-10 text-night-300"
       >
         {previous && (
           <Link
             href={`/team/${previous.slug}`}
-            className="group flex flex-col gap-1 hover:text-silver-100"
+            className="group flex flex-col gap-1 hover:text-star"
           >
-            <span className="flex items-center gap-2 label-mono text-grey-400">
+            <span className="flex items-center gap-2 type-ui text-[14px]">
               <ArrowLeftIcon aria-hidden className="size-3.5" /> {copy.previous}
             </span>
-            <span className="font-display text-lg font-semibold">{previous.name}</span>
+            <span className="type-display text-[clamp(1.75rem,3vw,2.75rem)] leading-none text-star transition-colors group-hover:text-apricot">
+              {previous.name}
+            </span>
           </Link>
         )}
         {next && (
           <Link
             href={`/team/${next.slug}`}
-            className="group flex flex-col items-end gap-1 text-right hover:text-silver-100"
+            className="group flex flex-col items-end gap-1 text-right hover:text-star"
           >
-            <span className="flex items-center gap-2 label-mono text-grey-400">
+            <span className="flex items-center gap-2 type-ui text-[14px]">
               {copy.next} <ArrowRightIcon aria-hidden className="size-3.5" />
             </span>
-            <span className="font-display text-lg font-semibold">{next.name}</span>
+            <span className="type-display text-[clamp(1.75rem,3vw,2.75rem)] leading-none text-star transition-colors group-hover:text-apricot">
+              {next.name}
+            </span>
           </Link>
         )}
       </nav>

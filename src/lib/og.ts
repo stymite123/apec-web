@@ -7,13 +7,13 @@ import type { Accent } from "@/content/schema";
 export const ogSize = { width: 1200, height: 630 };
 
 export const ogColors = {
-  void: "#05060A",
-  navy800: "#0E1A2E",
-  steel400: "#8A9BB4",
-  steel800: "#2A3646",
-  silver100: "#EEF1F5",
+  night950: "#060A20",
+  night700: "#1E2B6E",
+  night300: "#9AA6D4",
+  night800: "#131B4E",
+  star: "#EEF1F8",
   brand300: "#5CC2FF",
-  rose400: "#E5577A",
+  apricot: "#F3A86B",
   brand500: "#1F7BFF",
 };
 

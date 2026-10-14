@@ -2,73 +2,78 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
-/* Dark-only site: <html class="dark">. Kept so shadcn's dark: variants resolve. */
+/* Dark-first site: <html class="dark">. Kept so shadcn's dark: variants resolve. */
 @custom-variant dark (&:is(.dark *));
 
 /* ---------------------------------------------------------------------------
-   Brand tokens (brief §6.2, §6.5, §6.8)
+   Tokens. The home page moves through one day on the climb (DECISIONS 2026-10-14):
+   night → dawn → black-and-white team → daylight studio → graphite build → night.
    --------------------------------------------------------------------------- */
 @theme {
+  /* Night: hero, contact, footer */
+  --color-night-950: #060a20;
+  --color-night-900: #0b1233;
+  --color-night-800: #131b4e;
+  --color-night-700: #1e2b6e;
+  --color-night-500: #3446a0;
+  --color-night-300: #9aa6d4;
+  --color-star: #eef1f8;
+
+  /* Dawn: manifesto sky */
+  --color-dawn-950: #17255a;
+  --color-dawn-900: #1e2f66;
+  --color-dawn-700: #33509a;
+  --color-dawn-500: #6e92cf;
+  --color-dawn-300: #a9c4e8;
+  --color-dawn-100: #f6d9bc;
+  --color-cloud: #f1f4fb;
+
+  /* Daylight paper: services */
+  --color-paper: #e4e7ec;
+  --color-paper-50: #f7f8fa;
+  --color-ink: #0e1220;
+  --color-ink-600: #4a5063;
+
+  /* Graphite: process (the build) */
+  --color-graphite-950: #15171b;
+  --color-graphite-900: #1c1f24;
+  --color-graphite-100: #f2f3f5;
+
+  /* The summit flag: the one warm accent that travels with you. */
+  --color-apricot: #f3a86b;
+  --color-apricot-700: #c9744a;
+
+  /* Logo and legacy surfaces (logo trace, member pages) */
   --color-void: #05060a;
-  --color-ink: #0a0e15;
-  --color-navy-900: #0b1424;
-  --color-navy-800: #0e1a2e;
-  --color-navy-700: #13233d;
-  --color-steel-300: #afbacb;
-  --color-steel-400: #8a9bb4;
-  --color-steel-600: #4e5f78;
-  --color-steel-800: #2a3646;
   --color-silver-100: #eef1f5;
   --color-silver-300: #c5ccd6;
+  --color-steel-400: #8a9bb4;
   --color-brand-300: #5cc2ff;
   --color-brand-500: #1f7bff;
   --color-brand-700: #0b3fa8;
-  /* Pinkish red + blackish red + grey (Mustafa 2026-10-08: more of these across the theme;
-     blue stays for the logo and hero). rose-400 on void 5.9:1, rose-300 on void 8:1. */
-  --color-rose-300: #f08aa2;
-  --color-rose-400: #e5577a;
-  --color-rose-600: #b8304f;
-  --color-oxblood-950: #0d0406;
-  --color-oxblood-900: #160609;
-  --color-oxblood-800: #22090f;
-  --color-oxblood-700: #3a0f1b;
-  --color-grey-300: #c4c6cc;
-  --color-grey-400: #9a9ca3;
-  --color-grey-500: #74767d;
-  --color-grey-700: #34363b;
-  --color-grey-800: #1f2024;
-  --color-grey-900: #131417;
   --color-wine-400: #a33a50;
   --color-wine-600: #7a1f33;
-  --color-wine-800: #4a1220;
   --color-signal: #3ddc97;
 
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-in-out-quart: cubic-bezier(0.76, 0, 0.24, 1);
   --ease-out-back: cubic-bezier(0.34, 1.56, 0.64, 1);
 
-  --radius-card: 1.25rem;
-
-  /* Fluid type scale (brief §6.3) */
-  --text-hero: clamp(3.5rem, 11vw, 11rem);
-  --text-hero--line-height: 0.92;
-  --text-hero--letter-spacing: -0.03em;
-  --text-h2: clamp(2.25rem, 6vw, 5.5rem);
-  --text-h2--line-height: 0.95;
-  --text-h2--letter-spacing: -0.03em;
-  --text-h3: clamp(1.5rem, 3vw, 2.5rem);
-  --text-h3--line-height: 1.1;
-  --text-h3--letter-spacing: -0.02em;
-  --text-body: clamp(1rem, 1.1vw, 1.125rem);
+  /* Type scale: condensed display sizes are set in vw so headlines fill their column. */
+  --text-mega: clamp(3.6rem, 12.2vw, 12.5rem);
+  --text-mega--line-height: 0.82;
+  --text-display: clamp(3rem, 8.6vw, 8.75rem);
+  --text-display--line-height: 0.84;
+  --text-title: clamp(2.1rem, 4.4vw, 4.25rem);
+  --text-title--line-height: 0.9;
+  --text-lead: clamp(1.0625rem, 1.35vw, 1.3125rem);
+  --text-lead--line-height: 1.45;
+  --text-body: clamp(1rem, 1.05vw, 1.0625rem);
   --text-body--line-height: 1.6;
-  --text-label: 0.75rem;
-  --text-label--line-height: 1.4;
-  --text-label--letter-spacing: 0.12em;
 
-  --animate-rise: rise 0.9s var(--ease-out-expo) both;
-  --animate-marquee: marquee 45s linear infinite;
   --animate-mark-in: mark-in 1.4s var(--ease-out-expo) 0.15s both;
   --animate-float: float 7s ease-in-out infinite;
+  --animate-aura: aura-drift 11s ease-in-out infinite;
 
   @keyframes mark-in {
     from {
@@ -83,30 +88,21 @@
     }
   }
 
-  @keyframes rise {
-    from {
-      opacity: 0;
-      transform: translateY(1.5rem);
-    }
-  }
-
-  @keyframes marquee {
-    to {
-      transform: translateX(-50%);
+  @keyframes aura-drift {
+    50% {
+      scale: 1.06;
+      rotate: 4deg;
     }
   }
 }
 
-/* Font families come from next/font CSS variables set on <html>, so they are inlined. */
 @theme inline {
-  --font-display: var(--font-display-sans), var(--font-geist-sans), system-ui, sans-serif;
-  --font-sans: var(--font-geist-sans), system-ui, sans-serif;
-  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
-  --font-serif: var(--font-instrument-serif), Georgia, serif;
-  --font-field: var(--font-newsreader), Georgia, serif;
-  --font-heading: var(--font-display-sans), var(--font-geist-sans), system-ui, sans-serif;
+  --font-display: var(--font-archivo), system-ui, sans-serif;
+  --font-sans: var(--font-archivo), system-ui, sans-serif;
+  --font-heading: var(--font-archivo), system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains), ui-monospace, monospace;
 
-  /* shadcn semantic colours → brand tokens */
+  /* shadcn semantic colours → tokens */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -138,31 +134,25 @@
 :root {
   color-scheme: dark;
 
-  --background: var(--color-void);
-  --foreground: var(--color-silver-100);
-  --card: var(--color-navy-800);
-  --card-foreground: var(--color-silver-100);
-  --popover: var(--color-ink);
-  --popover-foreground: var(--color-silver-100);
-  /* void on rose-400 ≈ 5.9:1 (buttons are void-on-rose) */
-  --primary: var(--color-rose-400);
-  --primary-foreground: var(--color-void);
-  --secondary: var(--color-navy-700);
-  --secondary-foreground: var(--color-silver-100);
-  --muted: var(--color-navy-900);
-  --muted-foreground: var(--color-grey-400);
-  --accent: var(--color-navy-700);
-  --accent-foreground: var(--color-silver-100);
+  --background: var(--color-night-900);
+  --foreground: var(--color-star);
+  --card: var(--color-night-800);
+  --card-foreground: var(--color-star);
+  --popover: var(--color-night-950);
+  --popover-foreground: var(--color-star);
+  --primary: var(--color-apricot);
+  --primary-foreground: var(--color-night-950);
+  --secondary: var(--color-night-700);
+  --secondary-foreground: var(--color-star);
+  --muted: var(--color-night-800);
+  --muted-foreground: var(--color-night-300);
+  --accent: var(--color-night-700);
+  --accent-foreground: var(--color-star);
   --destructive: oklch(0.704 0.191 22.216);
-  --border: var(--color-grey-800);
-  --input: var(--color-grey-700);
-  --ring: var(--color-brand-500);
+  --border: var(--color-night-700);
+  --input: var(--color-night-700);
+  --ring: var(--color-apricot);
   --radius: 0.75rem;
-
-  --grad-brand: linear-gradient(160deg, #5cc2ff 0%, #1f7bff 45%, #0b3fa8 100%);
-  --grad-silver: linear-gradient(160deg, #ffffff 0%, #c5ccd6 55%, #8a9bb4 100%);
-  --glow-navy: radial-gradient(closest-side, #13233d, transparent);
-  --glow-wine: radial-gradient(closest-side, rgb(150 32 62 / 0.42), transparent);
 
   --nav-height: 4.5rem;
 }
@@ -177,115 +167,49 @@
   padding-inline: clamp(1rem, 4vw, 3rem);
 }
 
-@utility label-mono {
-  font-family: var(--font-mono);
-  font-size: var(--text-label);
-  line-height: var(--text-label--line-height);
-  letter-spacing: var(--text-label--letter-spacing);
+/* Title-card type: Archivo at its narrowest and heaviest. */
+@utility type-display {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-stretch: 62%;
   text-transform: uppercase;
+  letter-spacing: -0.005em;
 }
 
-@utility text-grad-silver {
-  background-image: var(--grad-silver);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+/* Small UI words (nav, buttons, captions): semi-expanded, sentence case. */
+@utility type-ui {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-stretch: 112%;
+  letter-spacing: 0.005em;
 }
 
-/* Film grain (brief §6.4): static SVG noise, rasterised once. */
-@utility grain {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  background-size: 160px 160px;
+/* Shapes used across sections (clip-path, so content inside is clipped too). */
+@utility clip-hex {
+  clip-path: polygon(25% 3%, 75% 3%, 100% 50%, 75% 97%, 25% 97%, 0 50%);
 }
-
-/* Gradient text, top → bottom, colours from --g-from / --g-to (inherited, so letters
-   created by SplitText pick them up from their heading). Vertical on purpose: split
-   letters each paint their own box, and a vertical ramp stays continuous along a line. */
-@utility text-grad {
-  background-image: linear-gradient(180deg, var(--g-from, #ffffff), var(--g-to, #9a9ca3));
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  -webkit-text-fill-color: transparent;
-  /* The gradient only paints inside the box; with tight leading, ascenders, descenders and
-     italic overhangs stick out of it and were cut off. Padding grows the painted box,
-     the equal negative margin keeps the layout unchanged. */
-  padding: 0.18em 0.08em;
-  margin: -0.18em -0.08em;
-}
-
-/* Set on a gradient element once SplitText has split it into gradient letters or lines:
-   the parent stops painting its own copy (it showed as ghost letters behind the animated
-   ones) but keeps its transparent fill, padding and margins, so nothing shifts. */
-.text-grad-split {
-  background-image: none;
-}
-
-/* Gradient text that moves while scrolling gets its own GPU layer; otherwise every frame
-   repaints the gradient (measured 2026-10-08: slowest 5% of frames 25 ms → 11–14 ms). */
-[data-hero-title],
-[data-phrase-text] .text-grad,
-[data-card-name] .text-grad,
-[data-band-a],
-[data-band-b] {
-  will-change: transform;
-}
-
-@utility text-grad-brand {
-  background-image: var(--grad-brand);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+@utility clip-chamfer {
+  clip-path: polygon(
+    var(--cut, 18px) 0,
+    100% 0,
+    100% calc(100% - var(--cut, 18px)),
+    calc(100% - var(--cut, 18px)) 100%,
+    0 100%,
+    0 var(--cut, 18px)
+  );
 }
 
 /* ---------------------------------------------------------------------------
-   Dither portrait (components/team/DitherPortrait.tsx)
-   One variable, --resolve 0 → 1, steps through: dither L0 → L1 → L2 → photo.
+   Load sequence (CSS only, runs before hydration)
    --------------------------------------------------------------------------- */
-.dither-portrait {
-  --resolve: 1;
-}
-.dither-layer {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: top;
-  image-rendering: pixelated;
-  pointer-events: none;
-}
-.dither-layer[data-level="0"] {
-  opacity: clamp(0, (0.3 - var(--resolve)) * 1000, 1);
-}
-.dither-layer[data-level="1"] {
-  opacity: clamp(0, min((var(--resolve) - 0.3) * 1000, (0.55 - var(--resolve)) * 1000), 1);
-}
-.dither-layer[data-level="2"] {
-  opacity: clamp(0, min((var(--resolve) - 0.55) * 1000, (0.96 - var(--resolve)) * 1000), 1);
-}
-.dither-photo {
-  opacity: clamp(0, (var(--resolve) - 0.78) * 6, 1);
-}
-
-/* ---------------------------------------------------------------------------
-   GSAP Field direction: load sequence (CSS only, runs before hydration)
-   --------------------------------------------------------------------------- */
-/* Characters light up one after another (components/motion/CharLight.tsx). */
 .field-char {
-  opacity: 0.14;
+  opacity: 0.12;
   animation: field-light 0.9s var(--ease-out-expo) forwards;
-  animation-delay: calc(0.25s + var(--i, 0) * 38ms);
+  animation-delay: calc(0.2s + var(--i, 0) * 30ms);
 }
-/* Bottom captions after the mark: set --d for the delay. */
 .field-rise {
   animation: field-rise 0.9s var(--ease-out-expo) both;
   animation-delay: var(--d, 0s);
-}
-/* Nav boxes drop in one by one: set --i. */
-.field-drop {
-  animation: field-drop 0.7s var(--ease-out-expo) both;
-  animation-delay: calc(1.05s + var(--i, 0) * 55ms);
 }
 @keyframes field-light {
   to {
@@ -298,28 +222,303 @@
     transform: translateY(1rem);
   }
 }
-@keyframes field-drop {
-  from {
+
+/* ---------------------------------------------------------------------------
+   Team (components/sections/TeamSection.tsx): five equal black-and-white cards.
+   Phones: a swipe row. Reveal: when the row comes into view (TeamReveal), each
+   portrait goes coarse dither → fine dither → photo in one quick crossfade.
+   Opacity only, so it stays on the compositor.
+   --------------------------------------------------------------------------- */
+.team-row {
+  display: flex;
+  gap: 0.75rem;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: clamp(1rem, 4vw, 3rem);
+  padding-inline: clamp(1rem, 4vw, 3rem);
+  scrollbar-width: none;
+}
+.team-card {
+  flex: 0 0 min(64vw, 300px);
+  scroll-snap-align: start;
+}
+.team-frame::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: #000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.35s ease;
+}
+@media (min-width: 768px) {
+  .team-row {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 1rem;
+    overflow: visible;
+    max-width: 1440px;
+    margin-inline: auto;
+  }
+  .team-row:has(.team-card:hover) .team-card:not(:hover) .team-frame::after {
+    opacity: 0.5;
+  }
+}
+.team-dither {
+  image-rendering: pixelated;
+  opacity: 0;
+}
+.team-row[data-reveal="pending"] .team-photo {
+  opacity: 0;
+}
+.team-row[data-reveal="pending"] .team-dither[data-level="1"] {
+  opacity: 1;
+}
+.team-row[data-reveal="done"] .team-dither[data-level="1"] {
+  animation: team-l1 0.75s ease both;
+  animation-delay: calc(var(--i, 0) * 90ms);
+}
+.team-row[data-reveal="done"] .team-dither[data-level="2"] {
+  animation: team-l2 0.75s ease both;
+  animation-delay: calc(var(--i, 0) * 90ms);
+}
+.team-row[data-reveal="done"] .team-photo {
+  animation: team-photo 0.75s ease both;
+  animation-delay: calc(var(--i, 0) * 90ms);
+}
+@keyframes team-l1 {
+  0%,
+  25% {
+    opacity: 1;
+  }
+  50%,
+  100% {
     opacity: 0;
-    transform: translateY(-0.75rem);
+  }
+}
+@keyframes team-l2 {
+  0%,
+  20% {
+    opacity: 0;
+  }
+  45% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+@keyframes team-photo {
+  0%,
+  35% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
   }
 }
 
-/* Boxed nav (components/layout/Nav.tsx): equal-width mono boxes, like the reference. */
-@utility nav-box {
-  position: relative;
-  display: flex;
-  height: 2rem;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  overflow: hidden;
-  border-radius: 3px;
-  font-family: var(--font-mono);
-  font-size: 0.6875rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  white-space: nowrap;
+/* ---------------------------------------------------------------------------
+   Showcase device loops (components/showcase/*). They run only while their stage is
+   on screen ([data-play], set by Stage3D); every element's resting style is the
+   finished picture, which is what reduced motion shows.
+   --------------------------------------------------------------------------- */
+.showcase .loop {
+  animation-play-state: paused;
+}
+.showcase[data-play] .loop {
+  animation-play-state: running;
+}
+@keyframes rank-ours {
+  0%,
+  16% {
+    translate: 0 130px;
+  }
+  32%,
+  100% {
+    translate: 0 0;
+  }
+}
+@keyframes rank-other {
+  0%,
+  16% {
+    translate: 0 -96px;
+  }
+  32%,
+  100% {
+    translate: 0 0;
+  }
+}
+/* A cover shrinks away from the left (scale is composited; clip-path is not). */
+@keyframes unmask {
+  0%,
+  12% {
+    scale: 1 1;
+  }
+  55%,
+  100% {
+    scale: 0 1;
+  }
+}
+@keyframes pop-in {
+  0%,
+  56% {
+    opacity: 0;
+    scale: 0.6;
+  }
+  64%,
+  100% {
+    opacity: 1;
+    scale: 1;
+  }
+}
+/* Staggered by animation-delay; same length for every step keeps them in phase. */
+@keyframes step-in {
+  0% {
+    opacity: 0;
+    translate: 0 6px;
+  }
+  7%,
+  86% {
+    opacity: 1;
+    translate: 0 0;
+  }
+  96%,
+  100% {
+    opacity: 0;
+    translate: 0 0;
+  }
+}
+@keyframes ticker {
+  to {
+    translate: -50% 0;
+  }
+}
+@keyframes eq {
+  0%,
+  100% {
+    scale: 1 1;
+  }
+  50% {
+    scale: 1 0.45;
+  }
+}
+@keyframes breathe {
+  50% {
+    scale: 1.04;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .showcase .loop {
+    animation: none !important;
+  }
+}
+
+/* Ticket stub: semicircle notches cut from both ends. */
+.ticket {
+  --notch: 11px;
+  mask:
+    radial-gradient(circle var(--notch) at 0 50%, #0000 98%, #000) left / 51% 100% no-repeat,
+    radial-gradient(circle var(--notch) at 100% 50%, #0000 98%, #000) right / 51% 100% no-repeat;
+}
+
+/* ---------------------------------------------------------------------------
+   Chameleon nav (components/layout/NavIsland.tsx). The island takes the shape,
+   colours and edge of whichever section is under it; only the variables change.
+   --------------------------------------------------------------------------- */
+#site-header {
+  --nav-bg: rgb(11 18 51 / 0.94);
+  --nav-fg: var(--color-star);
+  --nav-muted: var(--color-night-300);
+  --nav-edge: rgb(154 166 212 / 0.28);
+  --nav-edge-w: 1px;
+  --nav-radius: 999px;
+  --nav-skew: 0deg;
+  --nav-shadow: 0 0 0 transparent;
+  --nav-active: var(--color-star);
+  --nav-active-fg: var(--color-night-900);
+  --nav-cta: var(--color-apricot);
+  --nav-cta-fg: var(--color-night-950);
+}
+#site-header[data-theme="dawn"] {
+  --nav-bg: var(--color-cloud);
+  --nav-fg: var(--color-dawn-950);
+  --nav-muted: var(--color-dawn-700);
+  --nav-edge: transparent;
+  --nav-shadow: 0 5px 0 rgb(23 37 90 / 0.22);
+  --nav-active: var(--color-dawn-950);
+  --nav-active-fg: var(--color-cloud);
+  --nav-cta: var(--color-dawn-950);
+  --nav-cta-fg: var(--color-cloud);
+}
+#site-header[data-theme="mono"] {
+  --nav-bg: rgb(0 0 0 / 0.94);
+  --nav-fg: #ffffff;
+  --nav-muted: rgb(255 255 255 / 0.6);
+  --nav-edge: rgb(255 255 255 / 0.22);
+  --nav-radius: 6px;
+  --nav-active: #ffffff;
+  --nav-active-fg: #000000;
+  --nav-cta: #ffffff;
+  --nav-cta-fg: #000000;
+}
+#site-header[data-theme="graphite"] {
+  --nav-bg: rgb(21 23 27 / 0.95);
+  --nav-fg: var(--color-graphite-100);
+  --nav-muted: rgb(242 243 245 / 0.6);
+  --nav-edge: rgb(242 243 245 / 0.14);
+  --nav-radius: 12px;
+  --nav-active: var(--color-apricot);
+  --nav-active-fg: var(--color-graphite-950);
+  --nav-cta: var(--color-graphite-100);
+  --nav-cta-fg: var(--color-graphite-950);
+}
+#site-header[data-theme="paper"] {
+  --nav-bg: #ffffff;
+  --nav-fg: var(--color-ink);
+  --nav-muted: var(--color-ink-600);
+  --nav-edge: rgb(14 18 32 / 0.1);
+  --nav-shadow: 0 10px 30px -12px rgb(14 18 32 / 0.25);
+  --nav-active: var(--color-ink);
+  --nav-active-fg: #ffffff;
+  --nav-cta: var(--color-ink);
+  --nav-cta-fg: #ffffff;
+}
+
+.nav-shape,
+.nav-indicator,
+.nav-cta-shape {
+  position: absolute;
+  inset: 0;
+  transform: skewX(var(--nav-skew));
+  transition:
+    transform 0.5s var(--ease-out-expo),
+    border-radius 0.5s var(--ease-out-expo),
+    background-color 0.4s ease,
+    box-shadow 0.4s ease,
+    border-color 0.4s ease;
+}
+.nav-shape {
+  background: var(--nav-bg);
+  border: var(--nav-edge-w) solid var(--nav-edge);
+  border-radius: var(--nav-radius);
+  box-shadow: var(--nav-shadow);
+}
+.nav-indicator {
+  inset: auto;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: var(--nav-active);
+  border-radius: calc(max(var(--nav-radius) - 4px, 0px));
+}
+.nav-cta-shape {
+  background: var(--nav-cta);
+  border-radius: calc(max(var(--nav-radius) - 4px, 0px));
+}
+.nav-text {
+  color: var(--nav-fg);
+  transition: color 0.4s ease;
 }
 
 /* ---------------------------------------------------------------------------
@@ -340,34 +539,33 @@
   }
 
   ::selection {
-    background: var(--color-wine-600);
-    color: var(--color-silver-100);
+    background: var(--color-apricot);
+    color: var(--color-night-950);
   }
 
   :focus-visible {
-    outline: 2px solid var(--color-brand-500);
+    outline: 2px solid var(--color-apricot);
     outline-offset: 3px;
   }
 
-  /*
-   * Reduced motion (brief §6.5): remove movement, keep gentle fades. Many Windows
-   * users have animations off for speed, so a completely static site isn't the goal.
-   */
+  /* Reduced motion: remove movement, keep gentle fades. */
   @media (prefers-reduced-motion: reduce) {
     html {
       scroll-behavior: auto;
     }
     .animate-float,
-    .animate-marquee {
+    .animate-aura {
       animation: none !important;
     }
     .animate-mark-in,
-    .animate-rise,
-    .field-rise,
-    .field-drop {
+    .field-rise {
       animation-name: apex-fade !important;
     }
-    /* Menu sheet: fade instead of slide. */
+    .nav-shape,
+    .nav-indicator,
+    .nav-cta-shape {
+      transition-property: background-color, color, box-shadow, border-color !important;
+    }
     [data-slot="sheet-content"] {
       --tw-enter-translate-x: 0 !important;
       --tw-enter-translate-y: 0 !important;

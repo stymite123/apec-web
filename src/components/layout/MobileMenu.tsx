@@ -1,25 +1,19 @@
 "use client";
 
-import { MenuIcon } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
-import { buttonVariants } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import { cn } from "@/lib/utils";
 
 type NavLink = { label: string; href: string };
 
-/**
- * Small-screen navigation. The trigger is a nav box (GSAP Field rhythm); the sheet
- * itself is unchanged until the preview is approved.
- */
 type MobileMenuProps = {
   links: NavLink[];
   cta: NavLink;
   labels: { openMenu: string; menuTitle: string };
 };
 
+/** Small-screen navigation: a night sheet with title-card links. */
 export function MobileMenu({ links, cta, labels }: MobileMenuProps) {
   const [open, setOpen] = useState(false);
   const close = () => setOpen(false);
@@ -30,26 +24,28 @@ export function MobileMenu({ links, cta, labels }: MobileMenuProps) {
         <button
           type="button"
           aria-label={labels.openMenu}
-          className="field-drop nav-box bg-grey-800 px-3 text-silver-100 [--i:1] md:hidden"
+          className="group relative flex h-10 items-center gap-2 px-4"
         >
-          {labels.menuTitle}
-          <MenuIcon aria-hidden className="size-3.5" />
+          <span aria-hidden className="nav-cta-shape" />
+          <span className="relative type-ui text-[14px]" style={{ color: "var(--nav-cta-fg)" }}>
+            {labels.menuTitle}
+          </span>
         </button>
       </SheetTrigger>
       <SheetContent
         side="right"
-        className="w-full border-grey-800 bg-oxblood-950 sm:max-w-sm"
+        className="w-full border-night-700 bg-night-950 sm:max-w-sm"
         aria-describedby={undefined}
       >
         <SheetTitle className="sr-only">{labels.menuTitle}</SheetTitle>
         <nav aria-label="Mobile" className="flex flex-1 flex-col justify-between px-6 pt-20 pb-10">
-          <ul className="flex flex-col gap-1">
+          <ul className="flex flex-col">
             {links.map((link) => (
               <li key={link.href}>
                 <Link
                   href={link.href}
                   onClick={close}
-                  className="block py-2 font-display text-h3 font-semibold text-silver-100"
+                  className="block py-1 type-display text-[clamp(3.5rem,18vw,5rem)] leading-[0.95] text-star transition-colors hover:text-apricot"
                 >
                   {link.label}
                 </Link>
@@ -59,9 +55,10 @@ export function MobileMenu({ links, cta, labels }: MobileMenuProps) {
           <Link
             href={cta.href}
             onClick={close}
-            className={cn(buttonVariants({ size: "lg" }), "h-12 rounded-full text-base")}
+            className="group relative flex h-14 items-center justify-center"
           >
-            {cta.label}
+            <span aria-hidden className="absolute inset-0 -skew-x-12 rounded-[3px] bg-apricot" />
+            <span className="relative type-ui text-base text-night-950">{cta.label}</span>
           </Link>
         </nav>
       </SheetContent>

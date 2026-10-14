@@ -31,8 +31,8 @@ export default async function OpengraphImage({ params }: { params: Promise<{ slu
         width: "100%",
         height: "100%",
         display: "flex",
-        background: ogColors.void,
-        color: ogColors.silver100,
+        background: ogColors.night950,
+        color: ogColors.star,
       }}
     >
       <div style={{ display: "flex", width: 470, height: "100%", position: "relative" }}>
@@ -66,7 +66,7 @@ export default async function OpengraphImage({ params }: { params: Promise<{ slu
           flex: 1,
         }}
       >
-        <div style={{ display: "flex", fontSize: 24, letterSpacing: 5, color: ogColors.steel400 }}>
+        <div style={{ display: "flex", fontSize: 24, letterSpacing: 5, color: ogColors.night300 }}>
           {`0${member.order} / 0${team.length} — ${site.name.toUpperCase()}`}
         </div>
         <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
@@ -85,7 +85,7 @@ export default async function OpengraphImage({ params }: { params: Promise<{ slu
             {member.role}
           </div>
         </div>
-        <div style={{ display: "flex", fontSize: 26, color: ogColors.steel400 }}>
+        <div style={{ display: "flex", fontSize: 26, color: ogColors.night300 }}>
           {isTodo(member.headline) ? site.tagline : member.headline}
         </div>
       </div>

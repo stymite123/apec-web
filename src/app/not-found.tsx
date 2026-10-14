@@ -1,30 +1,37 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import Image from "next/image";
 
-import { TemporaryApexMark } from "@/components/brand/TemporaryApexMark";
-import { buttonVariants } from "@/components/ui/button";
+import { ShapeLink } from "@/components/ui/shape-link";
 import { site } from "@/content/site";
-import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = {
   title: site.notFound.pageTitle,
 };
 
-/** Static 404 (brief §8.3). The falling-bars animation waits for the approved design. */
+/** 404 (brief §8.3): an empty night sky — no summit here. */
 export default function NotFound() {
   const copy = site.notFound;
 
   return (
-    <section className="container-site flex min-h-[calc(100svh-var(--nav-height))] flex-col items-start justify-center gap-8 py-24">
-      <TemporaryApexMark className="w-24" />
-      <p className="label-mono text-grey-400">{copy.eyebrow}</p>
-      <h1 className="font-display text-h2 font-semibold text-silver-100">{copy.title}</h1>
-      <Link
-        href={copy.cta.href}
-        className={cn(buttonVariants({ size: "lg" }), "h-12 rounded-full px-6 text-base")}
-      >
-        {copy.cta.label}
-      </Link>
+    <section className="relative isolate -mt-(--nav-height) flex min-h-svh items-center overflow-hidden bg-night-900">
+      <div aria-hidden className="absolute inset-0 -z-10">
+        <Image src="/art/night-sky.webp" alt="" fill className="object-cover" />
+      </div>
+      <div aria-hidden className="absolute inset-x-0 bottom-0 -z-10 h-[34svh] min-h-[200px]">
+        <Image
+          src="/art/night-ridge-near.webp"
+          alt=""
+          fill
+          className="object-cover object-bottom"
+        />
+      </div>
+      <div className="container-site flex flex-col items-start gap-8 py-24">
+        <p className="type-display text-[clamp(6rem,22vw,16rem)] leading-[0.8] text-night-700">
+          {copy.eyebrow}
+        </p>
+        <h1 className="type-display text-display leading-[0.86] text-star">{copy.title}</h1>
+        <ShapeLink href={copy.cta.href}>{copy.cta.label}</ShapeLink>
+      </div>
     </section>
   );
 }

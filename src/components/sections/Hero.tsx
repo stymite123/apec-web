@@ -1,104 +1,115 @@
-import Link from "next/link";
+import Image from "next/image";
 
 import { CharLight } from "@/components/motion/CharLight";
 import { HeroStage } from "@/components/sections/HeroStage";
+import { ShapeLink } from "@/components/ui/shape-link";
 import { site } from "@/content/site";
 
+/** The headline's four lines read as two on wider screens: "Agency for Professionals," / … */
+function pairs(lines: string[]) {
+  const half = Math.ceil(lines.length / 2);
+  return [lines.slice(0, half).join(" "), lines.slice(half).join(" ")].filter(Boolean);
+}
+
 /**
- * Hero in the GSAP Field rhythm (Mustafa's chosen reference, DECISIONS 2026-10-08):
- * stacked display serif top-left, mono captions along the bottom edge, the
- * pre-rendered APEC mark with its blue aura as the "media". It stays put
- * (sticky) while the next panel slides over it.
- * Load sequence (CSS only, no JS wait): characters light up → mark + aura rise in →
- * nav boxes drop in → captions.
+ * Ridge artwork: scaled by width and anchored to the bottom, so peaks are never
+ * cropped; on narrow screens a minimum height crops the sides instead.
+ */
+function Ridge({
+  src,
+  className,
+  depth,
+  height,
+}: {
+  src: string;
+  className: string;
+  depth: number;
+  height: number;
+}) {
+  return (
+    <div aria-hidden data-depth={depth} className={`absolute -inset-x-[3%] ${className}`}>
+      <Image
+        src={src}
+        alt=""
+        width={2400}
+        height={height}
+        priority
+        sizes="106vw"
+        className="h-auto min-h-[180px] w-full object-cover object-bottom"
+      />
+    </div>
+  );
+}
+
+/**
+ * Night: the start of the climb. Stars, two cel-shaded ridges and the APEC mark
+ * rising behind them. Copy sits in one column (title, line, actions), sized by the
+ * smaller of width and height so it never runs into the scenery.
+ * The hero stays put (sticky) while the dawn panel slides over.
  */
 export function Hero() {
-  const { lines, accent } = site.headline;
-  // The accent word (in the last line) is set in pinkish-red italic.
-  const runs = lines.map((line, index) => {
-    const at = index === lines.length - 1 ? line.indexOf(accent) : -1;
-    if (at < 0) return [{ text: line }];
-    return [
-      { text: line.slice(0, at) },
-      { text: accent, em: true, className: "[--g-from:#f6b9c8] [--g-to:#d9506f]" },
-      { text: line.slice(at + accent.length) },
-    ].filter((run) => run.text);
-  });
-  const [primary, secondary] = site.heroCtas;
+  const { lines } = site.headline;
+  const [meet, start] = site.heroCtas;
 
   return (
     <section
       data-hero
       aria-labelledby="hero-title"
-      className="sticky top-0 isolate -mt-(--nav-height) h-svh min-h-[600px] overflow-hidden bg-void"
+      className="sticky top-0 isolate -mt-(--nav-height) h-svh min-h-[620px] overflow-hidden bg-night-900"
     >
-      {/* Blackish-red counterweight to the blue aura, low and to the left. Static. */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute -bottom-1/4 -left-1/4 size-[80vmax] bg-[radial-gradient(closest-side,rgb(150_32_62/0.38),transparent)] md:-left-[12%] md:size-[60vmax]"
-      />
+      {/* Night sky and stars: one opaque bitmap. */}
+      <div aria-hidden className="absolute inset-0">
+        <Image src="/art/night-sky.webp" alt="" fill priority className="object-cover" />
+      </div>
 
       <HeroStage />
 
-      {/* Keeps the title and captions readable where they cross the aura. */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-x-0 bottom-0 h-2/5 bg-linear-to-t from-void via-void/70 to-transparent"
+      {/* The far ridge art runs deep below its peaks, so lifting it never opens a gap. */}
+      <Ridge
+        src="/art/night-ridge-far.webp"
+        depth={0.4}
+        height={640}
+        className="bottom-[min(0px,calc(9svh-9.7vw))]"
       />
+      <Ridge src="/art/night-ridge-near.webp" depth={0.75} height={420} className="-bottom-[4%]" />
 
-      <h1
-        id="hero-title"
-        data-hero-title
-        className="absolute top-[calc(var(--nav-height)+1.25rem)] left-4 font-field text-[clamp(2.9rem,7.6vw,8rem)] leading-[0.86] font-normal tracking-[-0.035em] text-brand-300 [font-variation-settings:'opsz'_72] md:left-6"
-      >
-        <CharLight
-          label={lines.join(" ")}
-          lines={runs}
-          charClassName="text-grad"
-          lineClassNames={[
-            "[--g-from:#ffffff] [--g-to:#e4e6ea]",
-            "[--g-from:#f4f5f7] [--g-to:#d6d9de]",
-            "[--g-from:#e9ebee] [--g-to:#c8ccd2]",
-            "[--g-from:#dfe2e6] [--g-to:#bcc0c7]",
-          ]}
-        />
-      </h1>
-
-      {/* Bottom edge: CTAs (left), disciplines + location (centre), tagline (right). */}
       <div
-        data-hero-fade
-        className="absolute inset-x-0 bottom-0 grid gap-5 px-4 pb-4 md:grid-cols-[1fr_auto_1fr] md:items-end md:px-6 md:pb-6"
+        data-hero-copy
+        className="absolute inset-x-0 top-[calc(var(--nav-height)+2.5rem)] flex flex-col items-start gap-5 px-5 md:top-[calc(var(--nav-height)+min(4.5rem,9svh))] md:gap-7 md:px-12"
       >
-        <div className="field-rise flex w-fit items-center gap-1.5 rounded-md border border-grey-800 bg-grey-900/90 p-1.5 [--d:1.5s]">
-          {primary && (
-            <Link
-              href={primary.href}
-              className="inline-flex h-9 items-center rounded-[5px] bg-linear-to-b from-white to-grey-300 px-4 text-sm font-medium text-void transition-[filter] hover:brightness-110"
-            >
-              {primary.label}
-            </Link>
-          )}
-          {secondary && (
-            <Link
-              href={secondary.href}
-              className="inline-flex h-9 items-center rounded-[5px] px-4 text-sm font-medium text-silver-100 transition-colors hover:bg-grey-800"
-            >
-              {secondary.label}
-            </Link>
-          )}
-        </div>
-        <p className="field-rise label-mono text-[11px] text-grey-300 [--d:1.6s] md:text-center md:whitespace-nowrap">
-          {site.heroCaption}
-          <br />
-          {site.location}.
-        </p>
-        <p className="field-rise hidden items-center justify-end gap-2 label-mono text-[11px] text-rose-300 [--d:1.7s] md:flex">
-          {site.tagline}
-          <span
-            aria-hidden
-            className="inline-block size-2 rotate-45 bg-linear-to-br from-rose-300 to-rose-600"
+        <h1
+          id="hero-title"
+          data-hero-title
+          className="text-[clamp(2.25rem,min(4.8vw,8.4svh),5.25rem)] leading-[1.06] font-semibold tracking-[-0.03em] text-star [font-stretch:94%]"
+        >
+          <CharLight
+            label={lines.join(" ")}
+            lines={pairs(lines).map((text) => [{ text }])}
+            lineClassNames={["max-md:whitespace-normal", "max-md:whitespace-normal"]}
           />
-        </p>
+        </h1>
+        <div data-hero-fade className="flex max-w-2xl flex-col items-start gap-6">
+          <p className="field-rise max-w-[48ch] text-[clamp(1.0625rem,1.35vw,1.375rem)] leading-relaxed text-star/70 [--d:1.2s]">
+            {site.subheadline}
+          </p>
+          <div className="field-rise flex flex-wrap items-center gap-3 [--d:1.35s]">
+            {start && (
+              <ShapeLink href={start.href} className="h-13 px-8 text-[16px]">
+                {start.label}
+              </ShapeLink>
+            )}
+            {meet && (
+              <ShapeLink
+                href={meet.href}
+                variant="outline"
+                fill="var(--color-star)"
+                className="h-13 px-8 text-[16px]"
+              >
+                {meet.label}
+              </ShapeLink>
+            )}
+          </div>
+        </div>
       </div>
     </section>
   );

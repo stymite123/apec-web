@@ -9,14 +9,14 @@ Owner for SEO wording (brief §12): **Muhammad Huzaifa**.
 | Where | Draft |
 |---|---|
 | Hero headline (given by Mustafa, not a draft) | Agency for Professionals, Experienced & Creatives |
-| Hero caption | SEO · AI agents · Websites · Mobile apps · Brand design |
-| Intro statement (rewritten on request, 2026-10-08) | Five specialists, one standard. Search, AI agents, websites, mobile apps and brand design, each led by the person who actually does the work. AI sets our pace; craft sets the bar. |
+| Intro statement (hero sub-headline; last sentence cut 2026-10-14, the manifesto says it) | Five specialists, one standard. Search, AI agents, websites, mobile apps and brand design, each led by the person who actually does the work. |
 | Meta description (Google, share cards) | APEC Digital is a five-person studio from Pakistan for SEO, AI agents, web development, mobile apps and brand design, working with clients worldwide. |
 | Manifesto | AI makes us fast. / Specialists make it right. / You get both. |
-| Team intro | One specialist per discipline, working as one team on your project. |
-| Intro panel label (preview) | Scroll gently / into the five |
-| Team card caption (preview) | APEC Digital · The five |
-| Services title + intro | What we do — Five disciplines, each led by the person who practises it. |
+| Nav button (merged with the Contact link) | Contact |
+| Team title | The Five (cards show name and role only) |
+| Services title | What we do |
+| Discipline cards (dawn sky) | SEO · AI agents · Websites · Mobile apps · Brand design |
+| "What we do" mock-ups (words inside the pictures, `src/content/showcase.ts`) | Search query "ai agents for small business", result "Your Brand — AI agents that answer every lead, 24/7"; AI prompt and answer; workflow "Lead intake" (Gmail → AI Agent → If → HubSpot / WhatsApp); exchange headline "Trade the next market."; music "Neon Summit — Night Drive Club"; ride "Arriving in 4 min"; poster "Ascent". "yourbrand.com" stands for a client; prices and times are demo values. |
 | Process title | How we work |
 | Contact title (APEC, not apex) | Bring your next build to APEC. |
 | Contact intro | Tell us what you’re building. Email or WhatsApp — whichever is easier for you. |

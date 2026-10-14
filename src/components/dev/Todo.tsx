@@ -13,7 +13,7 @@ export function Todo({ children, className }: { children: ReactNode; className?:
     <span
       data-todo=""
       className={cn(
-        "inline-block rounded-md px-2 py-1 font-mono text-xs leading-snug text-grey-300 outline-1 outline-wine-400 outline-dashed",
+        "inline-block rounded-md px-2 py-1 font-mono text-xs leading-snug text-night-300 outline-1 outline-wine-400 outline-dashed",
         className,
       )}
     >

@@ -135,7 +135,6 @@ const linkSchema = z.object({ label: nonEmpty, href: nonEmpty });
 
 const sectionSchema = z.object({
   id: z.string().regex(/^[a-z-]+$/),
-  eyebrow: nonEmpty,
   title: nonEmpty,
   intro: orTodo(nonEmpty).optional(),
 });
@@ -145,6 +144,8 @@ const slug = z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/);
 export const serviceSchema = z.object({
   slug,
   title: nonEmpty,
+  /** One or two words, for the floating cards in the dawn sky. */
+  short: nonEmpty,
   summary: orTodo(nonEmpty),
   /** Team member slug who leads this discipline. */
   lead: slug,
@@ -164,8 +165,6 @@ export const siteSchema = z.object({
   headline: z
     .object({ lines: z.array(nonEmpty).min(1).max(4), accent: nonEmpty })
     .refine((h) => h.lines.at(-1)?.includes(h.accent), "headline.accent must be in the last line"),
-  /** Mono caption along the bottom of the hero. */
-  heroCaption: orTodo(nonEmpty),
   subheadline: orTodo(nonEmpty),
   description: orTodo(nonEmpty.max(160)),
   location: orTodo(nonEmpty),
@@ -177,13 +176,7 @@ export const siteSchema = z.object({
   /** Home page section copy; `id` is the anchor used by the nav. */
   sections: z.object({
     manifesto: z.object({ lines: z.array(nonEmpty).min(1).max(3) }),
-    team: sectionSchema.extend({
-      viewProfile: nonEmpty,
-      /** Mono caption on each card (GSAP Field "FIELD CHARACTERS"). */
-      cardCaption: nonEmpty,
-      /** Two-line mono label beside the intro paragraph. */
-      scrollLabel: z.tuple([nonEmpty, nonEmpty]),
-    }),
+    team: sectionSchema,
     services: sectionSchema.extend({ ledBy: nonEmpty }),
     process: sectionSchema,
     contact: sectionSchema.extend({

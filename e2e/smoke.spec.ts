@@ -82,14 +82,16 @@ test("mobile menu links navigate and close the menu", async ({ page }, testInfo)
   await expect(page.locator("#process-title")).toBeInViewport();
 });
 
-test("team cards open member pages with prev/next navigation", async ({ page }) => {
+test("the five are shown without links; member pages keep prev/next navigation", async ({
+  page,
+}) => {
   const errors = collectErrors(page);
   await page.goto("/");
 
-  // Cards 2–5 are stacked below the first (sticky), so check links, then visit.
-  const slideLinks = page.locator("#team ol > li a");
-  await expect(slideLinks).toHaveCount(5);
-  await expect(slideLinks.nth(1)).toHaveAttribute("href", "/team/mustafa-ishaq");
+  // The team section shows people, it is not navigation (feedback 2026-10-15).
+  await expect(page.locator("#team ol > li")).toHaveCount(5);
+  await expect(page.locator("#team ol > li a")).toHaveCount(0);
+  await expect(page.locator("#team ol > li").nth(1)).toContainText("Mustafa Ishaq");
   await page.goto("/team/mustafa-ishaq");
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Mustafa Ishaq");
   await expect(page).toHaveTitle("Mustafa Ishaq — AI Agent Engineer | APEC Digital");
@@ -128,8 +130,9 @@ test("native scrolling and no WebGL on the home page", async ({ page }, testInfo
   await expect(page.locator("html")).not.toHaveClass(/\blenis\b/);
   await expect(page.locator("[data-hero] canvas")).toHaveCount(0);
   await expect(page.locator('[data-hero] img[src*="apex-mark-layer"]')).toHaveCount(1);
-  // The aura is a pre-rendered video loop, not live 3D.
-  await expect(page.locator('[data-hero] video source[src*="apex-aura"]')).toHaveCount(2);
+  // The aura is a pre-rendered still (a video under the blend layer cost frames), not live 3D.
+  await expect(page.locator('[data-hero] img[src*="apex-aura"]')).toHaveCount(1);
+  await expect(page.locator("[data-hero] video")).toHaveCount(0);
 
   await page.mouse.move(720, 450);
   await page.mouse.wheel(0, 600);

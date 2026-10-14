@@ -13,6 +13,9 @@
     "e2e": "playwright test",
     "lhci": "lhci autorun",
     "dither": "node scripts/dither-portraits.mjs",
+    "art": "node scripts/render-anime-art.mjs",
+    "framing": "node scripts/portrait-framing.mjs",
+    "aura": "node scripts/aura-alpha.mjs",
     "render:layers": "node scripts/render-hero-layers.mjs",
     "profile": "node scripts/profile/profile-home.mjs"
   },
