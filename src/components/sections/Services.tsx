@@ -1,25 +1,11 @@
 import Image from "next/image";
-import type { ComponentType } from "react";
 
-import { FlowCanvas } from "@/components/showcase/FlowCanvas";
-import { Gallery } from "@/components/showcase/Gallery";
-import { Laptop } from "@/components/showcase/Laptop";
-import { Phones } from "@/components/showcase/Phones";
-import { SearchStack } from "@/components/showcase/SearchStack";
+import { LazyScene } from "@/components/showcase/LazyScene";
 import { services } from "@/content/services";
 import { site } from "@/content/site";
 import { getMember } from "@/content/team";
 import { isTodo } from "@/lib/todo";
 import { cn } from "@/lib/utils";
-
-/** One device scene per discipline (CSS 3D, components/showcase). */
-const VISUALS: Record<string, ComponentType> = {
-  seo: SearchStack,
-  "ai-agents": FlowCanvas,
-  web: Laptop,
-  "mobile-apps": Phones,
-  "brand-design": Gallery,
-};
 
 /**
  * Daylight: "What we do" as a studio. Each discipline gets a lit stage with a working
@@ -35,7 +21,7 @@ export function Services() {
       id={copy.id}
       data-theme="paper"
       aria-labelledby={`${copy.id}-title`}
-      className="relative bg-paper text-ink"
+      className="relative bg-paper text-ink defer-render [--defer-h:4200px]"
     >
       <div className="container-site pt-[calc(var(--nav-height)+4rem)] pb-24 md:pb-32">
         <h2 id={`${copy.id}-title`} className="type-display text-display leading-[0.84]">
@@ -44,7 +30,6 @@ export function Services() {
 
         <ol className="mt-12 flex flex-col gap-20 md:mt-16 md:gap-28">
           {services.map((service, i) => {
-            const Visual = VISUALS[service.slug];
             const lead = getMember(service.lead);
             return (
               <li key={service.slug} className="grid items-center gap-8 lg:grid-cols-12 lg:gap-12">
@@ -56,7 +41,9 @@ export function Services() {
                     i % 2 === 1 && "lg:order-2",
                   )}
                 >
-                  <div className="[zoom:var(--z)]">{Visual && <Visual />}</div>
+                  <div className="[zoom:var(--z)]">
+                    <LazyScene slug={service.slug} />
+                  </div>
                 </div>
 
                 <div className="lg:col-span-5">

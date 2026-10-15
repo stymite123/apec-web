@@ -1,19 +1,13 @@
 import Image from "next/image";
+import type { CSSProperties } from "react";
 
-import { CharLight } from "@/components/motion/CharLight";
 import { HeroStage } from "@/components/sections/HeroStage";
 import { ShapeLink } from "@/components/ui/shape-link";
 import { site } from "@/content/site";
 
-/** The headline's four lines read as two on wider screens: "Agency for Professionals," / … */
-function pairs(lines: string[]) {
-  const half = Math.ceil(lines.length / 2);
-  return [lines.slice(0, half).join(" "), lines.slice(half).join(" ")].filter(Boolean);
-}
-
 /**
- * Ridge artwork: scaled by width and anchored to the bottom, so peaks are never
- * cropped; on narrow screens a minimum height crops the sides instead.
+ * Night horizon (Climb artwork), kept low and quiet: scaled by width, bottom-anchored,
+ * pushed down so only the peaks show and the mark stays clear of it.
  */
 function Ridge({
   src,
@@ -35,81 +29,114 @@ function Ridge({
         height={height}
         priority
         sizes="106vw"
-        className="h-auto min-h-[180px] w-full object-cover object-bottom"
+        className="h-auto min-h-[150px] w-full object-cover object-bottom"
       />
     </div>
   );
 }
 
+/** One headline line; the accent word (approved: "Creatives") is set in rose italic. */
+function Line({ text, accent, index }: { text: string; accent: string; index: number }) {
+  const at = text.indexOf(accent);
+  const style = { "--i": index } as CSSProperties;
+  return (
+    <span className="hero-line">
+      <span style={style} className="text-grad [--g-from:#ffffff] [--g-to:#c3cad6]">
+        {at < 0 ? (
+          text
+        ) : (
+          <>
+            {text.slice(0, at)}
+            <em className="text-grad pr-[0.04em] italic [--g-from:#f6c3cf] [--g-to:#e0718b]">
+              {accent}
+            </em>
+            {text.slice(at + accent.length)}
+          </>
+        )}
+      </span>
+    </span>
+  );
+}
+
 /**
- * Night: the start of the climb. Stars, two cel-shaded ridges and the APEC mark
- * rising behind them. Copy sits in one column (title, line, actions), sized by the
- * smaller of width and height so it never runs into the scenery.
- * The hero stays put (sticky) while the dawn panel slides over.
+ * Night: the opening (Field composition on Climb's sky). Newsreader headline on the
+ * left, lines revealed in sequence; the pre-rendered APEC mark with its blue aura on
+ * the right; a restrained night horizon along the bottom. Phones: headline, copy and
+ * actions first, the mark directly beneath. The hero stays put (sticky) while the
+ * dawn panel slides over it. Opening sequence is CSS only (globals.css).
  */
 export function Hero() {
-  const { lines } = site.headline;
+  const { lines, accent } = site.headline;
   const [meet, start] = site.heroCtas;
 
   return (
     <section
       data-hero
       aria-labelledby="hero-title"
-      className="sticky top-0 isolate -mt-(--nav-height) h-svh min-h-[620px] overflow-hidden bg-night-900"
+      className="sticky top-0 isolate -mt-(--nav-height) h-svh min-h-[640px] overflow-hidden bg-night-950"
     >
       {/* Night sky and stars: one opaque bitmap. */}
       <div aria-hidden className="absolute inset-0">
         <Image src="/art/night-sky.webp" alt="" fill priority className="object-cover" />
       </div>
 
-      <HeroStage />
-
-      {/* The far ridge art runs deep below its peaks, so lifting it never opens a gap. */}
+      {/* Horizon: lowered so it frames the page without reaching the mark or the copy. */}
       <Ridge
         src="/art/night-ridge-far.webp"
         depth={0.4}
         height={640}
-        className="bottom-[min(0px,calc(9svh-9.7vw))]"
+        className="-bottom-[6%] opacity-80 md:-bottom-[9%]"
       />
-      <Ridge src="/art/night-ridge-near.webp" depth={0.75} height={420} className="-bottom-[4%]" />
+      <Ridge
+        src="/art/night-ridge-near.webp"
+        depth={0.75}
+        height={420}
+        className="-bottom-[10%] md:-bottom-[12%]"
+      />
 
-      <div
-        data-hero-copy
-        className="absolute inset-x-0 top-[calc(var(--nav-height)+2.5rem)] flex flex-col items-start gap-5 px-5 md:top-[calc(var(--nav-height)+min(4.5rem,9svh))] md:gap-7 md:px-12"
-      >
-        <h1
-          id="hero-title"
-          data-hero-title
-          className="text-[clamp(2.25rem,min(4.8vw,8.4svh),5.25rem)] leading-[1.06] font-semibold tracking-[-0.03em] text-star [font-stretch:94%]"
-        >
-          <CharLight
-            label={lines.join(" ")}
-            lines={pairs(lines).map((text) => [{ text }])}
-            lineClassNames={["max-md:whitespace-normal", "max-md:whitespace-normal"]}
-          />
-        </h1>
-        <div data-hero-fade className="flex max-w-2xl flex-col items-start gap-6">
-          <p className="field-rise max-w-[48ch] text-[clamp(1.0625rem,1.35vw,1.375rem)] leading-relaxed text-star/70 [--d:1.2s]">
-            {site.subheadline}
-          </p>
-          <div className="field-rise flex flex-wrap items-center gap-3 [--d:1.35s]">
-            {start && (
-              <ShapeLink href={start.href} className="h-13 px-8 text-[16px]">
-                {start.label}
-              </ShapeLink>
-            )}
-            {meet && (
-              <ShapeLink
-                href={meet.href}
-                variant="outline"
-                fill="var(--color-star)"
-                className="h-13 px-8 text-[16px]"
-              >
-                {meet.label}
-              </ShapeLink>
-            )}
+      <div className="relative z-10 mx-auto flex h-full max-w-[1440px] flex-col px-5 pt-[calc(var(--nav-height)+1.5rem)] md:block md:px-12 md:pt-[calc(var(--nav-height)+min(3.5rem,7svh))]">
+        <div data-hero-copy className="md:max-w-[min(56%,780px)]">
+          <h1
+            id="hero-title"
+            data-hero-title
+            className="type-serif text-[clamp(2.6rem,min(6.4vw,10svh),7rem)] leading-[0.98]"
+          >
+            <span className="sr-only">{lines.join(" ")}</span>
+            <span aria-hidden className="block">
+              {lines.map((line, i) => (
+                <Line key={line} text={line} accent={accent} index={i} />
+              ))}
+            </span>
+          </h1>
+
+          <div data-hero-fade className="mt-4 md:mt-[min(2.25rem,4svh)]">
+            <p className="field-rise max-w-[44ch] text-[16px] leading-[1.55] text-star/75 [--d:0.5s] md:text-[clamp(1.0625rem,1.2vw,1.25rem)] md:leading-relaxed">
+              {site.subheadline}
+            </p>
+            <div className="field-rise mt-5 flex flex-wrap items-center gap-2.5 [--d:0.6s] md:mt-6 md:gap-3">
+              {start && (
+                <ShapeLink href={start.href} className="max-md:px-5">
+                  {start.label}
+                </ShapeLink>
+              )}
+              {meet && (
+                <ShapeLink href={meet.href} variant="outline" className="max-md:px-5">
+                  {meet.label}
+                </ShapeLink>
+              )}
+            </div>
+            <p className="field-rise mt-4 type-ui text-[14px] text-night-300 [--d:0.7s] md:mt-5">
+              {site.location}
+            </p>
           </div>
         </div>
+
+        <HeroStage />
+
+        {/* The tagline, quietly, above the horizon (desktop). */}
+        <p className="field-rise absolute right-12 bottom-7 hidden type-ui text-[13px] tracking-[0.04em] text-star/55 [--d:0.8s] md:block">
+          {site.tagline}
+        </p>
       </div>
     </section>
   );

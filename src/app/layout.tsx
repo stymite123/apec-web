@@ -11,7 +11,7 @@ import { reportTodosAtBuild } from "@/lib/todo-report";
 import { cn } from "@/lib/utils";
 import { GsapRegister } from "@/providers/GsapRegister";
 
-import { archivo, jetbrainsMono } from "./fonts";
+import { archivo, jetbrainsMono, newsreader } from "./fonts";
 import "./globals.css";
 
 const defaultTitle = isTodo(site.tagline) ? site.name : `${site.name} — ${site.tagline}`;
@@ -48,7 +48,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   reportTodosAtBuild();
 
   return (
-    <html lang="en" className={cn("dark", archivo.variable, jetbrainsMono.variable)}>
+    <html
+      lang="en"
+      className={cn("dark", newsreader.variable, archivo.variable, jetbrainsMono.variable)}
+    >
       <body>
         <SkipLink label={site.labels.skipLink} />
         <GsapRegister />

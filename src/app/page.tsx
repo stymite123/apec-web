@@ -17,9 +17,9 @@ export const metadata: Metadata = {
 };
 
 /**
- * Home (brief §8.1). One day on the climb (DECISIONS 2026-10-14): night hero → dawn
- * manifesto → the five (character select) → daylight services → dusk process →
- * night summit contact. Work, Toolbelt and Testimonials stay hidden until real content exists.
+ * Home (brief §8.1). Field + Climb combined (DECISIONS 2026-10-15), one journey through
+ * the day: night hero → dawn manifesto → dark studio (the five) → daylight services →
+ * graphite workshop (process) → night summit contact. Work, Toolbelt and Testimonials stay hidden until real content exists.
  */
 export default function Home() {
   return (
@@ -50,7 +50,6 @@ export default function Home() {
         <SkyStage
           phrases={site.sections.manifesto.lines}
           cards={services.map((service) => ({ slug: service.slug, label: service.short }))}
-          wipe="#000000"
         />
       </div>
       <TeamSection />

@@ -10,7 +10,7 @@ export function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="bg-night-950 text-night-300">
+    <footer className="bg-night-950 text-night-300 defer-render [--defer-h:760px]">
       <FooterWordmark text={site.shortName} />
 
       <div className="container-site grid gap-10 py-14 md:grid-cols-12">

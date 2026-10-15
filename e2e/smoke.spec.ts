@@ -82,16 +82,18 @@ test("mobile menu links navigate and close the menu", async ({ page }, testInfo)
   await expect(page.locator("#process-title")).toBeInViewport();
 });
 
-test("the five are shown without links; member pages keep prev/next navigation", async ({
+test("each of the five links to its member page; member pages keep prev/next navigation", async ({
   page,
 }) => {
   const errors = collectErrors(page);
   await page.goto("/");
 
-  // The team section shows people, it is not navigation (feedback 2026-10-15).
+  // One link per person: the portrait and name (combined direction, 2026-10-15).
   await expect(page.locator("#team ol > li")).toHaveCount(5);
-  await expect(page.locator("#team ol > li a")).toHaveCount(0);
-  await expect(page.locator("#team ol > li").nth(1)).toContainText("Mustafa Ishaq");
+  const links = page.locator("#team ol > li a");
+  await expect(links).toHaveCount(5);
+  await expect(links.nth(1)).toHaveAttribute("href", "/team/mustafa-ishaq");
+  await expect(links.nth(1)).toContainText("Mustafa Ishaq");
   await page.goto("/team/mustafa-ishaq");
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Mustafa Ishaq");
   await expect(page).toHaveTitle("Mustafa Ishaq — AI Agent Engineer | APEC Digital");

@@ -1,0 +1,316 @@
+{
+  "desktop/current": {
+    "summary": {
+      "runs": 6,
+      "scriptKB": 230,
+      "hero3dReadyMs": null,
+      "ditherMs": 0,
+      "loadLongTasks": 4,
+      "loadLongTotalMs": 654,
+      "loadMaxTaskMs": 468,
+      "loadBlockingMs": 454,
+      "scrollLongTotalMs": 0,
+      "scrollMaxTaskMs": 0,
+      "scrollP95FrameMs": 14,
+      "scrollMaxFrameMs": 107,
+      "scrollJankPct": 1
+    },
+    "raw": [
+      {
+        "domContentLoaded": 1057.8999999999069,
+        "fcp": 1492,
+        "scriptKB": 230.4521484375,
+        "hero3dStart": null,
+        "hero3dCompiled": null,
+        "ditherMs": 0,
+        "load": {
+          "tasks": 4,
+          "total": 413,
+          "max": 237,
+          "blocking": 213
+        },
+        "scroll": {
+          "tasks": 0,
+          "total": 0,
+          "max": 0,
+          "frames": 941,
+          "p95": 17.799999999999272,
+          "maxFrame": 185.79999999999927,
+          "jankPct": 2.0191285866099893
+        }
+      },
+      {
+        "domContentLoaded": 168.5,
+        "fcp": 884,
+        "scriptKB": 230.4521484375,
+        "hero3dStart": null,
+        "hero3dCompiled": null,
+        "ditherMs": 0,
+        "load": {
+          "tasks": 4,
+          "total": 699,
+          "max": 486,
+          "blocking": 499
+        },
+        "scroll": {
+          "tasks": 0,
+          "total": 0,
+          "max": 0,
+          "frames": 1093,
+          "p95": 17.800000000000182,
+          "maxFrame": 117.79999999999927,
+          "jankPct": 1.738334858188472
+        }
+      },
+      {
+        "domContentLoaded": 173.60000000009313,
+        "fcp": 1020,
+        "scriptKB": 230.4521484375,
+        "hero3dStart": null,
+        "hero3dCompiled": null,
+        "ditherMs": 0,
+        "load": {
+          "tasks": 4,
+          "total": 731,
+          "max": 513,
+          "blocking": 531
+        },
+        "scroll": {
+          "tasks": 0,
+          "total": 0,
+          "max": 0,
+          "frames": 1001,
+          "p95": 14.300000000000182,
+          "maxFrame": 103.69999999999982,
+          "jankPct": 1.3986013986013985
+        }
+      },
+      {
+        "domContentLoaded": 164.20000000018626,
+        "fcp": 512,
+        "scriptKB": 230.4521484375,
+        "hero3dStart": null,
+        "hero3dCompiled": null,
+        "ditherMs": 0,
+        "load": {
+          "tasks": 3,
+          "total": 298,
+          "max": 170,
+          "blocking": 148
+        },
+        "scroll": {
+          "tasks": 0,
+          "total": 0,
+          "max": 0,
+          "frames": 1074,
+          "p95": 14.300000000000182,
+          "maxFrame": 103.5,
+          "jankPct": 1.2104283054003724
+        }
+      },
+      {
+        "domContentLoaded": 87.89999999990687,
+        "fcp": 748,
+        "scriptKB": 230.4521484375,
+        "hero3dStart": null,
+        "hero3dCompiled": null,
+        "ditherMs": 0,
+        "load": {
+          "tasks": 4,
+          "total": 654,
+          "max": 468,
+          "blocking": 454
+        },
+        "scroll": {
+          "tasks": 0,
+          "total": 0,
+          "max": 0,
+          "frames": 1040,
+          "p95": 14.300000000000182,
+          "maxFrame": 150.10000000000036,
+          "jankPct": 1.153846153846154
+        }
+      },
+      {
+        "domContentLoaded": 99.70000000018626,
+        "fcp": 792,
+        "scriptKB": 230.4521484375,
+        "hero3dStart": null,
+        "hero3dCompiled": null,
+        "ditherMs": 0,
+        "load": {
+          "tasks": 4,
+          "total": 693,
+          "max": 485,
+          "blocking": 493
+        },
+        "scroll": {
+          "tasks": 0,
+          "total": 0,
+          "max": 0,
+          "frames": 988,
+          "p95": 14.300000000000182,
+          "maxFrame": 107.10000000000036,
+          "jankPct": 1.417004048582996
+        }
+      }
+    ]
+  },
+  "mobile/current": {
+    "summary": {
+      "runs": 6,
+      "scriptKB": 230,
+      "hero3dReadyMs": null,
+      "ditherMs": 0,
+      "loadLongTasks": 5,
+      "loadLongTotalMs": 1205,
+      "loadMaxTaskMs": 882,
+      "loadBlockingMs": 955,
+      "scrollLongTotalMs": 65,
+      "scrollMaxTaskMs": 56,
+      "scrollP95FrameMs": 22,
+      "scrollMaxFrameMs": 186,
+      "scrollJankPct": 3
+    },
+    "raw": [
+      {
+        "domContentLoaded": 114.5,
+        "fcp": 1920,
+        "scriptKB": 230.4521484375,
+        "hero3dStart": null,
+        "hero3dCompiled": null,
+        "ditherMs": 0,
+        "load": {
+          "tasks": 5,
+          "total": 1908,
+          "max": 1556,
+          "blocking": 1658
+        },
+        "scroll": {
+          "tasks": 1,
+          "total": 65,
+          "max": 65,
+          "frames": 724,
+          "p95": 25,
+          "maxFrame": 171.5,
+          "jankPct": 2.7624309392265194
+        }
+      },
+      {
+        "domContentLoaded": 80,
+        "fcp": 1196,
+        "scriptKB": 230.4521484375,
+        "hero3dStart": null,
+        "hero3dCompiled": null,
+        "ditherMs": 0,
+        "load": {
+          "tasks": 5,
+          "total": 1205,
+          "max": 882,
+          "blocking": 955
+        },
+        "scroll": {
+          "tasks": 2,
+          "total": 109,
+          "max": 56,
+          "frames": 674,
+          "p95": 21.5,
+          "maxFrame": 178.59999999999854,
+          "jankPct": 2.8189910979228485
+        }
+      },
+      {
+        "domContentLoaded": 108,
+        "fcp": 1156,
+        "scriptKB": 230.4521484375,
+        "hero3dStart": null,
+        "hero3dCompiled": null,
+        "ditherMs": 0,
+        "load": {
+          "tasks": 4,
+          "total": 985,
+          "max": 712,
+          "blocking": 785
+        },
+        "scroll": {
+          "tasks": 1,
+          "total": 55,
+          "max": 55,
+          "frames": 637,
+          "p95": 21.400000000000546,
+          "maxFrame": 196.39999999999964,
+          "jankPct": 2.511773940345369
+        }
+      },
+      {
+        "domContentLoaded": 192.1999999997206,
+        "fcp": 1624,
+        "scriptKB": 230.4521484375,
+        "hero3dStart": null,
+        "hero3dCompiled": null,
+        "ditherMs": 0,
+        "load": {
+          "tasks": 5,
+          "total": 1552,
+          "max": 1213,
+          "blocking": 1302
+        },
+        "scroll": {
+          "tasks": 1,
+          "total": 69,
+          "max": 69,
+          "frames": 747,
+          "p95": 21.5,
+          "maxFrame": 185.79999999999927,
+          "jankPct": 2.2757697456492636
+        }
+      },
+      {
+        "domContentLoaded": 70.60000000009313,
+        "fcp": 1376,
+        "scriptKB": 230.4521484375,
+        "hero3dStart": null,
+        "hero3dCompiled": null,
+        "ditherMs": 0,
+        "load": {
+          "tasks": 4,
+          "total": 1095,
+          "max": 836,
+          "blocking": 895
+        },
+        "scroll": {
+          "tasks": 1,
+          "total": 52,
+          "max": 52,
+          "frames": 755,
+          "p95": 21.5,
+          "maxFrame": 200.10000000000036,
+          "jankPct": 2.119205298013245
+        }
+      },
+      {
+        "domContentLoaded": 173.3000000002794,
+        "fcp": 1804,
+        "scriptKB": 230.4521484375,
+        "hero3dStart": null,
+        "hero3dCompiled": null,
+        "ditherMs": 0,
+        "load": {
+          "tasks": 5,
+          "total": 1792,
+          "max": 1422,
+          "blocking": 1542
+        },
+        "scroll": {
+          "tasks": 2,
+          "total": 112,
+          "max": 59,
+          "frames": 684,
+          "p95": 25,
+          "maxFrame": 189.29999999999927,
+          "jankPct": 2.923976608187134
+        }
+      }
+    ]
+  }
+}

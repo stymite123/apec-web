@@ -6,10 +6,31 @@
 @custom-variant dark (&:is(.dark *));
 
 /* ---------------------------------------------------------------------------
-   Tokens. The home page moves through one day on the climb (DECISIONS 2026-10-14):
-   night → dawn → black-and-white team → daylight studio → graphite build → night.
+   Tokens. Field + Climb combined (DECISIONS 2026-10-15): one journey through the day,
+   night → dawn → dark studio (team) → daylight studio → graphite workshop → night summit.
+   Blue is the one interactive accent; rose is secondary; peach lives in the scenery.
    --------------------------------------------------------------------------- */
 @theme {
+  /* Interactive blue (buttons, active states, focus). White on action-600 = 4.6:1. */
+  --color-action-600: #2a6ef0;
+  --color-action-700: #1f5fd6;
+  --color-action-300: #8db8ff;
+
+  /* Secondary rose and blackish red (Field): contact, footer, small details only. */
+  --color-rose-300: #f08aa2;
+  --color-rose-400: #e5577a;
+  --color-oxblood-950: #0d0406;
+  --color-oxblood-900: #160609;
+
+  /* Dark studio (team) and greys (Field). */
+  --color-studio-950: #0a0b0d;
+  --color-studio-900: #121317;
+  --color-grey-300: #c4c6cc;
+  --color-grey-400: #9a9ca3;
+  --color-grey-500: #74767d;
+  --color-grey-700: #34363b;
+  --color-grey-800: #1f2024;
+
   /* Night: hero, contact, footer */
   --color-night-950: #060a20;
   --color-night-900: #0b1233;
@@ -71,14 +92,24 @@
   --text-body: clamp(1rem, 1.05vw, 1.0625rem);
   --text-body--line-height: 1.6;
 
-  --animate-mark-in: mark-in 1.4s var(--ease-out-expo) 0.15s both;
+  /* Hero opening (CSS only, so it never waits on JavaScript): headline lines, then the
+     mark rises, then its aura fades in behind it. Overall ≈ 1.4 s. */
+  --animate-mark-in: mark-in 0.95s var(--ease-out-expo) 0.35s both;
+  --animate-aura-in: aura-in 1s ease-out 0.6s both;
   --animate-float: float 7s ease-in-out infinite;
-  --animate-aura: aura-drift 11s ease-in-out infinite;
+  --animate-aura: aura-drift 12s ease-in-out infinite;
 
   @keyframes mark-in {
     from {
       opacity: 0;
-      transform: translateY(2rem) scale(0.96);
+      transform: translateY(1.75rem) scale(0.97);
+    }
+  }
+
+  @keyframes aura-in {
+    from {
+      opacity: 0;
+      scale: 0.92;
     }
   }
 
@@ -88,15 +119,23 @@
     }
   }
 
+  /* Visible but gentle: the prepared aura breathes, turns and drifts (composited only). */
   @keyframes aura-drift {
-    50% {
-      scale: 1.06;
-      rotate: 4deg;
+    33% {
+      scale: 1.07;
+      rotate: 5deg;
+      translate: 1.2% -1%;
+    }
+    66% {
+      scale: 0.97;
+      rotate: -3deg;
+      translate: -1% 0.8%;
     }
   }
 }
 
 @theme inline {
+  --font-serif: var(--font-newsreader), Georgia, "Times New Roman", serif;
   --font-display: var(--font-archivo), system-ui, sans-serif;
   --font-sans: var(--font-archivo), system-ui, sans-serif;
   --font-heading: var(--font-archivo), system-ui, sans-serif;
@@ -140,8 +179,8 @@
   --card-foreground: var(--color-star);
   --popover: var(--color-night-950);
   --popover-foreground: var(--color-star);
-  --primary: var(--color-apricot);
-  --primary-foreground: var(--color-night-950);
+  --primary: var(--color-action-600);
+  --primary-foreground: #ffffff;
   --secondary: var(--color-night-700);
   --secondary-foreground: var(--color-star);
   --muted: var(--color-night-800);
@@ -151,7 +190,7 @@
   --destructive: oklch(0.704 0.191 22.216);
   --border: var(--color-night-700);
   --input: var(--color-night-700);
-  --ring: var(--color-apricot);
+  --ring: var(--color-action-300);
   --radius: 0.75rem;
 
   --nav-height: 4.5rem;
@@ -167,20 +206,53 @@
   padding-inline: clamp(1rem, 4vw, 3rem);
 }
 
-/* Title-card type: Archivo at its narrowest and heaviest. */
+/* Section titles (combined system): Newsreader display, same as type-serif. Kept as a
+   separate name for the sections Preview 2 still has to rework. */
 @utility type-display {
-  font-family: var(--font-display);
-  font-weight: 900;
-  font-stretch: 62%;
-  text-transform: uppercase;
-  letter-spacing: -0.005em;
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-variation-settings: "opsz" 72;
+  letter-spacing: -0.03em;
 }
 
-/* Small UI words (nav, buttons, captions): semi-expanded, sentence case. */
+/* Below-the-fold sections skip layout and text shaping until you scroll near them
+   (first-visit cost, measured 2026-10-15). `auto` remembers the real size once seen;
+   the number is only the first estimate. ScrollTrigger re-measures when the page height
+   changes (GsapRegister). */
+@utility defer-render {
+  content-visibility: auto;
+  contain-intrinsic-size: auto var(--defer-h, 1000px);
+}
+
+/* Expressive display type (Field): Newsreader at its display optical size. */
+@utility type-serif {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-variation-settings: "opsz" 72;
+  letter-spacing: -0.03em;
+}
+
+/* Gradient text, top → bottom, colours from --g-from / --g-to. The padding grows the
+   painted box so ascenders, descenders and italics are never clipped; the equal
+   negative margin keeps the layout unchanged (Field, DECISIONS 2026-10-08). */
+@utility text-grad {
+  background-image: linear-gradient(180deg, var(--g-from, #ffffff), var(--g-to, #b9bfca));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  padding: 0.18em 0.08em;
+  margin: -0.18em -0.08em;
+}
+/* Set once text is split into gradient letters: the parent stops painting its own copy. */
+.text-grad-split {
+  background-image: none;
+}
+
+/* Small UI words (nav, buttons, captions): Archivo semibold, sentence case. */
 @utility type-ui {
   font-family: var(--font-sans);
   font-weight: 600;
-  font-stretch: 112%;
   letter-spacing: 0.005em;
 }
 
@@ -200,8 +272,88 @@
 }
 
 /* ---------------------------------------------------------------------------
-   Load sequence (CSS only, runs before hydration)
+   Load sequence (CSS only, runs before hydration). Hero order (≈1.4 s): headline lines
+   rise in sequence → mark rises → aura fades in → copy and actions settle → nav.
+   Text is readable and clickable throughout; nothing blocks input.
    --------------------------------------------------------------------------- */
+.hero-line {
+  display: block;
+  overflow: clip;
+  /* Room for descenders and the italic overhang inside the clip. */
+  padding-block: 0.06em 0.14em;
+  margin-block: -0.06em -0.14em;
+  padding-inline: 0.06em;
+  margin-inline: -0.06em;
+}
+.hero-line > span {
+  display: block;
+  animation: line-in 0.7s var(--ease-out-expo) both;
+  animation-delay: calc(0.1s + var(--i, 0) * 75ms);
+}
+@keyframes line-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.9em);
+  }
+}
+.nav-in {
+  animation: nav-in 0.4s var(--ease-out-expo) 1s both;
+}
+@keyframes nav-in {
+  from {
+    opacity: 0;
+    transform: translateY(-0.5rem);
+  }
+}
+/* Orbit arcs (components/motion/OrbitArc.tsx): resting state is fully drawn. */
+.orbit-path {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+}
+
+/* The boundary arc is drawn by scroll; it starts undrawn so it never flashes at first paint. */
+@media (prefers-reduced-motion: no-preference) {
+  [data-arc="edge"] .orbit-path {
+    stroke-dashoffset: 1;
+  }
+}
+
+/* Phones and reduced motion: blocks marked .arrive fade (and on phones rise) in once
+   as they come into view. Only hidden once JS has armed the observer
+   ([data-arrive-ready]), so without JS everything simply shows. */
+[data-arrive-ready] .arrive {
+  transition:
+    opacity 0.7s ease,
+    transform 0.7s var(--ease-out-expo);
+}
+[data-arrive-ready] .arrive:not([data-arrived]) {
+  opacity: 0;
+  transform: translateY(1.25rem);
+}
+[data-arrive-ready] .arrive .orbit-path {
+  transition: stroke-dashoffset 0.9s ease 0.25s;
+}
+[data-arrive-ready] .arrive:not([data-arrived]) .orbit-path {
+  stroke-dashoffset: 1;
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-arrive-ready] .arrive:not([data-arrived]) {
+    transform: none;
+  }
+  [data-arrive-ready] .arrive .orbit-path {
+    transition: none;
+  }
+  [data-arrive-ready] .arrive:not([data-arrived]) .orbit-path {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* Decorative hero motion stops while the dawn panel covers the hero. */
+[data-hero][data-covered] .animate-float,
+[data-hero][data-covered] .animate-aura {
+  animation-play-state: paused;
+}
+
 .field-char {
   opacity: 0.12;
   animation: field-light 0.9s var(--ease-out-expo) forwards;
@@ -233,58 +385,123 @@
   display: flex;
   gap: 0.75rem;
   overflow-x: auto;
+  overscroll-behavior-x: contain;
   scroll-snap-type: x mandatory;
   scroll-padding-inline: clamp(1rem, 4vw, 3rem);
   padding-inline: clamp(1rem, 4vw, 3rem);
+  padding-block: 0.75rem;
   scrollbar-width: none;
 }
-.team-card {
-  flex: 0 0 min(64vw, 300px);
-  scroll-snap-align: start;
+.team-row::-webkit-scrollbar {
+  display: none;
 }
-.team-frame::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: #000;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.35s ease;
+.team-card {
+  /* Phones: one card and a clear slice of the next. */
+  flex: 0 0 min(70vw, 300px);
+  scroll-snap-align: start;
 }
 @media (min-width: 768px) {
   .team-row {
     display: grid;
     grid-template-columns: repeat(5, minmax(0, 1fr));
-    gap: 1rem;
+    gap: clamp(0.75rem, 1.4vw, 1.5rem);
     overflow: visible;
     max-width: 1440px;
     margin-inline: auto;
   }
-  .team-row:has(.team-card:hover) .team-card:not(:hover) .team-frame::after {
-    opacity: 0.5;
+}
+
+/* Heading line (orbit, signature A part 3): draws once with the formation. */
+[data-team-reveal] .team-head .orbit-path {
+  transition: stroke-dashoffset 1s var(--ease-out-expo) 0.35s;
+}
+[data-team-reveal="pending"] .team-head .orbit-path {
+  stroke-dashoffset: 1;
+}
+
+/* Formation entrance (signature B): centre first, then the inner pair, then the outer
+   pair (--order 0/1/2). Small rise, tight timing; names settle just after. Once. */
+[data-team-reveal="pending"] .team-card {
+  opacity: 0;
+  transform: translateY(28px);
+}
+[data-team-reveal="done"] .team-card {
+  animation: team-rise 0.65s var(--ease-out-expo) both;
+  animation-delay: calc(var(--order, 0) * 110ms);
+}
+[data-team-reveal="done"] .team-caption {
+  animation: team-caption 0.5s var(--ease-out-expo) both;
+  animation-delay: calc(var(--order, 0) * 110ms + 180ms);
+}
+@keyframes team-rise {
+  from {
+    opacity: 0;
+    transform: translateY(28px);
   }
 }
+@keyframes team-caption {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+/* Hover / keyboard focus: the portrait comes forward, a slim blue edge, the name
+   gains emphasis. The other four stay fully visible. */
+.team-lift {
+  transition: transform 0.35s var(--ease-out-expo);
+}
+.team-edge {
+  box-shadow: inset 0 0 0 1.5px var(--color-action-300);
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+.team-name-line {
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.35s var(--ease-out-expo);
+}
+.team-link:hover .team-lift,
+.team-link:focus-visible .team-lift {
+  transform: translateY(-8px) scale(1.015);
+}
+.team-link:hover .team-edge,
+.team-link:focus-visible .team-edge {
+  opacity: 1;
+}
+.team-link:hover .team-name-line,
+.team-link:focus-visible .team-name-line {
+  transform: scaleX(1);
+}
+.team-link:hover .team-name,
+.team-link:focus-visible .team-name {
+  color: #ffffff;
+}
+.team-link:focus-visible {
+  outline: none;
+}
+
 .team-dither {
   image-rendering: pixelated;
   opacity: 0;
 }
-.team-row[data-reveal="pending"] .team-photo {
+[data-team-reveal="pending"] .team-photo {
   opacity: 0;
 }
-.team-row[data-reveal="pending"] .team-dither[data-level="1"] {
+[data-team-reveal="pending"] .team-dither[data-level="1"] {
   opacity: 1;
 }
-.team-row[data-reveal="done"] .team-dither[data-level="1"] {
+[data-team-reveal="done"] .team-dither[data-level="1"] {
   animation: team-l1 0.75s ease both;
-  animation-delay: calc(var(--i, 0) * 90ms);
+  animation-delay: calc(var(--order, 0) * 110ms);
 }
-.team-row[data-reveal="done"] .team-dither[data-level="2"] {
+[data-team-reveal="done"] .team-dither[data-level="2"] {
   animation: team-l2 0.75s ease both;
-  animation-delay: calc(var(--i, 0) * 90ms);
+  animation-delay: calc(var(--order, 0) * 110ms);
 }
-.team-row[data-reveal="done"] .team-photo {
+[data-team-reveal="done"] .team-photo {
   animation: team-photo 0.75s ease both;
-  animation-delay: calc(var(--i, 0) * 90ms);
+  animation-delay: calc(var(--order, 0) * 110ms);
 }
 @keyframes team-l1 {
   0%,
@@ -426,6 +643,8 @@
    Chameleon nav (components/layout/NavIsland.tsx). The island takes the shape,
    colours and edge of whichever section is under it; only the variables change.
    --------------------------------------------------------------------------- */
+/* One stable pill. Only its surface and text colours follow the section underneath
+   (no reshaping or skewing). Contact is always the same blue action. */
 #site-header {
   --nav-bg: rgb(11 18 51 / 0.94);
   --nav-fg: var(--color-star);
@@ -433,56 +652,45 @@
   --nav-edge: rgb(154 166 212 / 0.28);
   --nav-edge-w: 1px;
   --nav-radius: 999px;
-  --nav-skew: 0deg;
-  --nav-shadow: 0 0 0 transparent;
-  --nav-active: var(--color-star);
-  --nav-active-fg: var(--color-night-900);
-  --nav-cta: var(--color-apricot);
-  --nav-cta-fg: var(--color-night-950);
+  --nav-shadow: 0 10px 30px -14px rgb(0 0 0 / 0.6);
+  --nav-active: rgb(238 241 248 / 0.14);
+  --nav-active-fg: var(--color-star);
+  --nav-cta: var(--color-action-600);
+  --nav-cta-fg: #ffffff;
 }
 #site-header[data-theme="dawn"] {
-  --nav-bg: var(--color-cloud);
+  --nav-bg: rgb(247 249 253 / 0.96);
   --nav-fg: var(--color-dawn-950);
   --nav-muted: var(--color-dawn-700);
-  --nav-edge: transparent;
-  --nav-shadow: 0 5px 0 rgb(23 37 90 / 0.22);
-  --nav-active: var(--color-dawn-950);
-  --nav-active-fg: var(--color-cloud);
-  --nav-cta: var(--color-dawn-950);
-  --nav-cta-fg: var(--color-cloud);
+  --nav-edge: rgb(23 37 90 / 0.12);
+  --nav-shadow: 0 10px 30px -14px rgb(23 37 90 / 0.45);
+  --nav-active: rgb(23 37 90 / 0.1);
+  --nav-active-fg: var(--color-dawn-950);
 }
 #site-header[data-theme="mono"] {
-  --nav-bg: rgb(0 0 0 / 0.94);
+  --nav-bg: rgb(18 19 23 / 0.95);
   --nav-fg: #ffffff;
   --nav-muted: rgb(255 255 255 / 0.6);
-  --nav-edge: rgb(255 255 255 / 0.22);
-  --nav-radius: 6px;
-  --nav-active: #ffffff;
-  --nav-active-fg: #000000;
-  --nav-cta: #ffffff;
-  --nav-cta-fg: #000000;
+  --nav-edge: rgb(255 255 255 / 0.16);
+  --nav-active: rgb(255 255 255 / 0.12);
+  --nav-active-fg: #ffffff;
 }
 #site-header[data-theme="graphite"] {
   --nav-bg: rgb(21 23 27 / 0.95);
   --nav-fg: var(--color-graphite-100);
   --nav-muted: rgb(242 243 245 / 0.6);
   --nav-edge: rgb(242 243 245 / 0.14);
-  --nav-radius: 12px;
-  --nav-active: var(--color-apricot);
-  --nav-active-fg: var(--color-graphite-950);
-  --nav-cta: var(--color-graphite-100);
-  --nav-cta-fg: var(--color-graphite-950);
+  --nav-active: rgb(242 243 245 / 0.12);
+  --nav-active-fg: var(--color-graphite-100);
 }
 #site-header[data-theme="paper"] {
-  --nav-bg: #ffffff;
+  --nav-bg: rgb(255 255 255 / 0.97);
   --nav-fg: var(--color-ink);
   --nav-muted: var(--color-ink-600);
   --nav-edge: rgb(14 18 32 / 0.1);
   --nav-shadow: 0 10px 30px -12px rgb(14 18 32 / 0.25);
-  --nav-active: var(--color-ink);
-  --nav-active-fg: #ffffff;
-  --nav-cta: var(--color-ink);
-  --nav-cta-fg: #ffffff;
+  --nav-active: rgb(14 18 32 / 0.08);
+  --nav-active-fg: var(--color-ink);
 }
 
 .nav-shape,
@@ -490,13 +698,10 @@
 .nav-cta-shape {
   position: absolute;
   inset: 0;
-  transform: skewX(var(--nav-skew));
   transition:
-    transform 0.5s var(--ease-out-expo),
-    border-radius 0.5s var(--ease-out-expo),
-    background-color 0.4s ease,
-    box-shadow 0.4s ease,
-    border-color 0.4s ease;
+    background-color 0.35s ease,
+    box-shadow 0.35s ease,
+    border-color 0.35s ease;
 }
 .nav-shape {
   background: var(--nav-bg);
@@ -539,12 +744,12 @@
   }
 
   ::selection {
-    background: var(--color-apricot);
-    color: var(--color-night-950);
+    background: var(--color-action-600);
+    color: #ffffff;
   }
 
   :focus-visible {
-    outline: 2px solid var(--color-apricot);
+    outline: 2px solid var(--color-action-300);
     outline-offset: 3px;
   }
 
@@ -558,8 +763,23 @@
       animation: none !important;
     }
     .animate-mark-in,
-    .field-rise {
+    .animate-aura-in,
+    .field-rise,
+    .hero-line > span,
+    .nav-in,
+    [data-team-reveal="done"] .team-card,
+    [data-team-reveal="done"] .team-caption {
       animation-name: apex-fade !important;
+    }
+    [data-team-reveal="pending"] .team-card {
+      transform: none;
+    }
+    .team-lift {
+      transition: none;
+    }
+    .team-link:hover .team-lift,
+    .team-link:focus-visible .team-lift {
+      transform: none;
     }
     .nav-shape,
     .nav-indicator,

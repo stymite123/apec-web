@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 
-import { gsap, useGSAP } from "@/lib/gsap";
+import { gsap, ScrollTrigger, useGSAP } from "@/lib/gsap";
 import { whenIdle } from "@/lib/idle";
 import { cn } from "@/lib/utils";
 
@@ -12,10 +12,10 @@ type NavLink = { label: string; href: string };
 const sectionId = (href: string) => href.replace("/#", "");
 
 /**
- * Chameleon nav: a floating island that takes the theme of the section under it
- * (`data-theme` on sections → `data-theme` on the header; globals.css swaps shape,
- * colours and edge). An indicator slides to the section you are reading, and the
- * island tightens once you leave the top of the page.
+ * Floating island (Climb) with a stable pill shape: only its surface and text colours
+ * follow the section underneath (`data-theme` on sections → on the header). An
+ * indicator slides to the section you are reading (≈250 ms) and the island tightens
+ * slightly after the hero. Entrance is CSS (`.nav-in`), so links work immediately.
  */
 export function NavIsland({
   brand,
@@ -86,6 +86,9 @@ export function NavIsland({
       remeasure();
       resize.observe(document.body);
     });
+    // Pin spacers and late fonts move sections without resizing the window.
+    ScrollTrigger.addEventListener("refresh", remeasure);
+    document.fonts?.ready.then(remeasure);
     window.addEventListener("scroll", schedule, { passive: true });
     window.addEventListener("resize", remeasure);
     return () => {
@@ -94,6 +97,7 @@ export function NavIsland({
       cancelAnimationFrame(frame);
       window.removeEventListener("scroll", schedule);
       window.removeEventListener("resize", remeasure);
+      ScrollTrigger.removeEventListener("refresh", remeasure);
     };
   }, [links]);
 
@@ -114,7 +118,7 @@ export function NavIsland({
         x: target.offsetLeft,
         width: target.offsetWidth,
         opacity: 1,
-        duration: reduce || wasHidden ? 0 : 0.55,
+        duration: reduce || wasHidden ? 0 : 0.25,
         ease: "expo.out",
         overwrite: true,
       });
@@ -122,7 +126,6 @@ export function NavIsland({
     { dependencies: [active] },
   );
 
-  const activeLabel = links.find((link) => sectionId(link.href) === active)?.label;
   // The contact section has no link of its own: the CTA is the way there.
   const sectionLinks = links.filter((link) => link.href !== cta.href);
   const ctaCurrent = active === sectionId(cta.href);
@@ -136,34 +139,16 @@ export function NavIsland({
     >
       <div
         className={cn(
-          "pointer-events-auto relative flex h-13 w-full items-center gap-1 pr-1.5 pl-4 transition-[max-width,gap] duration-500 ease-out-expo md:w-auto",
-          compact ? "md:gap-1" : "md:gap-3",
+          "nav-in pointer-events-auto relative flex w-full items-center gap-1 pr-1.5 pl-4 transition-[height,gap] duration-300 ease-out-expo md:w-auto",
+          compact ? "h-12 md:gap-2" : "h-13 md:gap-4",
         )}
       >
         <span aria-hidden className="nav-shape" />
 
         <Link href="/" className="nav-text relative flex items-center gap-2.5 py-2 pr-2">
           {mark}
-          {/* Brand name collapses on desktop once you scroll; phones show the section instead. */}
-          <span
-            className={cn(
-              "grid transition-[grid-template-columns,opacity] duration-500 ease-out-expo",
-              compact ? "md:grid-cols-[0fr] md:opacity-0" : "grid-cols-[1fr]",
-              activeLabel && "max-md:grid-cols-[0fr] max-md:opacity-0",
-            )}
-          >
-            <span className="overflow-hidden type-ui text-[15px] whitespace-nowrap">{brand}</span>
-          </span>
+          <span className="type-ui text-[15px] whitespace-nowrap">{brand}</span>
         </Link>
-        <span
-          aria-hidden
-          className={cn(
-            "nav-text relative type-ui text-[15px] whitespace-nowrap transition-opacity duration-300 md:hidden",
-            activeLabel ? "opacity-100" : "opacity-0",
-          )}
-        >
-          {activeLabel}
-        </span>
 
         <nav aria-label="Primary" className="hidden md:block">
           <div ref={linkRow} className="relative">
@@ -202,7 +187,7 @@ export function NavIsland({
           <span
             aria-hidden
             className={cn(
-              "nav-cta-shape transition-[scale,box-shadow] duration-300 ease-out-expo group-hover:scale-x-[1.06]",
+              "nav-cta-shape rounded-full transition-[background-color,box-shadow] duration-200 group-hover:bg-action-700",
               ctaCurrent && "shadow-[0_0_0_2px_var(--nav-bg),0_0_0_3.5px_var(--nav-cta)]",
             )}
           />

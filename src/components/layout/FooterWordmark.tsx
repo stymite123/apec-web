@@ -34,7 +34,7 @@ export function FooterWordmark({ text }: { text: string }) {
     { scope: ref },
   );
 
-  const word = "type-display block text-center text-[clamp(7rem,44vw,44rem)] leading-[0.78]";
+  const word = "type-display block text-center text-[clamp(5rem,28vw,27rem)] leading-[0.9]";
 
   return (
     <div ref={ref} aria-hidden className="overflow-hidden pt-16 select-none">

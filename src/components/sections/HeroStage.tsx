@@ -23,8 +23,11 @@ const AURA = "/brand/apex-aura.webp";
 
 /**
  * Client half of the hero. Visitors get pre-rendered artwork (no WebGL on load,
- * DECISIONS 2026-10-08). Motion is transform/opacity only: entrance + float + aura drift
- * (CSS), pointer tilt with aura parallax (desktop) and recede-on-cover (GSAP scrub).
+ * DECISIONS 2026-10-08). Motion is transform/opacity only: the mark rises, its aura
+ * fades in behind it and then drifts, turns and breathes (CSS); pointer tilt with aura
+ * parallax on fine-pointer desktops; recede-on-cover (GSAP scrub). Everything
+ * decorative pauses once the dawn panel covers the hero.
+ * Phones: in the page flow under the copy; desktop: the right half.
  */
 export function HeroStage() {
   const root = useRef<HTMLDivElement>(null);
@@ -78,6 +81,7 @@ export function HeroStage() {
       const setCovered = (value: boolean) => {
         covered = value;
         hero.style.visibility = value ? "hidden" : "";
+        hero.toggleAttribute("data-covered", value);
       };
       const coverTrigger = cover
         ? ScrollTrigger.create({
@@ -135,21 +139,25 @@ export function HeroStage() {
   }
 
   return (
-    <div ref={root} aria-hidden className="pointer-events-none absolute inset-0">
-      <div className="absolute top-[78%] left-1/2 w-[min(62vw,380px)] -translate-x-1/2 -translate-y-1/2 md:top-[50%] md:right-[1%] md:left-auto md:w-[min(52vw,820px)] md:translate-x-0">
+    <div
+      ref={root}
+      aria-hidden
+      className="pointer-events-none relative mx-auto mt-2 w-[clamp(170px,calc(100svh-575px),330px)] md:absolute md:top-[48%] md:right-[2%] md:mt-0 md:w-[min(44vw,660px,74svh)] md:-translate-y-1/2"
+    >
+      <div>
         <div ref={art} className="will-change-transform">
           <div data-art-tilt>
-            <div className="animate-mark-in [animation-delay:0.85s] [animation-duration:1.8s]">
+            <div className="animate-mark-in">
               <div className="relative animate-float [mask-image:radial-gradient(closest-side,black_64%,transparent)]">
                 {/* The aura drifts on its own and a little more than the mark under the
                     pointer, for depth. */}
-                <div data-aura-shift className="absolute inset-0">
+                <div data-aura-shift className="absolute inset-0 animate-aura-in">
                   <Image
                     src={AURA}
                     alt=""
                     fill
                     priority
-                    sizes="(min-width: 768px) 52vw, 62vw"
+                    sizes="(min-width: 768px) 44vw, 340px"
                     className="animate-aura object-cover"
                   />
                 </div>
@@ -159,7 +167,7 @@ export function HeroStage() {
                   width={1600}
                   height={1600}
                   priority
-                  sizes="(min-width: 768px) 58vw, 108vw"
+                  sizes="(min-width: 768px) 44vw, 340px"
                   className="relative h-auto w-full"
                 />
               </div>

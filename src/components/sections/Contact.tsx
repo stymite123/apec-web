@@ -21,7 +21,7 @@ export function Contact() {
       id={copy.id}
       data-theme="night"
       aria-labelledby={`${copy.id}-title`}
-      className="relative isolate overflow-hidden bg-night-900"
+      className="relative isolate overflow-hidden bg-night-900 defer-render [--defer-h:900px]"
     >
       <div aria-hidden className="absolute inset-0 -z-10">
         <Image src="/art/night-sky.webp" alt="" fill className="object-cover" />

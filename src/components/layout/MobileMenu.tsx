@@ -13,7 +13,7 @@ type MobileMenuProps = {
   labels: { openMenu: string; menuTitle: string };
 };
 
-/** Small-screen navigation: a night sheet with title-card links. */
+/** Small-screen navigation: a night sheet with the same section links and one Contact action. */
 export function MobileMenu({ links, cta, labels }: MobileMenuProps) {
   const [open, setOpen] = useState(false);
   const close = () => setOpen(false);
@@ -45,7 +45,7 @@ export function MobileMenu({ links, cta, labels }: MobileMenuProps) {
                 <Link
                   href={link.href}
                   onClick={close}
-                  className="block py-1 type-display text-[clamp(3.5rem,18vw,5rem)] leading-[0.95] text-star transition-colors hover:text-apricot"
+                  className="block py-2 type-ui text-[clamp(2rem,9vw,2.75rem)] leading-[1.1] tracking-[-0.02em] text-star transition-colors duration-200 hover:text-action-300"
                 >
                   {link.label}
                 </Link>
@@ -57,8 +57,11 @@ export function MobileMenu({ links, cta, labels }: MobileMenuProps) {
             onClick={close}
             className="group relative flex h-14 items-center justify-center"
           >
-            <span aria-hidden className="absolute inset-0 -skew-x-12 rounded-[3px] bg-apricot" />
-            <span className="relative type-ui text-base text-night-950">{cta.label}</span>
+            <span
+              aria-hidden
+              className="absolute inset-0 rounded-full bg-action-600 transition-colors duration-200 group-hover:bg-action-700"
+            />
+            <span className="relative type-ui text-base text-white">{cta.label}</span>
           </Link>
         </nav>
       </SheetContent>
