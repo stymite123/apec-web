@@ -142,13 +142,15 @@ export function HeroStage() {
     <div
       ref={root}
       aria-hidden
-      className="pointer-events-none relative mx-auto mt-2 w-[clamp(170px,calc(100svh-575px),330px)] md:absolute md:top-[48%] md:right-[2%] md:mt-0 md:w-[min(44vw,660px,74svh)] md:-translate-y-1/2"
+      // Phones: a square that fills whatever height is left under the copy, so the mark
+      // is never cropped by the fold or pushed into the ridges. Desktop: the right half.
+      className="pointer-events-none relative mx-auto aspect-square h-full max-h-[min(40svh,320px)] w-auto md:absolute md:top-[48%] md:right-[2%] md:aspect-auto md:h-auto md:max-h-none md:w-[min(44vw,660px,74svh)] md:-translate-y-1/2"
     >
-      <div>
-        <div ref={art} className="will-change-transform">
-          <div data-art-tilt>
-            <div className="animate-mark-in">
-              <div className="relative animate-float [mask-image:radial-gradient(closest-side,black_64%,transparent)]">
+      <div className="h-full md:h-auto">
+        <div ref={art} className="h-full will-change-transform md:h-auto">
+          <div data-art-tilt className="h-full md:h-auto">
+            <div className="h-full animate-mark-in md:h-auto">
+              <div className="relative h-full animate-float [mask-image:radial-gradient(closest-side,black_64%,transparent)] md:h-auto">
                 {/* The aura drifts on its own and a little more than the mark under the
                     pointer, for depth. */}
                 <div data-aura-shift className="absolute inset-0 animate-aura-in">
@@ -168,7 +170,7 @@ export function HeroStage() {
                   height={1600}
                   priority
                   sizes="(min-width: 768px) 44vw, 340px"
-                  className="relative h-auto w-full"
+                  className="relative size-full object-contain md:h-auto md:w-full"
                 />
               </div>
             </div>

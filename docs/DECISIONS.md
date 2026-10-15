@@ -3,6 +3,13 @@
 Format: date · decision · why · alternatives rejected
 
 
+
+## 2026-10-15 · Preview 1 fixes (Mustafa)
+- **Team portraits are colour again.** The cards start as colour pixels and resolve into the original photo: `pnpm dither` now also writes `public/team/pixel/<slug>-{0,1}.png` (26 px and 64 px colour versions of the cut-out, scaled up with `image-rendering: pixelated`). The grayscale filter and the silver dither layers are gone from the cards.
+- **SEO & Machine Learning demo floats** like the Mondragon 4 reel Mustafa sent: the Bing, Google and AI-answer cards are three planes at different depths, each drifting and turning on its own (`plane-a/b/c` keyframes, transform only, paused off screen with `.loop`).
+- **Phone hero.** The mark now fills the height left under the copy (square box, `h-full max-h-[min(40svh,320px)]`, `md:contents` wrapper keeps the desktop layout), so it is never cropped by the fold or pushed into the ridges. Hero minimum height 640 → 560 px, which is what overflowed on short screens (360×620).
+- **"AI makes us fast." clipping** was checked at 320–820 px on the combined build: no overflow and no clipped glyphs. The clipped "t" is on the live site (apecdigital.tech still serves Climb, where the phrase is condensed caps that run past the right edge) — fixed by the combined build itself.
+
 ## 2026-10-15 · Field + Climb combined — Preview 1 (Mustafa, with Codex review)
 - **Branch** `feat/combined` from Climb; sources tagged `source/field` (5d3b2c7) and `source/climb` (8c1551a). Codex's rejected study is stashed (`codex-study-rejected`), not deleted.
 - **Type:** Newsreader (Field) for expressive display (hero, section titles, manifesto lines, member names); Archivo (Climb) for nav, buttons, body and captions; JetBrains Mono only inside demos.

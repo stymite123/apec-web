@@ -222,7 +222,7 @@ export function BuildStage({
       id={id}
       data-theme="graphite"
       aria-labelledby={`${id}-title`}
-      className="defer-render relative overflow-x-clip bg-graphite-950 text-graphite-100 [--defer-h:440svh]"
+      className="relative overflow-x-clip bg-graphite-950 text-graphite-100 defer-render [--defer-h:440svh]"
     >
       <div data-track className="relative h-[440svh] motion-reduce:h-auto">
         <div className="sticky top-0 grid h-svh min-h-[640px] grid-rows-[auto_1fr_auto] overflow-hidden pt-[calc(var(--nav-height)+1.5rem)] motion-reduce:relative motion-reduce:h-auto md:grid-cols-12 md:grid-rows-1 md:items-start">

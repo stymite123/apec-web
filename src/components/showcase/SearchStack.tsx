@@ -55,15 +55,16 @@ function OtherResult({ domain }: { domain: string }) {
 }
 
 /**
- * SEO across search engines and AI answers: Bing, Google and an AI assistant stacked
- * in depth. On Google your result climbs to the top; the AI answer types out and cites
- * you. Decorative (the service text sits beside it).
+ * SEO across search engines and AI answers: Bing, Google and an AI assistant as three
+ * planes floating in depth, each drifting and turning on its own (Mustafa 2026-10-15,
+ * after the Mondragon 4 reel). On Google your result climbs to the top; the AI answer
+ * types out and cites you. Decorative (the service text sits beside it).
  */
 export function SearchStack() {
   return (
     <Stage3D rest={{ x: 8, y: -14 }} className="h-[500px] w-[760px]">
-      {/* Bing, at the back */}
-      <div className="absolute top-[0px] left-[352px] w-[390px] [transform:translateZ(-150px)] rounded-[16px] bg-white p-5 text-[#111] shadow-[0_30px_60px_-24px_rgb(14_18_32/0.45),0_0_0_1px_rgb(14_18_32/0.06)]">
+      {/* Bing: the far plane, tipped away */}
+      <div className="loop absolute top-[0px] left-[352px] w-[390px] [transform:translateZ(-150px)_rotateY(-9deg)_rotateX(4deg)] [animation:plane-b_13s_ease-in-out_infinite] rounded-[16px] bg-white p-5 text-[#111] shadow-[0_30px_60px_-24px_rgb(14_18_32/0.45),0_0_0_1px_rgb(14_18_32/0.06)] [transform-style:preserve-3d]">
         <div className="flex items-center gap-2.5">
           <BingMark />
           <span className="text-[13px] font-semibold text-[#444]">Microsoft Bing</span>
@@ -81,8 +82,8 @@ export function SearchStack() {
         <OtherResult domain={s.others[2]} />
       </div>
 
-      {/* Google, in the middle */}
-      <div className="absolute top-[84px] left-[24px] h-[330px] w-[440px] overflow-hidden rounded-[16px] bg-white p-5 text-[#202124] shadow-[0_40px_80px_-28px_rgb(14_18_32/0.5),0_0_0_1px_rgb(14_18_32/0.06)]">
+      {/* Google: the middle plane, nearly square to you */}
+      <div className="loop absolute top-[84px] left-[24px] h-[330px] w-[440px] [transform:translateZ(0px)_rotateY(5deg)] [animation:plane-a_11s_ease-in-out_infinite] overflow-hidden rounded-[16px] bg-white p-5 text-[#202124] shadow-[0_40px_80px_-28px_rgb(14_18_32/0.5),0_0_0_1px_rgb(14_18_32/0.06)] [transform-style:preserve-3d]">
         <div className="flex items-center gap-3">
           <span className="text-[22px] font-medium tracking-[-0.03em]">
             {GOOGLE.map(([letter, color], i) => (
@@ -131,8 +132,8 @@ export function SearchStack() {
         </div>
       </div>
 
-      {/* AI answer, in front */}
-      <div className="absolute top-[232px] left-[396px] w-[340px] [transform:translateZ(120px)] rounded-[18px] bg-[#18191c] p-4 text-white shadow-[0_44px_80px_-24px_rgb(14_18_32/0.6),0_0_0_1px_rgb(255_255_255/0.08)]">
+      {/* AI answer: the near plane, leaning in */}
+      <div className="loop absolute top-[232px] left-[396px] w-[340px] [transform:translateZ(120px)_rotateY(-12deg)_rotateX(-3deg)] [animation:plane-c_9s_ease-in-out_infinite] rounded-[18px] bg-[#18191c] p-4 text-white shadow-[0_44px_80px_-24px_rgb(14_18_32/0.6),0_0_0_1px_rgb(255_255_255/0.08)] [transform-style:preserve-3d]">
         <div className="flex flex-wrap items-center gap-1.5">
           <span className="flex items-center gap-1.5 rounded-full bg-white/10 px-2 py-1 text-[10px]">
             <SparklesIcon aria-hidden className="size-3" />

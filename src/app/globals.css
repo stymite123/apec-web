@@ -376,9 +376,9 @@
 }
 
 /* ---------------------------------------------------------------------------
-   Team (components/sections/TeamSection.tsx): five equal black-and-white cards.
+   Team (components/sections/TeamSection.tsx): five equal colour cards.
    Phones: a swipe row. Reveal: when the row comes into view (TeamReveal), each
-   portrait goes coarse dither → fine dither → photo in one quick crossfade.
+   portrait goes coarse pixels → fine pixels → photo in one quick crossfade.
    Opacity only, so it stays on the compositor.
    --------------------------------------------------------------------------- */
 .team-row {
@@ -481,21 +481,21 @@
   outline: none;
 }
 
-.team-dither {
+.team-pixel {
   image-rendering: pixelated;
   opacity: 0;
 }
 [data-team-reveal="pending"] .team-photo {
   opacity: 0;
 }
-[data-team-reveal="pending"] .team-dither[data-level="1"] {
+[data-team-reveal="pending"] .team-pixel[data-level="0"] {
   opacity: 1;
 }
-[data-team-reveal="done"] .team-dither[data-level="1"] {
+[data-team-reveal="done"] .team-pixel[data-level="0"] {
   animation: team-l1 0.75s ease both;
   animation-delay: calc(var(--order, 0) * 110ms);
 }
-[data-team-reveal="done"] .team-dither[data-level="2"] {
+[data-team-reveal="done"] .team-pixel[data-level="1"] {
   animation: team-l2 0.75s ease both;
   animation-delay: calc(var(--order, 0) * 110ms);
 }
@@ -546,6 +546,24 @@
 .showcase[data-play] .loop {
   animation-play-state: running;
 }
+/* Floating planes (SEO showcase): the panels drift and turn slowly in depth, like
+   scattered sheets held in space. Transform only; .loop pauses them off screen. */
+@keyframes plane-a {
+  50% {
+    transform: translate3d(-14px, -22px, 26px) rotateX(-3deg) rotateY(5deg) rotateZ(-1.2deg);
+  }
+}
+@keyframes plane-b {
+  50% {
+    transform: translate3d(18px, 16px, -22px) rotateX(3deg) rotateY(-6deg) rotateZ(1.4deg);
+  }
+}
+@keyframes plane-c {
+  50% {
+    transform: translate3d(-10px, 24px, 18px) rotateX(4deg) rotateY(7deg) rotateZ(1deg);
+  }
+}
+
 @keyframes rank-ours {
   0%,
   16% {

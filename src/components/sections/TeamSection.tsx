@@ -38,8 +38,9 @@ function placement(slug: string): CSSProperties | undefined {
 }
 
 /**
- * The five (Climb composition, Field character): all five together in professional
- * black and white, heads aligned, Newsreader names. Formation entrance centre-out,
+ * The five (Climb composition, Field character): all five together in colour, heads
+ * aligned, Newsreader names. Each portrait starts as colour pixels and resolves into
+ * the original photo once the row is in view (Mustafa 2026-10-15). Formation entrance centre-out,
  * hover/focus brings one portrait forward with a slim blue edge. Each portrait and
  * name is one link to the member page (no extra buttons). Phones: a swipe row with
  * previous/next and a position indicator. The dark studio slides over the dawn sky
@@ -102,19 +103,19 @@ export function TeamSection() {
                         quality={85}
                         loading="eager"
                         sizes="(min-width: 1024px) 20vw, (min-width: 768px) 24vw, 72vw"
-                        className="team-photo object-cover object-top contrast-[1.06] grayscale"
+                        className="team-photo object-cover object-top"
                       />
                       {hasCutout &&
-                        [1, 2].map((level) => (
+                        [0, 1].map((level) => (
                           <Image
                             key={level}
-                            src={`/team/dither/${member.slug}-cut-${level}.png`}
+                            src={`/team/pixel/${member.slug}-${level}.png`}
                             alt=""
                             aria-hidden
                             fill
                             unoptimized
                             data-level={level}
-                            className="team-dither object-cover object-top"
+                            className="team-pixel object-cover object-top"
                           />
                         ))}
                     </div>

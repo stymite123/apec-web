@@ -73,7 +73,7 @@ export function Hero() {
     <section
       data-hero
       aria-labelledby="hero-title"
-      className="sticky top-0 isolate -mt-(--nav-height) h-svh min-h-[640px] overflow-hidden bg-night-950"
+      className="sticky top-0 isolate -mt-(--nav-height) h-svh min-h-[560px] overflow-hidden bg-night-950"
     >
       {/* Night sky and stars: one opaque bitmap. */}
       <div aria-hidden className="absolute inset-0">
@@ -131,7 +131,11 @@ export function Hero() {
           </div>
         </div>
 
-        <HeroStage />
+        {/* Phones: the mark takes the space left under the copy (md:contents keeps the
+            desktop layout, where the stage positions itself against this container). */}
+        <div className="relative flex min-h-0 flex-1 items-end justify-center pb-3 md:contents">
+          <HeroStage />
+        </div>
 
         {/* The tagline, quietly, above the horizon (desktop). */}
         <p className="field-rise absolute right-12 bottom-7 hidden type-ui text-[13px] tracking-[0.04em] text-star/55 [--d:0.8s] md:block">

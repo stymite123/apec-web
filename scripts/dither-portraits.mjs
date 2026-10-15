@@ -5,6 +5,8 @@
 // Team cards also get:
 //   public/team/dither/<slug>-cut-<level>.png  dither of the cut-out (scripts/cutout-portraits.py)
 //   public/team/backdrop/<slug>.jpg             tiny blurred, darkened, blue-tinted backdrop
+//   public/team/pixel/<slug>-<level>.png        tiny COLOUR versions of the cut-out: the
+//     team cards start pixelated and resolve into the full-colour photo (Mustafa 2026-10-15)
 import { existsSync } from "node:fs";
 import { mkdir, readdir } from "node:fs/promises";
 import { join } from "node:path";
@@ -15,6 +17,9 @@ const SRC = "public/team";
 const OUT = "public/team/dither";
 const CUTOUT = "public/team/cutout";
 const BACKDROP = "public/team/backdrop";
+const PIXEL = "public/team/pixel";
+/** Colour pixel widths, coarse → fine. Scaled up in CSS with image-rendering: pixelated. */
+const PIXEL_WIDTHS = [26, 64];
 /** Output widths per level, coarse → fine (the display is ~480 CSS px wide). */
 const WIDTHS = [72, 150, 300];
 /** Dot colour = silver-300. */
@@ -82,6 +87,20 @@ async function ditherOne(input, name, { cutout = false } = {}) {
   }
 }
 
+/** Colour pixel steps of a cut-out: small PNGs the browser scales up, no processing. */
+async function pixelOne(input, slug) {
+  for (const [level, width] of PIXEL_WIDTHS.entries()) {
+    const out = join(PIXEL, `${slug}-${level}.png`);
+    const result = await sharp(input)
+      // A touch more saturation survives the downscale and matches the photo beneath.
+      .modulate({ saturation: 1.12 })
+      .resize({ width, kernel: "cubic" })
+      .png({ compressionLevel: 9 })
+      .toFile(out);
+    console.log(`${out}  ${width}px  ${(result.size / 1024).toFixed(1)} KB`);
+  }
+}
+
 async function backdropOne(file, slug) {
   const out = join(BACKDROP, `${slug}.jpg`);
   await sharp(join(SRC, file))
@@ -101,11 +120,15 @@ async function backdropOne(file, slug) {
 
 await mkdir(OUT, { recursive: true });
 await mkdir(BACKDROP, { recursive: true });
+await mkdir(PIXEL, { recursive: true });
 const files = (await readdir(SRC)).filter((f) => f.endsWith(".jpg"));
 for (const file of files) {
   const slug = file.replace(/\.jpg$/, "");
   await ditherOne(join(SRC, file), slug);
   await backdropOne(file, slug);
   const cut = join(CUTOUT, `${slug}.png`);
-  if (existsSync(cut)) await ditherOne(cut, `${slug}-cut`, { cutout: true });
+  if (existsSync(cut)) {
+    await ditherOne(cut, `${slug}-cut`, { cutout: true });
+    await pixelOne(cut, slug);
+  }
 }
