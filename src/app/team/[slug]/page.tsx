@@ -40,7 +40,7 @@ function Block({ id, title, children }: { id: string; title: string; children: R
   return (
     <section
       aria-labelledby={id}
-      className="grid gap-6 border-t border-night-800 py-14 md:grid-cols-12"
+      className="grid gap-6 border-t border-grey-800 py-14 md:grid-cols-12"
     >
       <SplitReveal as="h2" id={id} className="type-display text-title text-star md:col-span-4">
         {title}
@@ -58,7 +58,7 @@ function Tag({ children, dashed }: { children: ReactNode; dashed?: boolean }) {
         aria-hidden
         className={cn(
           "absolute inset-0 -skew-x-12 rounded-[3px] border-2",
-          dashed ? "border-dashed border-wine-400" : "border-night-700 bg-night-800",
+          dashed ? "border-dashed border-wine-400" : "border-grey-700 bg-grey-800",
         )}
       />
       <span className="relative flex items-center gap-2">{children}</span>
@@ -136,7 +136,7 @@ export default async function MemberPage({ params }: PageProps<"/team/[slug]">) 
       />
 
       <header className="grid gap-10 pt-10 pb-14 md:grid-cols-12 md:items-end md:pt-16 md:pb-20">
-        {/* Portrait in black and white, as on the home page. */}
+        {/* Portrait in colour, as on the home page (Mustafa 2026-10-17). */}
         <div className="relative overflow-hidden rounded-[6px] bg-[#0e0e0e] md:col-span-5">
           {member.portrait ? (
             <Image
@@ -146,7 +146,7 @@ export default async function MemberPage({ params }: PageProps<"/team/[slug]">) 
               height={1500}
               priority
               sizes="(min-width: 768px) 40vw, 100vw"
-              className="aspect-[4/5] h-auto w-full object-cover object-top contrast-[1.08] grayscale"
+              className="aspect-[4/5] h-auto w-full object-cover object-top"
             />
           ) : (
             <div className="flex aspect-[4/5] items-center justify-center type-display text-mega text-white/40">
@@ -156,12 +156,12 @@ export default async function MemberPage({ params }: PageProps<"/team/[slug]">) 
         </div>
 
         <div className="flex flex-col gap-6 md:col-span-7">
-          <p className="type-ui text-[15px] text-night-300">{member.role}</p>
+          <p className="type-ui text-[15px] text-grey-400">{member.role}</p>
           <h1 className="type-display text-[clamp(3.25rem,8vw,8rem)] leading-[0.84] text-star">
             {member.name}
           </h1>
           {shouldRender(member.headline) && (
-            <p className="max-w-xl text-lead text-night-300">
+            <p className="max-w-xl text-lead text-grey-400">
               <Copy value={member.headline} />
             </p>
           )}
@@ -177,7 +177,7 @@ export default async function MemberPage({ params }: PageProps<"/team/[slug]">) 
 
       {shouldRender(member.bio) && (
         <Block id="about" title={copy.about}>
-          <p className="max-w-2xl text-lead text-night-300">
+          <p className="max-w-2xl text-lead text-grey-400">
             <Copy value={member.bio} />
           </p>
         </Block>
@@ -190,7 +190,7 @@ export default async function MemberPage({ params }: PageProps<"/team/[slug]">) 
               <Tag key={skill.name} dashed={!skill.confirmed}>
                 {skill.name}
                 {!isTodo(skill.level) && (
-                  <span className="type-ui text-[12px] text-night-300">{skill.level}</span>
+                  <span className="type-ui text-[12px] text-grey-400">{skill.level}</span>
                 )}
               </Tag>
             ))}
@@ -210,7 +210,7 @@ export default async function MemberPage({ params }: PageProps<"/team/[slug]">) 
 
       {member.experience.length > 0 && (
         <Block id="experience" title={copy.experience}>
-          <ol className="space-y-8 border-l-2 border-dashed border-night-700 pl-8">
+          <ol className="space-y-8 border-l-2 border-dashed border-grey-700 pl-8">
             {member.experience.map((role) => (
               <li key={`${role.title}-${role.org}`} className="relative">
                 <span
@@ -221,12 +221,12 @@ export default async function MemberPage({ params }: PageProps<"/team/[slug]">) 
                   {role.title}, {role.org}
                 </p>
                 {shouldRender(role.start) && (
-                  <p className="mt-1 type-ui text-[14px] text-night-300">
+                  <p className="mt-1 type-ui text-[14px] text-grey-400">
                     <Copy value={role.start} /> to {role.end ?? copy.present}
                   </p>
                 )}
                 {shouldRender(role.summary) && (
-                  <p className="mt-2 text-night-300">
+                  <p className="mt-2 text-grey-400">
                     <Copy value={role.summary} />
                   </p>
                 )}
@@ -240,10 +240,10 @@ export default async function MemberPage({ params }: PageProps<"/team/[slug]">) 
         {member.projects.length > 0 && (
           <ul className="grid gap-4 sm:grid-cols-2">
             {member.projects.map((project) => (
-              <li key={project.slug} className="bg-night-800 p-6 [--cut:16px] clip-chamfer">
+              <li key={project.slug} className="bg-grey-800 p-6 [--cut:16px] clip-chamfer">
                 <p className="text-xl font-semibold text-star">{project.title}</p>
                 {shouldRender(project.summary) && (
-                  <p className="mt-2 text-night-300">
+                  <p className="mt-2 text-grey-400">
                     <Copy value={project.summary} />
                   </p>
                 )}
@@ -251,7 +251,7 @@ export default async function MemberPage({ params }: PageProps<"/team/[slug]">) 
             ))}
           </ul>
         )}
-        {member.projects.length < 3 && <p className="mt-4 text-night-300">{copy.projectsComing}</p>}
+        {member.projects.length < 3 && <p className="mt-4 text-grey-400">{copy.projectsComing}</p>}
         {member.projects.length === 0 && (
           <Todo className="mt-4">TODO: 2–4 projects (title, problem, what you did, result)</Todo>
         )}
@@ -264,7 +264,7 @@ export default async function MemberPage({ params }: PageProps<"/team/[slug]">) 
 
       <nav
         aria-label={copy.allMembers}
-        className="grid grid-cols-2 gap-4 border-t border-night-800 py-10 text-night-300"
+        className="grid grid-cols-2 gap-4 border-t border-grey-800 py-10 text-grey-400"
       >
         {previous && (
           <Link

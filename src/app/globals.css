@@ -173,7 +173,8 @@
 :root {
   color-scheme: dark;
 
-  --background: var(--color-night-900);
+  /* Member pages and 404 sit on neutral dark, not the hero blue (Mustafa 2026-10-17). */
+  --background: var(--color-studio-950);
   --foreground: var(--color-star);
   --card: var(--color-night-800);
   --card-foreground: var(--color-star);
