@@ -4,6 +4,15 @@ Format: date · decision · why · alternatives rejected
 
 
 
+
+## 2026-10-29 · Portfolios for the five (Mustafa)
+- **Backup first:** tag `backup/2026-10-29-live` (73afc87) on GitHub, plus a mirror at `D:/apec-tools/backups/apec-web-2026-10-29.git`.
+- **Clicking a portrait already opened `/team/<slug>`;** that page is now a full portfolio, modelled on Hamad's own site (hamadalamportfolio.vercel.app).
+- **Cinematic hero:** the portrait turns as you scroll. `pnpm frames` (scripts/portfolio-frames.mjs) takes the frame sequences Hamad shared (github.com/HamadAlam311/Images, and scroll/main from his portfolio repo) and writes 48 evenly spaced WebP frames per member to `public/portfolio/<slug>/` (0.3–0.8 MB each). `FrameScrub` decodes them in order after first paint and draws one per scroll step; the first frame is a plain `img`, so it still shows without JS or with reduced motion. Members without frames keep the still portrait.
+- **Hamad's real content** is in `team.ts` now: bio, his toolkit, three live projects (WholeSale, Islamic Noor, SecondOne) with covers and links, GitHub and portfolio links, and his CV at `/cv/hamad-alam.pdf` behind a "Download CV" button (new `cv` field and `member.cvLabel`).
+- **Project cards** show a cover, summary and stack, and open the live site when there is a link.
+- **Still needed from the other four:** bio, CV, confirmed skills, 2–4 projects with screenshots and links, social links. Their pages render correctly but stay thin until then; nothing is invented.
+
 ## 2026-10-15 · Preview 1 fixes (Mustafa)
 - **Team portraits are colour again.** The cards start as colour pixels and resolve into the original photo: `pnpm dither` now also writes `public/team/pixel/<slug>-{0,1}.png` (26 px and 64 px colour versions of the cut-out, scaled up with `image-rendering: pixelated`). The grayscale filter and the silver dither layers are gone from the cards.
 - **SEO & Machine Learning demo floats** like the Mondragon 4 reel Mustafa sent: the Bing, Google and AI-answer cards are three planes at different depths, each drifting and turning on its own (`plane-a/b/c` keyframes, transform only, paused off screen with `.loop`).

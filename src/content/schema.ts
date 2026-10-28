@@ -82,6 +82,8 @@ export const teamMemberSchema = z.object({
   bio: orTodo(wordCount(60, 120)),
   accent: accentSchema,
   portrait: z.object({ src: nonEmpty, alt: nonEmpty }).optional(),
+  /** Public path to a CV PDF, e.g. /cv/hamad-alam.pdf. */
+  cv: nonEmpty.optional(),
   location: z.string().optional(),
   timezone: z.string().optional(),
   availability: orTodo(availabilitySchema),
@@ -192,6 +194,7 @@ export const siteSchema = z.object({
   member: z.object({
     workWith: nonEmpty,
     emailLabel: nonEmpty,
+    cvLabel: nonEmpty,
     /** Pre-filled WhatsApp message / email subject; `{name}` = member's call name. */
     whatsappMessage: nonEmpty,
     emailSubject: nonEmpty,

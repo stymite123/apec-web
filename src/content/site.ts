@@ -67,6 +67,7 @@ export const site = siteSchema.parse({
   member: {
     workWith: "Work with {name}",
     emailLabel: "Email",
+    cvLabel: "Download CV",
     whatsappMessage:
       "Hi {name}, I found you on the APEC Digital website and I'd like to talk about a project.",
     emailSubject: "Project enquiry for {name}",

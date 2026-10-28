@@ -1,4 +1,14 @@
-import { ArrowLeftIcon, ArrowRightIcon, MailIcon, MessageCircleIcon } from "lucide-react";
+import { existsSync } from "node:fs";
+import { join } from "node:path";
+
+import {
+  ArrowLeftIcon,
+  ArrowRightIcon,
+  ArrowUpRightIcon,
+  FileTextIcon,
+  MailIcon,
+  MessageCircleIcon,
+} from "lucide-react";
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
@@ -6,6 +16,7 @@ import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
 
 import { Copy, Todo } from "@/components/dev/Todo";
+import { FrameScrub } from "@/components/portfolio/FrameScrub";
 import { SplitReveal } from "@/components/motion/SplitReveal";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { ShapeLink } from "@/components/ui/shape-link";
@@ -35,6 +46,11 @@ export async function generateMetadata({ params }: PageProps<"/team/[slug]">): P
 }
 
 const fill = (template: string, name: string) => template.replaceAll("{name}", name);
+
+/** Frames written by `pnpm frames` (scripts/portfolio-frames.mjs), if that member has them. */
+const FRAME_COUNT = 48;
+const hasFrames = (slug: string) =>
+  existsSync(join(process.cwd(), "public", "portfolio", slug, "f-00.webp"));
 
 function Block({ id, title, children }: { id: string; title: string; children: ReactNode }) {
   return (
@@ -79,6 +95,7 @@ export default async function MemberPage({ params }: PageProps<"/team/[slug]">) 
   const skills = visibleSkills(member);
   const showCurrently = member.currently?.public;
   const pageUrl = `${site.url}/team/${member.slug}`;
+  const frames = hasFrames(member.slug);
 
   const contactButtons = (
     <div className="flex flex-wrap gap-4">
@@ -94,6 +111,12 @@ export default async function MemberPage({ params }: PageProps<"/team/[slug]">) 
         <MailIcon aria-hidden className="size-4.5" />
         {copy.emailLabel}
       </ShapeLink>
+      {member.cv && (
+        <ShapeLink href={member.cv} variant="outline" fill="var(--color-grey-300)" external>
+          <FileTextIcon aria-hidden className="size-4.5" />
+          {copy.cvLabel}
+        </ShapeLink>
+      )}
     </div>
   );
 
@@ -135,45 +158,59 @@ export default async function MemberPage({ params }: PageProps<"/team/[slug]">) 
         }}
       />
 
-      <header className="grid gap-10 pt-10 pb-14 md:grid-cols-12 md:items-end md:pt-16 md:pb-20">
-        {/* Portrait in colour, as on the home page (Mustafa 2026-10-17). */}
-        <div className="relative overflow-hidden rounded-[6px] bg-[#0e0e0e] md:col-span-5">
-          {member.portrait ? (
+      {/* Cinematic opening: the portrait turns as you scroll (frames), name and actions
+          over it. Members without a frame strip keep the still portrait. */}
+      <header className="relative -mx-(--page-gutter) overflow-hidden">
+        <div className="relative aspect-[4/5] w-full sm:aspect-[16/10] lg:aspect-[21/9]">
+          {frames ? (
+            <FrameScrub
+              slug={member.slug}
+              count={FRAME_COUNT}
+              alt={member.portrait?.alt ?? member.name}
+              className="absolute inset-0"
+            />
+          ) : member.portrait ? (
             <Image
               src={member.portrait.src}
               alt={member.portrait.alt}
-              width={1200}
-              height={1500}
+              fill
               priority
-              sizes="(min-width: 768px) 40vw, 100vw"
-              className="aspect-[4/5] h-auto w-full object-cover object-top"
+              sizes="100vw"
+              className="object-cover object-top"
             />
           ) : (
-            <div className="flex aspect-[4/5] items-center justify-center type-display text-mega text-white/40">
+            <div className="flex size-full items-center justify-center bg-studio-900 type-display text-mega text-white/30">
               {member.name.slice(0, 1)}
             </div>
           )}
-        </div>
-
-        <div className="flex flex-col gap-6 md:col-span-7">
-          <p className="type-ui text-[15px] text-grey-400">{member.role}</p>
-          <h1 className="type-display text-[clamp(3.25rem,8vw,8rem)] leading-[0.84] text-star">
-            {member.name}
-          </h1>
-          {shouldRender(member.headline) && (
-            <p className="max-w-xl text-lead text-grey-400">
-              <Copy value={member.headline} />
-            </p>
-          )}
-          {showCurrently && member.currently && (
-            <p className="text-star">
-              <span className="mr-3 type-ui text-[14px] text-apricot">{copy.currently}</span>
-              {member.currently.title}, {member.currently.org}
-            </p>
-          )}
-          {contactButtons}
+          {/* Keeps the name readable over any frame. */}
+          <div
+            aria-hidden
+            className="absolute inset-0 bg-[linear-gradient(to_top,var(--color-studio-950)_4%,rgb(10_11_13/0.75)_26%,transparent_62%)]"
+          />
+          <div className="absolute inset-x-0 bottom-0 px-(--page-gutter) pb-8 md:pb-12">
+            <p className="type-ui text-[15px] text-grey-300">{member.role}</p>
+            <h1 className="mt-2 type-serif text-[clamp(2.75rem,7vw,6.5rem)] leading-[0.95] text-star">
+              {member.name}
+            </h1>
+          </div>
         </div>
       </header>
+
+      <div className="flex flex-col gap-6 pt-8 pb-14 md:pt-10 md:pb-20">
+        {shouldRender(member.headline) && (
+          <p className="max-w-2xl text-lead text-grey-400">
+            <Copy value={member.headline} />
+          </p>
+        )}
+        {showCurrently && member.currently && (
+          <p className="text-star">
+            <span className="mr-3 type-ui text-[14px] text-action-300">{copy.currently}</span>
+            {member.currently.title}, {member.currently.org}
+          </p>
+        )}
+        {contactButtons}
+      </div>
 
       {shouldRender(member.bio) && (
         <Block id="about" title={copy.about}>
@@ -238,17 +275,61 @@ export default async function MemberPage({ params }: PageProps<"/team/[slug]">) 
 
       <Block id="projects" title={copy.projects}>
         {member.projects.length > 0 && (
-          <ul className="grid gap-4 sm:grid-cols-2">
-            {member.projects.map((project) => (
-              <li key={project.slug} className="bg-grey-800 p-6 [--cut:16px] clip-chamfer">
-                <p className="text-xl font-semibold text-star">{project.title}</p>
-                {shouldRender(project.summary) && (
-                  <p className="mt-2 text-grey-400">
-                    <Copy value={project.summary} />
-                  </p>
-                )}
-              </li>
-            ))}
+          <ul className="grid gap-5 sm:grid-cols-2">
+            {member.projects.map((project) => {
+              const card = (
+                <>
+                  {project.cover && (
+                    <span className="relative block aspect-[16/10] overflow-hidden bg-studio-900">
+                      <Image
+                        src={project.cover}
+                        alt=""
+                        fill
+                        sizes="(min-width: 640px) 44vw, 90vw"
+                        className="object-cover object-top transition-transform duration-500 ease-out-expo group-hover:scale-[1.03]"
+                      />
+                    </span>
+                  )}
+                  <span className="block p-6">
+                    <span className="flex items-baseline gap-2">
+                      <span className="text-xl font-semibold text-star">{project.title}</span>
+                      {project.link && (
+                        <ArrowUpRightIcon
+                          aria-hidden
+                          className="size-4 text-action-300 transition-transform duration-300 group-hover:rotate-45"
+                        />
+                      )}
+                    </span>
+                    {shouldRender(project.summary) && (
+                      <span className="mt-2 block text-grey-400">
+                        <Copy value={project.summary} />
+                      </span>
+                    )}
+                    {project.stack.length > 0 && (
+                      <span className="mt-4 block type-ui text-[13px] text-grey-500">
+                        {project.stack.join(" · ")}
+                      </span>
+                    )}
+                  </span>
+                </>
+              );
+              return (
+                <li key={project.slug} className="group overflow-hidden rounded-[10px] bg-grey-800">
+                  {project.link ? (
+                    <a
+                      href={project.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block h-full"
+                    >
+                      {card}
+                    </a>
+                  ) : (
+                    card
+                  )}
+                </li>
+              );
+            })}
           </ul>
         )}
         {member.projects.length < 3 && <p className="mt-4 text-grey-400">{copy.projectsComing}</p>}
