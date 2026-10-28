@@ -678,6 +678,18 @@
   --nav-cta: var(--color-action-600);
   --nav-cta-fg: #ffffff;
 }
+/* The white stroke of the logo lands in the nav as the hero splits: the island turns
+   silver to match it (components/sections/MarkSplit.tsx). */
+body[data-mark-landed] #site-header {
+  --nav-bg: rgb(226 229 234 / 0.95);
+  --nav-fg: #16181d;
+  --nav-muted: #4a4e57;
+  --nav-edge: rgb(22 24 29 / 0.12);
+  --nav-shadow: 0 10px 30px -14px rgb(0 0 0 / 0.5);
+  --nav-active: rgb(22 24 29 / 0.1);
+  --nav-active-fg: #16181d;
+}
+
 #site-header[data-theme="dawn"] {
   --nav-bg: rgb(247 249 253 / 0.96);
   --nav-fg: var(--color-dawn-950);

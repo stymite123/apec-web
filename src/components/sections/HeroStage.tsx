@@ -4,6 +4,7 @@ import dynamic from "next/dynamic";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 
+import { MarkSplit } from "@/components/sections/MarkSplit";
 import { gsap, MOTION_OK, ScrollTrigger, useGSAP } from "@/lib/gsap";
 import { scrub } from "@/lib/motion";
 
@@ -14,11 +15,10 @@ const HeroScene = dynamic(() => import("@/components/three/HeroScene"), { ssr: f
 
 /**
  * Pre-rendered from the 3D scene by `pnpm render:layers` (TEMPORARY: based on the logo trace):
- * the mark as a transparent image over a still of its aura. The aura used to be a video
+ * the mark (now as four separate pieces, see MarkSplit) over a still of its aura. The aura used to be a video
  * loop; decoding it under the blend layer cost frames on every scroll (DECISIONS
  * 2026-10-15), so it is a still that drifts with a composited transform instead.
  */
-const MARK = "/brand/apex-mark-layer.png";
 const AURA = "/brand/apex-aura.webp";
 
 /**
@@ -37,8 +37,9 @@ export function HeroStage() {
   useEffect(() => {
     const param = new URLSearchParams(window.location.search).get("render-mark");
     if (param !== null) {
+      const layers = ["mark", "aura", "white", "blue", "bars", "swoosh"];
       // eslint-disable-next-line react-hooks/set-state-in-effect -- one-off tooling switch
-      setRenderMode(param === "mark" || param === "aura" ? param : "all");
+      setRenderMode((layers.includes(param) ? param : "all") as RenderLayer);
     }
   }, []);
 
@@ -57,7 +58,6 @@ export function HeroStage() {
           .timeline({
             scrollTrigger: { trigger: cover, start: "top bottom", end: "top top", scrub },
           })
-          .to(target, { yPercent: 14, scale: 0.9, ease: "none" }, 0)
           .to(
             hero.querySelector("[data-hero-title]"),
             { yPercent: -14, opacity: 0.25, ease: "none" },
@@ -163,15 +163,12 @@ export function HeroStage() {
                     className="animate-aura object-cover"
                   />
                 </div>
-                <Image
-                  src={MARK}
-                  alt=""
-                  width={1600}
-                  height={1600}
-                  priority
-                  sizes="(min-width: 768px) 44vw, 340px"
-                  className="relative size-full object-contain md:h-auto md:w-full"
-                />
+                {/* The mark is drawn from its four pieces, so it can come apart on
+                    scroll (components/sections/MarkSplit.tsx). Stacked, they are the
+                    same picture as the whole render. */}
+                <div className="relative aspect-square size-full md:h-auto md:w-full">
+                  <MarkSplit />
+                </div>
               </div>
             </div>
           </div>

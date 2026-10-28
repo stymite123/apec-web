@@ -131,7 +131,8 @@ test("native scrolling and no WebGL on the home page", async ({ page }, testInfo
   // DECISIONS 2026-10-08: no smooth-scroll library, no live 3D on load.
   await expect(page.locator("html")).not.toHaveClass(/\blenis\b/);
   await expect(page.locator("[data-hero] canvas")).toHaveCount(0);
-  await expect(page.locator('[data-hero] img[src*="apex-mark-layer"]')).toHaveCount(1);
+  // The mark is drawn from its four pre-rendered pieces, so it can split on scroll.
+  await expect(page.locator('[data-hero] img[src*="part-"]')).toHaveCount(4);
   // The aura is a pre-rendered still (a video under the blend layer cost frames), not live 3D.
   await expect(page.locator('[data-hero] img[src*="apex-aura"]')).toHaveCount(1);
   await expect(page.locator("[data-hero] video")).toHaveCount(0);

@@ -121,12 +121,14 @@ export function SkyStage({
             },
           });
 
-          // Background pace: the cloud layers drift across the whole stage.
-          tl.to(q("[data-layer='mid']"), { xPercent: -6, duration: 3 }, 0).to(
-            q("[data-layer='front']"),
-            { xPercent: -10, yPercent: 8, duration: 3 },
+          // The blade sweeps in from the left, as if the swoosh carried on from the hero,
+          // then drifts slowly for the rest of the stage.
+          tl.fromTo(
+            q("[data-blade]"),
+            { xPercent: -42, scaleX: 0.7, opacity: 0 },
+            { xPercent: 0, scaleX: 1, opacity: 1, duration: 0.8, ease: "power2.out" },
             0,
-          );
+          ).to(q("[data-blade]"), { xPercent: 7, yPercent: -4, duration: 2.2 }, 0.8);
 
           // Statement swaps, letter by letter.
           phraseEls.forEach((phrase, i) => {
@@ -181,6 +183,14 @@ export function SkyStage({
               .to(chip, { y: () => 14 * vh(), duration: 0.4, ease: "power2.out" }, 2.1);
           });
 
+          // The star arrives with the last line and drops away towards the five.
+          tl.fromTo(
+            q("[data-star]"),
+            { opacity: 0, y: -40, scale: 0.4 },
+            { opacity: 1, y: 0, scale: 1, duration: 0.3, ease: "power2.out" },
+            2.05,
+          ).to(q("[data-star]"), { y: () => window.innerHeight * 0.42, duration: 0.7 }, 2.4);
+
           // Signature A, part 2: the arc underlines the resolution.
           tl.fromTo(
             q("[data-arc='under'] path"),
@@ -203,12 +213,12 @@ export function SkyStage({
   return (
     // mt = the slanted cap height, so the cap starts exactly at the hero's bottom edge
     // and nothing of the next panel shows at rest.
-    <div ref={root} data-cover data-theme="dawn" className="relative z-10 mt-[7vw]">
+    <div ref={root} data-cover data-theme="mono" className="relative z-10 mt-[7vw]">
       {/* Slanted leading edge: a small cap above the panel (cheaper than clipping the
-          whole panel). Its colour matches the pale wash at the top of the sky. */}
+          whole panel), in the stage's own dark. */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-x-0 -top-[7vw] h-[calc(7vw+1px)] bg-dawn-300 [clip-path:polygon(0_100%,100%_0,100%_100%)]"
+        className="pointer-events-none absolute inset-x-0 -top-[7vw] h-[calc(7vw+1px)] bg-studio-950 [clip-path:polygon(0_100%,100%_0,100%_100%)]"
       />
       {/* Signature A, part 1: the orbit continues across the boundary. */}
       <OrbitArc
@@ -218,13 +228,25 @@ export function SkyStage({
 
       <div data-track className="relative md:motion-safe:h-[220svh]">
         <div className="relative overflow-hidden md:motion-safe:sticky md:motion-safe:top-0 md:motion-safe:h-svh md:motion-safe:min-h-[600px]">
-          {/* Sky with a pale wash over its top band: muted sky blue, cool clouds. */}
-          <div aria-hidden className="absolute inset-0">
-            <Image src="/art/dawn-sky.webp" alt="" fill sizes="100vw" className="object-cover" />
-            <div className="absolute inset-x-0 top-0 h-[55%] bg-linear-to-b from-dawn-300 via-dawn-300/70 to-transparent" />
+          {/* Dark stage: the swoosh from the logo sweeps across it like a blade, and
+              the light it leaves behind is the only colour (Mustafa 2026-10-29). */}
+          <div aria-hidden className="absolute inset-0 bg-studio-950">
+            <div className="absolute inset-0 bg-[radial-gradient(120%_80%_at_50%_42%,rgb(31_123_255/0.16),transparent_62%)]" />
+            <div data-blade className="absolute inset-[-18%] origin-left will-change-transform">
+              <Image
+                src="/brand/part-swoosh.png"
+                alt=""
+                fill
+                sizes="128vw"
+                className="scale-[1.45] object-contain opacity-90"
+              />
+            </div>
+            {/* The star the blue stroke became; it drops to the line under "The Five". */}
+            <div
+              data-star
+              className="absolute top-[34%] left-1/2 size-2.5 -translate-x-1/2 rounded-full bg-star opacity-0 shadow-[0_0_14px_6px_rgb(140_200_255/0.55),0_0_42px_18px_rgb(31_123_255/0.35)] will-change-transform"
+            />
           </div>
-          <Layer name="mid" src="/art/dawn-clouds-mid.webp" />
-          <Layer name="front" src="/art/dawn-clouds-front.webp" />
 
           <div className="relative px-5 py-[18svh] md:motion-safe:absolute md:motion-safe:inset-0 md:motion-safe:p-0">
             {phrases.map((phrase, i) => (
@@ -238,7 +260,9 @@ export function SkyStage({
                 >
                   <p
                     data-phrase-text
-                    className="mx-auto max-w-[16ch] type-serif text-[clamp(2.75rem,6.6vw,7rem)] leading-[1] text-balance text-dawn-950"
+                    // Solid, not a gradient: splitting the line into letters leaves a gradient with
+                    // no text of its own to paint (fixed 2026-10-29).
+                    className="mx-auto max-w-[16ch] type-serif text-[clamp(2.75rem,6.6vw,7rem)] leading-[1] text-balance text-star"
                   >
                     {phrase}
                   </p>
@@ -264,7 +288,7 @@ export function SkyStage({
                         <li
                           key={card.slug}
                           data-chip
-                          className="flex items-center gap-2 rounded-full border border-dawn-950/10 bg-white/90 py-2.5 pr-5 pl-3.5 type-ui text-[15px] text-dawn-950 shadow-[0_12px_28px_-14px_rgb(23_37_90/0.55)] md:motion-safe:absolute md:motion-safe:top-1/2 md:motion-safe:left-1/2 md:motion-safe:[translate:-50%_-50%] md:motion-safe:[transform:translate(var(--sx),var(--sy))_rotate(var(--sr))]"
+                          className="flex items-center gap-2 rounded-full border border-white/12 bg-white/8 py-2.5 pr-5 pl-3.5 type-ui text-[15px] text-grey-300 shadow-[0_12px_28px_-14px_rgb(0_0_0/0.8)] backdrop-saturate-150 md:motion-safe:absolute md:motion-safe:top-1/2 md:motion-safe:left-1/2 md:motion-safe:[translate:-50%_-50%] md:motion-safe:[transform:translate(var(--sx),var(--sy))_rotate(var(--sr))]"
                           style={
                             {
                               "--sx": `${s.x}vw`,
@@ -275,7 +299,7 @@ export function SkyStage({
                         >
                           <Icon
                             aria-hidden
-                            className="size-[18px] text-action-600"
+                            className="size-[18px] text-action-300"
                             strokeWidth={2.1}
                           />
                           {card.label}
@@ -289,23 +313,6 @@ export function SkyStage({
           </div>
         </div>
       </div>
-    </div>
-  );
-}
-
-const LAYER_BOX: Record<string, string> = {
-  mid: "-inset-x-[8%] inset-y-0",
-  front: "-inset-x-[8%] top-[18%] -bottom-[12%]",
-};
-
-function Layer({ name, src }: { name: string; src: string }) {
-  return (
-    <div
-      aria-hidden
-      data-layer={name}
-      className={`pointer-events-none absolute ${LAYER_BOX[name]}`}
-    >
-      <Image src={src} alt="" fill sizes="116vw" className="object-cover object-right" />
     </div>
   );
 }

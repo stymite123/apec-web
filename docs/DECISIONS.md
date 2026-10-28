@@ -5,6 +5,16 @@ Format: date · decision · why · alternatives rejected
 
 
 
+
+## 2026-10-29 · The mark splits, and the blue sky goes (Mustafa's idea)
+- **The logo is now four pre-rendered pieces** on one shared frame: `pnpm render:parts` (scripts/render-mark-parts.mjs) captures the white stroke, blue stroke, bars and swoosh separately from the same 3D scene, each with real transparency (black/white difference matting). Stacked, they are the same picture as the old whole-mark render, so the hero is unchanged at rest.
+- **Scrolling splits it into three destinations** (`MarkSplit`), each piece turning in perspective as it travels: the white stroke rises through the middle and into the header, the swoosh sweeps out until it covers the screen, the blue stroke contracts to a point and becomes the star. The bars fold away. Scroll-driven, so scrolling back reassembles the mark.
+- **The nav turns silver** while the white piece lands in it (`body[data-mark-landed]`), matching the logo rather than the old blue.
+- **The dawn sky is gone.** The manifesto stage is dark now: the swoosh carries it as a glowing blade that sweeps in and holds, the discipline labels are dark glass, and the star drops at "You get both." towards the line under "The Five". This is the answer to "the blue part looks bad"; no new scenery was needed.
+- **One fix found on the way:** splitting a line into letters leaves a gradient with no text of its own to paint, so the manifesto lines are a solid light colour rather than `text-grad`.
+- **Performance** (`docs/perf/profile-2026-10-29-split.json`): desktop 106 ms blocking, longest task 152 ms; mobile 300 ms blocking, longest 216 ms; scroll p95 11 ms desktop, 22 ms mobile. All inside the budgets. 20/20 smoke tests pass.
+- **HiggsField is still not connected** on the account, so no generated animation was used; the sequence is made from our own logo instead.
+
 ## 2026-10-29 · Portfolios for the five (Mustafa)
 - **Backup first:** tag `backup/2026-10-29-live` (73afc87) on GitHub, plus a mirror at `D:/apec-tools/backups/apec-web-2026-10-29.git`.
 - **Clicking a portrait already opened `/team/<slug>`;** that page is now a full portfolio, modelled on Hamad's own site (hamadalamportfolio.vercel.app).

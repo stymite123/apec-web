@@ -6,14 +6,19 @@ import { Bloom, EffectComposer } from "@react-three/postprocessing";
 import { useEffect, useRef, useState } from "react";
 import { MathUtils, type Group } from "three";
 
-import { ApexMark3D } from "./ApexMark3D";
+import { ApexMark3D, type MarkPart } from "./ApexMark3D";
 import { LiquidBlob, type BlobClock } from "./LiquidBlob";
 
 /** Fixed pose for the pre-rendered artwork: a slight three-quarter turn. */
 const POSE = { rotationY: 0.32, rotationX: -0.06, scale: 1.02, blobScale: 1.6 };
 
 /** `all` = the original single image; `mark` / `aura` = separate layers for the hero. */
-export type RenderLayer = "all" | "mark" | "aura";
+export type RenderLayer = "all" | "mark" | "aura" | "white" | "blue" | "bars" | "swoosh";
+
+/** The single-piece layers, used to split the mark for the scroll sequence. */
+const PARTS = ["white", "blue", "bars", "swoosh"] as const;
+const isPart = (layer: RenderLayer): layer is (typeof PARTS)[number] =>
+  (PARTS as readonly string[]).includes(layer);
 
 declare global {
   interface Window {
@@ -22,7 +27,7 @@ declare global {
   }
 }
 
-function Mark({ still }: { still: boolean }) {
+function Mark({ still, parts }: { still: boolean; parts?: MarkPart[] }) {
   const group = useRef<Group>(null);
   useFrame((state, delta) => {
     const g = group.current;
@@ -41,7 +46,7 @@ function Mark({ still }: { still: boolean }) {
   });
   return (
     <group ref={group} scale={POSE.scale}>
-      <ApexMark3D />
+      <ApexMark3D parts={parts} />
     </group>
   );
 }
@@ -114,10 +119,10 @@ export default function HeroScene({
       {/* The aura is additive: on a transparent canvas its result depends on how the
           browser composites alpha, so the video layer renders on an opaque page colour. */}
       {layer === "aura" && <color attach="background" args={["#05060A"]} />}
-      {layer !== "mark" && (
+      {layer !== "mark" && !isPart(layer) && (
         <LiquidBlob animate scale={POSE.blobScale} clock={layered ? clock : undefined} />
       )}
-      {layer !== "aura" && <Mark still={layered} />}
+      {layer !== "aura" && <Mark still={layered} parts={isPart(layer) ? [layer] : undefined} />}
       {layered && <FrameDriver clock={clock} />}
 
       <EffectComposer multisampling={4}>

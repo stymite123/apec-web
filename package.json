@@ -18,7 +18,8 @@
     "aura": "node scripts/aura-alpha.mjs",
     "render:layers": "node scripts/render-hero-layers.mjs",
     "profile": "node scripts/profile/profile-home.mjs",
-    "frames": "node scripts/portfolio-frames.mjs"
+    "frames": "node scripts/portfolio-frames.mjs",
+    "render:parts": "node scripts/render-mark-parts.mjs"
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",
