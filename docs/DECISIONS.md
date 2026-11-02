@@ -97,6 +97,12 @@ videos and PDFs not fetched up front, the double-tap guard, the stored motion ch
 and the tap-target and type floors. Playwright runs one worker: `/` holds a live WebGL
 context and parallel workers starve the GPU until the browser process dies.
 
+**CV filenames.** Vercel serves files from `public/` with `Content-Disposition: inline;
+filename="<the file's own name>"`, and that beats the `<a download>` attribute, so the
+first pass had CVs arriving as `310f7bb52f.pdf`. They live at `/cv/<slug>-CV.pdf`
+instead, cached for a day rather than forever since the name is no longer a hash of the
+contents. Covered by a test.
+
 **Reproducible.** `pnpm optimize:home` (scripts/optimize-home.mjs) regenerates
 `public/home.html` and `public/a/` from `APEC-Preview/index.html`. Every patch asserts
 its anchor appears exactly the expected number of times, so a later Codex build that

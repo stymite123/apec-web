@@ -148,6 +148,22 @@ test("the choice to pause the portrait video is remembered", async ({ page }) =>
   await expect(toggle).toHaveText(chosen!);
 });
 
+test("a CV downloads under the person's name", async ({ page }) => {
+  // The served filename is what the file is saved as: Vercel sends
+  // `Content-Disposition: inline; filename="<the file's own name>"`, which beats the
+  // <a download> attribute, so a content-hashed name would reach the visitor as
+  // "310f7bb52f.pdf" (DECISIONS 2026-11-02).
+  await page.goto("/");
+  await page.locator("#team").scrollIntoViewIfNeeded();
+  await page.waitForTimeout(600);
+  await page.locator('[data-member="2"]').first().click();
+
+  const link = page.locator("#download-cv");
+  await expect(link).toHaveAttribute("href", "/cv/hamad-alam-CV.pdf");
+  const [download] = await Promise.all([page.waitForEvent("download"), link.click()]);
+  expect(download.suggestedFilename()).toBe("hamad-alam-CV.pdf");
+});
+
 test("controls are big enough to tap and text is big enough to read", async ({ page }) => {
   await page.goto("/");
   await page.locator("#contact").scrollIntoViewIfNeeded();

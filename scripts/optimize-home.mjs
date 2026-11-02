@@ -92,6 +92,35 @@ for (const file of readdirSync(assetDir).filter((f) => f.endsWith(".png"))) {
 }
 console.log(`2. png -> webp, saved ${(pngSaved / 1048576).toFixed(2)} MB`);
 
+/* --------------------------------------------------------------- 2b. CV names */
+
+// Vercel serves files from public/ with `Content-Disposition: inline; filename="<the
+// file's own name>"`, and that beats the <a download> attribute — so a content-hashed
+// CV reaches the visitor as "310f7bb52f.pdf". The CVs get readable names instead, in
+// their own folder so they can keep a shorter cache than the hashed assets.
+const cvDir = join(root, "public", "cv");
+rmSync(cvDir, { recursive: true, force: true });
+mkdirSync(cvDir, { recursive: true });
+
+const cvMap = html.match(/"cvs":\{([^}]*)\}/);
+let cvCount = 0;
+if (cvMap) {
+  for (const [, slug, file] of cvMap[1].matchAll(/"([^"]+)":"\/a\/([^"]+)"/g)) {
+    const from = join(assetDir, file);
+    const name = `${slug}-CV.pdf`;
+    // Copy rather than move: two people could in principle share one CV, and the
+    // extraction above stores identical bytes once.
+    writeFileSync(join(cvDir, name), readFileSync(from));
+    html = html.split(`/a/${file}`).join(`/cv/${name}`);
+    cvCount += 1;
+  }
+  // Drop any PDF that nothing refers to any more.
+  for (const f of readdirSync(assetDir).filter((f) => f.endsWith(".pdf"))) {
+    if (!html.includes(`/a/${f}`)) unlinkSync(join(assetDir, f));
+  }
+}
+console.log(`2b. ${cvCount} CVs moved to /cv/ with readable names`);
+
 /* ----------------------------------------------------------------- 3. patches */
 
 const applied = [];

@@ -21,14 +21,21 @@ const nextConfig: NextConfig = {
   },
   /**
    * Everything under /a/ is content-addressed (the filename is a hash of the bytes),
-   * so a repeat visitor never refetches it. The page itself is revalidated every
-   * time; it is the only thing that changes when the build changes.
+   * so a repeat visitor never refetches it. The CVs under /cv/ are named for the
+   * person instead — the served filename is what a download is saved as, and Vercel's
+   * Content-Disposition beats the <a download> attribute — so they are cached for a
+   * day rather than forever. The page itself is revalidated every time; it is the only
+   * thing that changes when the build changes.
    */
   async headers() {
     return [
       {
         source: "/a/:file*",
         headers: [{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }],
+      },
+      {
+        source: "/cv/:file*",
+        headers: [{ key: "Cache-Control", value: "public, max-age=86400, must-revalidate" }],
       },
       {
         source: "/",
