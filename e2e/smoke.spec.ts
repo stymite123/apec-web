@@ -1,5 +1,11 @@
 import { expect, test, type Page } from "@playwright/test";
 
+/**
+ * `/` serves Codex's single-file build (public/home.html, live since 2026-10-30), not
+ * the Next home page, so these tests describe that page. The Next app still owns the
+ * member pages, the 404 and the metadata routes, which are covered further down.
+ */
+
 function collectErrors(page: Page) {
   const errors: string[] = [];
   page.on("console", (message) => {
@@ -15,14 +21,14 @@ test("home renders the headline and the five, with no TODO text", async ({ page 
 
   const h1 = page.getByRole("heading", { level: 1 });
   await expect(h1).toHaveCount(1);
-  await expect(h1).toContainText("Agency for Professionals, Experienced & Creatives");
-  await expect(page.locator("#team ol > li")).toHaveCount(5);
-  for (const id of ["services", "process", "contact"]) {
-    await expect(page.locator(`#${id}-title`)).toBeAttached();
+  await expect(h1).toContainText("Agency for");
+  await expect(h1).toContainText("Creatives");
+  await expect(page.locator("#team .member")).toHaveCount(5);
+  for (const id of ["team", "services", "process", "contact"]) {
+    await expect(page.locator(`#${id}`)).toBeAttached();
   }
 
   await expect(page.locator("body")).not.toContainText("TODO:");
-  await expect(page.locator("[data-todo]")).toHaveCount(0);
 
   // No sideways scrolling at any width or motion setting.
   const overflow = await page.evaluate(
@@ -32,68 +38,156 @@ test("home renders the headline and the five, with no TODO text", async ({ page 
   expect(errors).toEqual([]);
 });
 
-test("skip link moves focus to the main content", async ({ page }, testInfo) => {
-  test.skip(testInfo.project.name === "mobile-390", "keyboard check runs on desktop widths");
+test("the headline and description are in the markup, not built by script", async ({ request }) => {
+  // Without this the page is a set of empty boxes until the bundle has run, and a
+  // crawler sees nothing at all (DECISIONS 2026-11-02). Checked on the served HTML
+  // rather than in a browser, which is what a crawler reads.
+  const body = await (await request.get("/")).text();
+  expect(body).toContain("Agency for");
+  expect(body).toContain("<em>Creatives</em>");
+  expect(body).toContain("Five specialists, one standard.");
+});
+
+test("nothing heavy is inlined, and the page itself stays small", async ({ page }) => {
+  // The build ships 15.5 MB of base64 in one document; optimize-home.mjs takes it out
+  // so the assets can be cached and the document can paint (DECISIONS 2026-11-02).
+  const response = await page.goto("/");
+  const body = (await response!.body()).toString("latin1");
+  expect(body).not.toMatch(/base64,[A-Za-z0-9+/=]{200,}/);
+  expect(body.length).toBeLessThan(200_000);
+});
+
+test("portrait videos and CV PDFs are not fetched until they are asked for", async ({ page }) => {
+  const fetched: string[] = [];
+  page.on("requestfinished", (r) => fetched.push(r.url()));
+  await page.goto("/", { waitUntil: "load" });
+  expect(fetched.filter((u) => u.endsWith(".mp4") || u.endsWith(".pdf"))).toEqual([]);
+});
+
+test("skip link moves focus past the introduction", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "desktop-1440", "keyboard check runs at desktop width");
   await page.goto("/");
 
   await page.keyboard.press("Tab");
-  await expect(page.getByRole("link", { name: "Skip to content" })).toBeFocused();
+  await expect(page.getByRole("link", { name: "Skip introduction" })).toBeFocused();
   await page.keyboard.press("Enter");
-  await expect(page.locator("#content")).toBeFocused();
+  // The page handles its own in-page links and scrolls without changing the hash.
+  await expect(page.locator("#team")).toBeInViewport();
 });
 
 test("primary nav links jump to their sections", async ({ page }, testInfo) => {
-  test.skip(testInfo.project.name === "mobile-390", "desktop navigation only");
+  // The nav island is hidden outright under reduced motion (the stylesheet collapses
+  // the whole introduction there), so this is a desktop, full-motion feature.
+  test.skip(testInfo.project.name !== "desktop-1440", "desktop, full motion only");
   await page.goto("/");
 
+  // The nav fades in partway through the introduction.
+  await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight * 0.3));
+  await page.waitForTimeout(600);
   await page
-    .getByRole("navigation", { name: "Primary" })
+    .getByRole("navigation", { name: "Main navigation" })
     .getByRole("link", { name: "Services" })
     .click();
-  await expect(page).toHaveURL(/#services$/);
-  await expect(page.locator("#services-title")).toBeInViewport();
+  await expect(page.locator("#services")).toBeInViewport();
 });
 
-test("mobile menu opens, keeps focus inside and closes with Escape", async ({ page }, testInfo) => {
-  test.skip(testInfo.project.name !== "mobile-390", "mobile navigation only");
-  await page.goto("/");
-
-  const trigger = page.getByRole("button", { name: "Open menu" });
-  await trigger.click();
-  const dialog = page.getByRole("dialog", { name: "Menu" });
-  await expect(dialog).toBeVisible();
-
-  for (let i = 0; i < 10; i++) await page.keyboard.press("Tab");
-  expect(await dialog.evaluate((el) => el.contains(document.activeElement))).toBe(true);
-
-  await page.keyboard.press("Escape");
-  await expect(dialog).toBeHidden();
-  await expect(trigger).toBeFocused();
-});
-
-test("mobile menu links navigate and close the menu", async ({ page }, testInfo) => {
-  test.skip(testInfo.project.name !== "mobile-390", "mobile navigation only");
-  await page.goto("/");
-
-  await page.getByRole("button", { name: "Open menu" }).click();
-  await page.getByRole("dialog", { name: "Menu" }).getByRole("link", { name: "Process" }).click();
-  await expect(page.getByRole("dialog", { name: "Menu" })).toBeHidden();
-  await expect(page).toHaveURL(/#process$/);
-  await expect(page.locator("#process-title")).toBeInViewport();
-});
-
-test("each of the five links to its member page; member pages keep prev/next navigation", async ({
+test("tapping a portrait opens that person's portfolio, and closing it returns", async ({
   page,
 }) => {
   const errors = collectErrors(page);
   await page.goto("/");
+  await page.locator("#team").scrollIntoViewIfNeeded();
+  await page.waitForTimeout(600);
 
-  // One link per person: the portrait and name (combined direction, 2026-10-15).
-  await expect(page.locator("#team ol > li")).toHaveCount(5);
-  const links = page.locator("#team ol > li a");
-  await expect(links).toHaveCount(5);
-  await expect(links.nth(1)).toHaveAttribute("href", "/team/mustafa-ishaq");
-  await expect(links.nth(1)).toContainText("Mustafa Ishaq");
+  await page.locator(".member").first().click();
+  const dialog = page.locator("#portfolio");
+  await expect(dialog).toHaveAttribute("open", "");
+  await expect(page.locator("#profile-name")).toContainText("Huzaifa");
+
+  await page.locator("#profile-close").click();
+  await expect(dialog).not.toHaveAttribute("open", "");
+  expect(errors).toEqual([]);
+});
+
+test("a second tap does not open a second portfolio", async ({ page }) => {
+  await page.goto("/");
+  await page.locator("#team").scrollIntoViewIfNeeded();
+  await page.waitForTimeout(600);
+
+  // Two taps in the same task, which is what a double tap produces: the second used
+  // to rebuild the profile and start its video under the first (DECISIONS 2026-11-02).
+  await page.locator(".member").first().evaluate((el: HTMLElement) => {
+    el.click();
+    el.click();
+  });
+  await page.waitForTimeout(600);
+
+  await expect(page.locator("#profile-name")).toContainText("Huzaifa");
+  await expect(page.locator("#portfolio video")).toHaveCount(1);
+});
+
+test("the choice to pause the portrait video is remembered", async ({ page }) => {
+  await page.goto("/");
+  await page.locator("#team").scrollIntoViewIfNeeded();
+  await page.waitForTimeout(600);
+
+  await page.locator(".member").first().click();
+  const toggle = page.locator("#motion-toggle");
+  // Reduced motion starts paused and full motion starts playing, so assert on the
+  // flip rather than on a fixed label: either way the choice must survive a reopen.
+  const started = await toggle.textContent();
+  await toggle.click();
+  const chosen = await toggle.textContent();
+  expect(chosen).not.toBe(started);
+
+  await page.locator("#profile-close").click();
+  // Closing restores the scroll position, so let the row settle before tapping again.
+  await expect(page.locator("#portfolio")).not.toHaveAttribute("open", "");
+  await page.waitForTimeout(800);
+  await page.locator(".member").first().click();
+  await expect(toggle).toHaveText(chosen!);
+});
+
+test("controls are big enough to tap and text is big enough to read", async ({ page }) => {
+  await page.goto("/");
+  await page.locator("#contact").scrollIntoViewIfNeeded();
+  await page.waitForTimeout(400);
+
+  const problems = await page.evaluate(() => {
+    const small: string[] = [];
+    for (const el of document.querySelectorAll<HTMLElement>("a, button")) {
+      const r = el.getBoundingClientRect();
+      if (!r.width || !r.height) continue;
+      // elementFromPoint only answers for the visible viewport, so the extended-hit-area
+      // check below is only meaningful for what is actually on screen.
+      if (r.top < 8 || r.bottom > window.innerHeight - 8) continue;
+      // Where the box must stay small for the design, the hit area is extended with
+      // a pseudo-element, so check what a tap at the edges actually lands on.
+      const reaches = (dy: number) =>
+        document.elementFromPoint(r.left + r.width / 2, dy)?.closest("a, button") === el;
+      const tall = r.height >= 44 || (reaches(r.top - 5) && reaches(r.bottom + 5));
+      if (!tall) small.push(`${el.tagName}.${el.className} ${Math.round(r.height)}px`);
+    }
+
+    const tiny: string[] = [];
+    for (const el of document.querySelectorAll<HTMLElement>("body *")) {
+      if (![...el.childNodes].some((n) => n.nodeType === 3 && n.textContent!.trim())) continue;
+      const r = el.getBoundingClientRect();
+      if (!r.width || !r.height) continue;
+      const size = parseFloat(getComputedStyle(el).fontSize);
+      if (size < 11) tiny.push(`${size}px ${el.tagName}.${el.className}`);
+    }
+    return { small, tiny };
+  });
+
+  expect(problems.small).toEqual([]);
+  expect(problems.tiny).toEqual([]);
+});
+
+test("each of the five has a member page; member pages keep prev/next navigation", async ({
+  page,
+}) => {
+  const errors = collectErrors(page);
   await page.goto("/team/mustafa-ishaq");
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Mustafa Ishaq");
   await expect(page).toHaveTitle("Mustafa Ishaq — AI Agent Engineer | APEC Digital");
@@ -122,24 +216,4 @@ test("unknown URLs show the 404 page", async ({ page }) => {
   await expect(page).toHaveTitle(/Page not found/);
   await page.getByRole("link", { name: "Back to home" }).click();
   await expect(page).toHaveURL(/\/$/);
-});
-
-test("native scrolling and no WebGL on the home page", async ({ page }, testInfo) => {
-  test.skip(testInfo.project.name === "mobile-390", "checked on desktop widths");
-  await page.goto("/");
-
-  // DECISIONS 2026-10-08: no smooth-scroll library, no live 3D on load.
-  await expect(page.locator("html")).not.toHaveClass(/\blenis\b/);
-  await expect(page.locator("[data-hero] canvas")).toHaveCount(0);
-  await expect(page.locator('[data-hero] img[src*="apex-mark-layer"]')).toHaveCount(1);
-  // The aura is a pre-rendered still (a video under the blend layer cost frames), not live 3D.
-  await expect(page.locator('[data-hero] img[src*="apex-aura"]')).toHaveCount(1);
-  await expect(page.locator("[data-hero] video")).toHaveCount(0);
-
-  await page.mouse.move(720, 450);
-  await page.mouse.wheel(0, 600);
-  // Native wheel scrolling lands immediately (no eased catch-up).
-  await expect
-    .poll(() => page.evaluate(() => window.scrollY), { timeout: 1000 })
-    .toBeGreaterThan(0);
 });

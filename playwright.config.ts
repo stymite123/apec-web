@@ -13,6 +13,12 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
   reporter: [["list"]],
+  // `/` runs a live WebGL scene, so every worker holds a GPU context and compiles the
+  // logo's shaders. Running them in parallel starves the GPU and the browser process
+  // dies mid-test ("GPU stall due to ReadPixels", then a closed session). One at a
+  // time is slower but is the difference between a green suite and a flaky one.
+  workers: 1,
+  timeout: 60_000,
   use: {
     baseURL,
     trace: "retain-on-failure",

@@ -4,6 +4,113 @@ Format: date · decision · why · alternatives rejected
 
 
 
+## 2026-11-02 · Fixing the shipped single-file build (Mustafa)
+
+Mustafa sent a list of the things that give a "vibe coded" app away and asked for the
+site to be fixed against it. The page live on apecdigital.tech was Codex's single-file
+build. Measured first on a Pixel 7 at 4× CPU with a real GPU, then again after each
+change. What the list actually caught, and what it did not:
+
+**Real, and fixed**
+
+- **No caching (#5).** 15.5 MB of fonts, portraits, portrait videos and CV PDFs were
+  base64 data: URIs inside the document, so nothing could be cached, everything was
+  re-sent on every visit, and base64 costs a further third on top. They are now files
+  under `public/a/`, named by content hash and served `immutable` for a year
+  (`headers()` in next.config.ts). The portrait videos and the CV PDFs — 5.8 MB — are
+  no longer fetched at all unless a portfolio or a CV is opened.
+- **New user, blank screen (#10).** Every heading and paragraph was built by script, so
+  until the bundle had been read off the document the page showed empty boxes, and a
+  crawler saw nothing. The hero headline and description are in the markup now;
+  `populatePage()` replaces them with identical content. The 2.1 MB of unminified
+  inline JavaScript is minified (0.6 MB), hashed and loaded with `defer`.
+- **Text too small (#6) and text scaling (#11).** The phone breakpoint shrank body copy
+  while keeping the display sizes: the hero paragraph was 12 px, labels 7–10 px.
+  Floors: 15 px body, 11 px for tracked uppercase labels, 14 px for buttons. The
+  editorial heading scale is untouched.
+- **Buttons too small (#4).** 14 controls were under 44 px on a phone; the "led by"
+  links were 24 px tall. Where the box could grow it grew; where growing it would move
+  the design (the wordmark, the underlined links) the hit area is extended behind it.
+- **No tap animations (#14).** The lit/tilt treatment is `(hover:hover) and
+  (pointer:fine)` only, so a tap on a touch screen produced no feedback at all. Added
+  `:active` states under `@media(hover:none)`, plus `touch-action: manipulation` to
+  drop the 300 ms delay.
+- **Tapping twice acts twice (#9).** A second tap on a portrait rebuilt the whole
+  profile and started its video underneath the one already open. Ignored while open.
+- **User preferences wiped (#15).** Pausing the portrait video lasted until the dialog
+  closed; every reopen started it again. Stored in `localStorage`. The stored choice
+  wins where there is one and `prefers-reduced-motion` is only the default — OR-ing the
+  two (the first attempt, caught by the reduced-motion run of the suite) reproduced the
+  same bug in mirror image, putting a reduced-motion visitor who pressed "play portrait
+  motion" back to paused on every reopen.
+
+**Not actually wrong, after checking**
+
+- Purple gradients (#1): none. The palette is navy, wine and ice blue.
+- Spinners (#7), emojis (#8): none.
+- Dark/light mode (#12): dark by design and `color-scheme: dark` is declared.
+- Keyboard covers input (#3): there is no form on the page.
+- Raw error text (#13): the one failure path (no WebGL) falls back to the logo poster
+  and warns to the console only.
+
+**The 3D logo.** Building the scene compiles its shaders, which blocked the main thread
+for about 2.4 s on a throttled phone — most of the remaining cost, and all of it native,
+not JavaScript (confirmed by CPU profile: 6.3 s in `(program)`, 1.4 s in JS; the larger
+figure is headless software GL, a real GPU does it in about 2.4 s). Everything
+downstream already coped with a null scene, so it is built after the first painted
+frame. Measured: content paints at ~1.3 s, the scene is built at ~4.6 s, so the page is
+readable and scrollable ~3.3 s earlier than before.
+
+**Measured, Pixel 7 at 4× CPU, real GPU.** "Before" is apecdigital.tech over the
+network; "after" is `next start` on this machine, so the timings are not like for like
+on the network leg — the byte counts and the layout and blocking figures are. Re-measure
+on the live site once this is deployed.
+
+| | before | after |
+|---|---|---|
+| transferred (document) | 12.5 MB | 14 KB |
+| document, decoded | 18.5 MB | 46 KB |
+| first contentful paint | 4,684 ms | ~1,300 ms |
+| DOM interactive | 27,501 ms | 53 ms |
+| load | 27,516 ms | ~4,300 ms |
+| cumulative layout shift | 0.068 | 0 |
+| controls under 44 px | 14 | 0 (the wordmark's box stays 30 px; its hit area is 44 px) |
+| rendered text under 14 px | down to 7 px | floor 11 px |
+
+**Reduced motion: looked like a bug, left alone.** With `prefers-reduced-motion: reduce`
+the journey's progress is pinned at 0, and the stylesheet hides the nav island and
+collapses `.journey` to one viewport, so these visitors get a static hero followed by
+the ordinary sections — and no nav links, no manifesto, no discipline chips. Driving
+progress from the scroll position instead was tried and measured: with the journey
+collapsed, `range` is 1, so progress flips from 0 to 1 on the first pixel of scroll and
+the hero vanishes at once. That is worse than what it replaced, so it was reverted. The
+remaining cost is that these visitors have no nav links; every section is reachable by
+scrolling and the skip link goes straight to the team. Worth revisiting as a design
+question (a plain static nav for reduced motion), not as a patch to the scene loop.
+
+**Tests.** `e2e/smoke.spec.ts` was still describing the Next home page, which has not
+been served at `/` since 2026-10-30: 15 of its 20 assertions had been failing since
+that deploy (`data-hero`, `apex-mark-layer`, `services-title` and `<ol>` do not appear
+anywhere in the deployed document). It now describes the page that is actually served,
+and covers the fixes above as regressions: content in the markup, nothing inlined,
+videos and PDFs not fetched up front, the double-tap guard, the stored motion choice,
+and the tap-target and type floors. Playwright runs one worker: `/` holds a live WebGL
+context and parallel workers starve the GPU until the browser process dies.
+
+**Reproducible.** `pnpm optimize:home` (scripts/optimize-home.mjs) regenerates
+`public/home.html` and `public/a/` from `APEC-Preview/index.html`. Every patch asserts
+its anchor appears exactly the expected number of times, so a later Codex build that
+moves the code fails the script instead of silently shipping unpatched.
+
+**Not done.** `NEXT_PUBLIC_SITE_URL` is still unset in Vercel, so the Next sitemap and
+share images still point at localhost. The four members other than Hamad Alam still have
+no portfolio content. No animation library was added: the five resources Mustafa sent
+(GSAP, Three.js, Lottie, Design DNA, animations.dev) describe practice rather than
+something to install here, and the page already has its own scroll engine and Three.js
+scene — a second animation library would add weight to a page whose whole problem was
+weight. What they informed is the work above: motion off the critical path, nothing
+behind a motion gate, and reduced motion checked rather than assumed.
+
 ## 2026-10-15 · Preview 1 fixes (Mustafa)
 - **Team portraits are colour again.** The cards start as colour pixels and resolve into the original photo: `pnpm dither` now also writes `public/team/pixel/<slug>-{0,1}.png` (26 px and 64 px colour versions of the cut-out, scaled up with `image-rendering: pixelated`). The grayscale filter and the silver dither layers are gone from the cards.
 - **SEO & Machine Learning demo floats** like the Mondragon 4 reel Mustafa sent: the Bing, Google and AI-answer cards are three planes at different depths, each drifting and turning on its own (`plane-a/b/c` keyframes, transform only, paused off screen with `.loop`).

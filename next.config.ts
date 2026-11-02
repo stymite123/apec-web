@@ -19,6 +19,23 @@ const nextConfig: NextConfig = {
       fallback: [],
     };
   },
+  /**
+   * Everything under /a/ is content-addressed (the filename is a hash of the bytes),
+   * so a repeat visitor never refetches it. The page itself is revalidated every
+   * time; it is the only thing that changes when the build changes.
+   */
+  async headers() {
+    return [
+      {
+        source: "/a/:file*",
+        headers: [{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }],
+      },
+      {
+        source: "/",
+        headers: [{ key: "Cache-Control", value: "public, max-age=0, must-revalidate" }],
+      },
+    ];
+  },
 };
 
 export default nextConfig;
